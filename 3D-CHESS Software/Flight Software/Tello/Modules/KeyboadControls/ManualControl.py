@@ -6,33 +6,11 @@ import KeyReader as kr
 from djitellopy import Tello
 from time import sleep
 
-#def init():
+
 tello = Tello()
 tello.connect()
 
 kr.init()
-    
-    #global vel
-    #global yb
-    #global xb
-    #global zb
-    #global yawb
-    #Keybinds dictionary
-def keybinds(key):
-   return {
-        "w": [0,vel,0,0],
-        "a": [-vel,0,0,0],
-        "s": [0,-vel,0,0],
-        "d": [vel,0,0,0],
-        "q": [0,0,-vel,0],
-        "e": [0,0,vel,0],
-        "SPACE": [0,0,0,vel],
-        #"LSHIFT": ,
-        "LCTRL": [0,0,0,vel]
-        #"ESCAPE":,
-        #"BACKSPACE": ,
-        }.get(key, "error")()
-
 
 
 def controlInput():
@@ -55,21 +33,14 @@ def controlInput():
     elif kr.getKey("LSHIFT"):
         z=-v
     if kr.getKey("q"):
-        yaw=-v
+        yaw=-2*v
     elif kr.getKey("e"):
-        yaw=v
+        yaw=2*v
     elif kr.getKey("ESCAPE"):
         tello.land()
 
     return [y,x,z,yaw]
 
-
-#if __name__ == "__main__":
-vel = 30
-yb = 0
-xb = 0
-zb = 0
-yawb = 0
 
 
 while True:
