@@ -4,8 +4,9 @@
     "\\Flight Software",
     "\\Flight Software\\Tello",
     "\\Flight Software\\Tello\\Modules",
+    "\\Flight Software\\Tello\\Modules\\KeyboadControls",
     "\\Flight Software\\Tello\\Modules\\Location"
   ],
-  "SelectedNode": "\\Flight Software\\Tello\\Modules\\Location\\APS.py",
+  "SelectedNode": "\\Flight Software\\Tello\\Modules\\KeyboadControls\\keyReader.py",
   "PreviewInSolutionExplorer": false
 }
