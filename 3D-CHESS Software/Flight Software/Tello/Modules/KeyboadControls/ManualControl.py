@@ -48,5 +48,6 @@ while True:
         vals = controlInput()
     except:
         pass
+    print(tello.get_battery())
     tello.send_rc_control(vals[0],vals[1],vals[2],vals[3])
     sleep(.2)
