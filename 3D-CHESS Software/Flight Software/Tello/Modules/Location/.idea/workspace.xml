@@ -5,8 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="404d2e9a-9cdd-464c-b66d-9cafedef4877" name="Changes" comment="A trial task where Tello flies to user inputted XY coords, takes a picture, saves the XY coords, and returns to home/OG and lands.">
-      <change afterPath="$PROJECT_DIR$/TelloSensorData.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task__GoXY_Pic_RecLXY_RetOG.py" beforeDir="false" afterPath="$PROJECT_DIR$/Task__GoXY_Pic_RecLXY_RetOG.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
