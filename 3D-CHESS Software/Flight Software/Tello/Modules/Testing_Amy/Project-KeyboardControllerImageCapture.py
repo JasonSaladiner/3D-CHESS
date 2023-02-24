@@ -42,7 +42,7 @@ def getKeyboardInput():
     return [lr, fb, ud, yv]
 
 
-me.set_video_direction(1)
+me.set_video_direction(0)
 
 while True:
     vals = getKeyboardInput()
