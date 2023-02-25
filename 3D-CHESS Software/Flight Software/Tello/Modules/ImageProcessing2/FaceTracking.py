@@ -1,4 +1,5 @@
-# # import modules
-# import cv2
-# import numpy as np
+# import modules
+import numpy as np
+import cv2
 
+cap = cv2.VideoCapture(1)
