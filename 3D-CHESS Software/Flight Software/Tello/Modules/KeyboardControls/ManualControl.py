@@ -63,7 +63,7 @@ def arrowInput():
 
 
 #init function
-def __init__():
+def init():
 
     keybinds = {"a":arrowInput,
                 "b":WASDInput}
@@ -77,13 +77,13 @@ def __init__():
     #tello = Tello()
     #tello.connect()
 
-    kr.__init__()
+    kr.init()
 
 def test():
     print("HI")
 #Entrance
 if __name__ == "__main__":  
-    __init__()
+    init()
     
     try:
         vals = keybinds[choice]()
