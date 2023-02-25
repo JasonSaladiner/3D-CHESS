@@ -46,7 +46,7 @@
       <recent name="C:\Users\amy20\Documents\GitHub\3D-CHESS\3D-CHESS Software\Flight Software\Tello\Modules\Location" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Task__GoXY_Pic_RecLXY_RetOG">
+  <component name="RunManager" selected="Python.Task__GoXY_Pic_RetOG">
     <configuration name="Project-KeyboardControllerImageCapture" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Location" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -68,7 +68,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Task__GoXY_Pic_RecLXY_RetOG" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="Task__GoXY_Pic_RetOG" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Location" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -80,7 +80,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Task__GoXY_Pic_RecLXY_RetOG.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\amy20\Documents\GitHub\3D-CHESS\3D-CHESS Software\Flight Software\Tello\Modules\Location\Task__GoXY_Pic_RetOG.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -91,7 +91,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Task__GoXY_Pic_RecLXY_RetOG" />
+        <item itemvalue="Python.Task__GoXY_Pic_RetOG" />
         <item itemvalue="Python.Project-KeyboardControllerImageCapture" />
       </list>
     </recent_temporary>
