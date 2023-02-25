@@ -5,4 +5,6 @@ From here, all other flight modules will be controlled in order to achieve 3D-CH
 
 from djitellopy import Tello
 import Modules.KeyboardControls.ManualControl as mc
-mc.test()
+tello = Tello()
+#tello.connect()
+mc.EngageMC(tello)
