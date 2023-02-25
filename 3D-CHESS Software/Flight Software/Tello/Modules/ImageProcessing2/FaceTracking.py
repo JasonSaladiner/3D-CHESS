@@ -3,7 +3,8 @@ import numpy as np
 import cv2
 
 def findFace(img):
-
+    faceCascade = cv2.CascadeClassifier("venv/facedetect.hml")
+    imgGray = cv2.cvtColor()
 
 
 
