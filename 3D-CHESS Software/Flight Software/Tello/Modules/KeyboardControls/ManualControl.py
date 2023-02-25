@@ -13,10 +13,11 @@ import Modules.KeyboardControls.KeyReader as kr
 from time import sleep
 
 
-
+#global tello variable
+global tello
 
 def WASDInput():
-    
+    global tello
     v = 50 #cm/s
     y,x,z,yaw = 0,0,0,0
     if kr.getKey("a"):
@@ -61,10 +62,10 @@ def arrowInput():
 
     return [lr, fb, ud, yv]
 
-
 #Dictionary of all possible keybinds
 keybinds = {"a":arrowInput,
             "b":WASDInput}
+
 
 
 
@@ -86,14 +87,16 @@ def EngageMC(ConnectedTello):
     EngageMC will begin searching for keyboard inputs to control a connected tello
     Tello ConnectedTello representing the connected tello
     """
-    tello = ConnectedTello
+    #tello = ConnectedTello
     choice = init()
+    global tello
+    tello = ConnectedTello
     while True:
         try:
             vals = keybinds[choice]()
         except:
             pass
     
-        tello.send_rc_control(vals[0],vals[1],vals[2],vals[3])
+        ConnectedTello.send_rc_control(vals[0],vals[1],vals[2],vals[3])
         sleep(.2)
 
