@@ -4,5 +4,4 @@ From here, all other flight modules will be controlled in order to achieve 3D-CH
 """
 
 from djitellopy import Tello
-import Modules.KeyboardControls as kc
-kc.ManualControl.test()
+

@@ -8,7 +8,7 @@ djitellopy
 time
 """
 
-import KeyReader as kr
+import Modules.KeyboardControls.KeyReader as kr
 from djitellopy import Tello
 from time import sleep
 
@@ -63,7 +63,7 @@ def arrowInput():
 
 
 #init function
-def init():
+def __init__():
 
     keybinds = {"a":arrowInput,
                 "b":WASDInput}
@@ -77,13 +77,14 @@ def init():
     #tello = Tello()
     #tello.connect()
 
-    kr.init()
+    kr.__init__()
 
 def test():
     print("HI")
 #Entrance
 if __name__ == "__main__":  
-    init()
+    __init__()
+    
     try:
         vals = keybinds[choice]()
     except:
