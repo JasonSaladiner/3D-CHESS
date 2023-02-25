@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="404d2e9a-9cdd-464c-b66d-9cafedef4877" name="Changes" comment="Goes to XY Coords and lands">
-      <change afterPath="$PROJECT_DIR$/Images/1677282758.7329972.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Images/1677284893.0611992.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task__GoXY_Pic_RecLXY_RetOG.py" beforeDir="false" afterPath="$PROJECT_DIR$/Task__GoXY_Pic_RecLXY_RetOG.py" afterDir="false" />
     </list>
@@ -46,7 +46,7 @@
       <recent name="C:\Users\amy20\Documents\GitHub\3D-CHESS\3D-CHESS Software\Flight Software\Tello\Modules\Location" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Project-KeyboardControllerImageCapture">
+  <component name="RunManager" selected="Python.Task__GoXY_Pic_RecLXY_RetOG">
     <configuration name="Project-KeyboardControllerImageCapture" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Location" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -91,8 +91,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Project-KeyboardControllerImageCapture" />
         <item itemvalue="Python.Task__GoXY_Pic_RecLXY_RetOG" />
+        <item itemvalue="Python.Project-KeyboardControllerImageCapture" />
       </list>
     </recent_temporary>
   </component>

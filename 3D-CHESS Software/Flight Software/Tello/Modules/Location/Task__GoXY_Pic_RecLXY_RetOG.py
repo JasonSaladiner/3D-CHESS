@@ -14,10 +14,11 @@ spd = 30
 def TakePhoto(tello):
     tello.streamoff()
     tello.streamon()
-    tello.set_video_direction()
+    tello.set_video_direction(1)
     img = tello.get_frame_read().frame
     cv2.resize(img, (320, 240))
     cv2.imwrite(f'Images/{time.time()}.jpg', img)
+    tello.streamoff()
 
 
 # User Input for Coordinates
