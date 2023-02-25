@@ -47,7 +47,7 @@ def WASDInput():
 def arrowInput():
     lr, fb, ud, yv = 0, 0, 0, 0
     spd = 50
-
+    global tello
     if kr.getKey("LEFT"): lr = -spd
     elif kr.getKey("RIGHT"): lr = spd
     if kr.getKey("UP"): fb = spd
