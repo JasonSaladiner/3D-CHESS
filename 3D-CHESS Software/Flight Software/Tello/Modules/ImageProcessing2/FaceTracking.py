@@ -80,10 +80,10 @@ while True:
     img = me.get_frame_read().frame
     img = cv2.resize(img, (w, h))
     img, info = findFace(img)
+    cv2.imshow("Output", img)
     pError = trackFace(info, w, pid, pError)
     # print("Area", info[1], "Center", info[0])
     findFace(img)
-    cv2.imshow("Output", img)
     if cv2.waitKey(1) & 0xff == ord('q'):
         me.land()
         break
