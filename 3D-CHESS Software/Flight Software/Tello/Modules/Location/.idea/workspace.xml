@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="404d2e9a-9cdd-464c-b66d-9cafedef4877" name="Changes" comment="Goes to XY Coords and lands">
+      <change afterPath="$PROJECT_DIR$/Images/1677282758.7329972.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task__GoXY_Pic_RecLXY_RetOG.py" beforeDir="false" afterPath="$PROJECT_DIR$/Task__GoXY_Pic_RecLXY_RetOG.py" afterDir="false" />
     </list>
@@ -35,6 +36,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -44,7 +46,28 @@
       <recent name="C:\Users\amy20\Documents\GitHub\3D-CHESS\3D-CHESS Software\Flight Software\Tello\Modules\Location" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.Project-KeyboardControllerImageCapture">
+    <configuration name="Project-KeyboardControllerImageCapture" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Location" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../Image Processing" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../Image Processing/Project-KeyboardControllerImageCapture.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Task__GoXY_Pic_RecLXY_RetOG" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Location" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -68,6 +91,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Project-KeyboardControllerImageCapture" />
         <item itemvalue="Python.Task__GoXY_Pic_RecLXY_RetOG" />
       </list>
     </recent_temporary>
@@ -95,7 +119,14 @@
       <option name="project" value="LOCAL" />
       <updated>1677279908309</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Goes to XY Coords and lands">
+      <created>1677280628987</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1677280628987</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -110,6 +141,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="A trial task where Tello flies to user inputted XY coords, takes a picture, saves the XY coords, and returns to home/OG and lands." />
     <MESSAGE value="Goes to XY Coords and lands" />
     <option name="LAST_COMMIT_MESSAGE" value="Goes to XY Coords and lands" />
