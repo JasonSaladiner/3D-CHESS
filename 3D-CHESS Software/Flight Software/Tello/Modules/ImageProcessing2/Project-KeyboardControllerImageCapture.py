@@ -9,12 +9,13 @@ me.connect()
 print(me.get_battery())
 global img
 me.streamon()
+me.set_video_fps(me.FPS_30)
 time.sleep(10)
 
 
 def getKeyboardInput():
     lr, fb, ud, yv = 0, 0, 0, 0
-    spd = 50
+    spd = 25
 
     if kp.getKey("LEFT"):
         lr = -spd
@@ -42,7 +43,7 @@ def getKeyboardInput():
     return [lr, fb, ud, yv]
 
 
-me.set_video_direction(0)
+me.set_video_direction(1)
 
 while True:
     vals = getKeyboardInput()
@@ -50,4 +51,4 @@ while True:
     img = me.get_frame_read().frame
     img = cv2.resize(img, (360, 240))
     cv2.imshow("Image", img)
-    cv2.waitKey(1)
+    cv2.waitKey(2)
