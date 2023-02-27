@@ -12,11 +12,12 @@ import threading
 
 
 tello = Tello()
-#tello.connect()
+tello.connect()
 
-#xyz = threading.Thread(target=IMU.init(tello))
+xyz = threading.Thread(target=IMU.init,args=(tello,))
 #mc.init()
-xyz = Process(target=IMU.init)#,args=([tello]))
+#xyz = Process(target=IMU.init,args=(tello,))
+
 xyz.start()
 
 

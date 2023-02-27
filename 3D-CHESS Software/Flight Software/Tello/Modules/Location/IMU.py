@@ -25,19 +25,20 @@ class location:
         self.vdisp = lambda v,t: v*t
 
 
-def init():
-    tello = Tello
-    tello.connect()
+def init(ConnectedTello):
+    tello = ConnectedTello
+    #tello.connect()
     x,y,z = 0,0,0
 
     vdisp = lambda v,t: v*t
+    dt = .2 
     while True:
         try:
             vx = tello.get_speed_x()
             vy = tello.get_speed_y()
             vz = tello.get_speed_z()
         
-            dt = .2 #s
+            #s
 
             x += vdisp(vx,dt)
             y += vdisp(vy,dt)
