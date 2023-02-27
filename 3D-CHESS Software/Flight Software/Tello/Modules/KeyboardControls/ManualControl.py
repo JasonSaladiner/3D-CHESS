@@ -11,7 +11,7 @@ time
 import Modules.KeyboardControls.KeyReader as kr
 #from djitellopy import Tello
 from time import sleep
-
+from Modules.Location import IMU
 
 #global tello variable
 global tello
@@ -91,12 +91,15 @@ def EngageMC(ConnectedTello):
     choice = init()
     global tello
     tello = ConnectedTello
+    #rps = IMU.location(tello)
     while True:
         try:
             vals = keybinds[choice]()
         except:
             pass
-    
+        dt = .2
         ConnectedTello.send_rc_control(vals[0],vals[1],vals[2],vals[3])
-        sleep(.2)
+        #rps.update([tello.get_speed_x(),tello.get_speed_y(),tello.get_speed_z()],dt)
+        #print(rps.cart)
+        sleep(dt)
 
