@@ -10,10 +10,10 @@ from djitellopy import Tello    #Tello
 import threading    #For multithreading
 import Modules._config_ as cfg  #Shared variables 
 
-import Modules.KeyboardControls.ManualControl as mc     #Manual Control of the drone
+import Modules.Controls.ManualControl as mc     #Manual Control of the drone
 from Modules.Location import IMU            #Location services
-
-Tello.LOGGER.setLevel(logging.WARNING)      #Setting tello outpus to warning only
+from Modules.Controls.ReturnToHome import return_to_home as rth
+#Tello.LOGGER.setLevel(logging.WARNING)      #Setting tello outpus to warning only
 
 #Connect to tello
 tello = Tello()
@@ -22,7 +22,18 @@ tello.connect()
 
 
 
-
+def _temp_():
+    tello.takeoff()
+    cfg.OutputAttitudePosition
+    tello.move_forward(120)
+    cfg.OutputAttitudePosition()
+    tello.rotate_clockwise(180)
+    cfg.OutputAttitudePosition()
+    tello.move_forward(40)
+    cfg.OutputAttitudePosition()
+    #tello.move_back(80)
+    tello.land()
+    cfg.OutputAttitudePosition()
 
 
 
@@ -34,6 +45,8 @@ if __name__ == "__main__":
     xyz.start()
 
     #Start manual control
+    #mc.EngageMC(tello)
+    #cfg.OutputAttitudePosition
+    print(tello.get_battery())
+   
     mc.EngageMC(tello)
-
-    #mc._tempPattern_(tello)

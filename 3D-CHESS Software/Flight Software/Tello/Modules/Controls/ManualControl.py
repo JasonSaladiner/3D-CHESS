@@ -8,40 +8,57 @@ djitellopy
 time
 """
 
-import Modules.KeyboardControls.KeyReader as kr
+import Modules.Controls.KeyReader as kr
 #from djitellopy import Tello
 from time import sleep
 from Modules.Location import IMU
 import Modules._config_ as cfg
+
+from math import floor
 #global tello variable
 global tello
+
+from Modules.Controls.ReturnToHome import directRTH 
+
+def RTH(ConnectedTello):
+
+    x = floor(cfg.xPos)
+    y = floor(cfg.yPos)
+    z = floor(cfg.zPos)
+    yaw = cfg.yaw
+
+    ConnectedTello.rotate_counter_clockwise(yaw)
+    ConnectedTello.go_xyz_speed(-x,-y,0,10)
 
 def _tempPattern_(ConnectedTello):
     """
     Used for testing only. WIll be deleted
     """
     #square
-    print(cfg.xPos,cfg.yPos,cfg.zPos)
+    out = cfg.OutputAttitudePosition
+
+    #Starting location is 0,0,0,0
+    out()
+
+    #Takeoff
     ConnectedTello.takeoff()
-    print(cfg.xPos,cfg.yPos,cfg.zPos)
-    #ConnectedTello.go_xyz_speed(91,0,0,50)
-    ConnectedTello.move_forward(91)
-    print(ConnectedTello.get_yaw())
-    print(cfg.xPos,cfg.yPos,cfg.zPos)
-    #ConnectedTello.go_xyz_speed(0,-91,0,50)
+    out()   #Should be 0,0,h,0
+
+    ConnectedTello.move_forward(91) #~3ft
+    out()
+
     ConnectedTello.move_right(91)
-    print(ConnectedTello.get_yaw())
-    print(cfg.xPos,cfg.yPos,cfg.zPos)
-    #ConnectedTello.go_xyz_speed(-91,0,0,50)
+    out()
+
     ConnectedTello.move_back(91)
-    print(ConnectedTello.get_yaw())
-    print(cfg.xPos,cfg.yPos,cfg.zPos)
-    #ConnectedTello.go_xyz_speed(0,91,0,50)
+    out()
+
     ConnectedTello.move_left(91)
-    print(ConnectedTello.get_yaw())
-    print(cfg.xPos,cfg.yPos,cfg.zPos)
+    out()
+
+    RTH(ConnectedTello)
+    out()
     ConnectedTello.land()
-    print(cfg.xPos,cfg.yPos,cfg.zPos)
 
 
 def WASDInput():
@@ -75,8 +92,11 @@ def WASDInput():
     elif kr.getKey("ESCAPE"):
         tello.land()
     elif kr.getKey("l"):
-        print(cfg.xPos,cfg.yPos,cfg.zPos)
-
+        print(cfg.xPos,cfg.yPos,cfg.zPos,tello.get_yaw())
+    elif kr.getKey("p"):
+        cfg.emOps = True
+        directRTH(tello)
+    
     return [y,x,z,yaw]
 
 def arrowInput():
@@ -128,7 +148,7 @@ def EngageMC(ConnectedTello):
     tello = ConnectedTello
     #rps = IMU.location(tello)
     dt = .2
-    while True:
+    while not cfg.emOps:
         try:
             vals = keybinds[choice]()
         except:

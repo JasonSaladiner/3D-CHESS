@@ -16,3 +16,12 @@ def suppress_out():
 xPos = 0
 yPos = 0
 zPos = 0
+yaw = 0
+
+
+emOps = False
+
+def OutputAttitudePosition():
+    print("X:",xPos,"Y:",yPos,"Z:",zPos,"Yaw:",yaw)
+    adjust = lambda x : x+2
+    print("Adjusted",adjust(xPos),adjust(yPos),adjust(zPos))
