@@ -3,6 +3,7 @@ This module hopes to integrate the IMU's X,Y,Z acceleartions to get position
 
 """
 from time import sleep
+import Modules._config_ as cfg
 
 from djitellopy.tello import Tello
 def displacement(velocity,acceleration,time):
@@ -28,8 +29,7 @@ class location:
 def init(ConnectedTello):
     tello = ConnectedTello
     #tello.connect()
-    x,y,z = 0,0,0
-
+    #x,y,z = 0,0,0
     vdisp = lambda v,t: v*t
     dt = .2 
     while True:
@@ -40,10 +40,10 @@ def init(ConnectedTello):
         
             #s
 
-            x += vdisp(vx,dt)
-            y += vdisp(vy,dt)
-            z += vdisp(vz,dt)
+            cfg.xPos += vdisp(vx,dt)
+            cfg.yPos += vdisp(vy,dt)
+            cfg.zPos += vdisp(vz,dt)
         except:
             pass
-        print(x,y,z)
+        #print(x,y,z)
         sleep(dt)

@@ -12,9 +12,37 @@ import Modules.KeyboardControls.KeyReader as kr
 #from djitellopy import Tello
 from time import sleep
 from Modules.Location import IMU
-
+import Modules._config_ as cfg
 #global tello variable
 global tello
+
+def _tempPattern_(ConnectedTello):
+    """
+    Used for testing only. WIll be deleted
+    """
+    #square
+    print(cfg.xPos,cfg.yPos,cfg.zPos)
+    ConnectedTello.takeoff()
+    print(cfg.xPos,cfg.yPos,cfg.zPos)
+    #ConnectedTello.go_xyz_speed(91,0,0,50)
+    ConnectedTello.move_forward(91)
+    print(ConnectedTello.get_yaw())
+    print(cfg.xPos,cfg.yPos,cfg.zPos)
+    #ConnectedTello.go_xyz_speed(0,-91,0,50)
+    ConnectedTello.move_right(91)
+    print(ConnectedTello.get_yaw())
+    print(cfg.xPos,cfg.yPos,cfg.zPos)
+    #ConnectedTello.go_xyz_speed(-91,0,0,50)
+    ConnectedTello.move_back(91)
+    print(ConnectedTello.get_yaw())
+    print(cfg.xPos,cfg.yPos,cfg.zPos)
+    #ConnectedTello.go_xyz_speed(0,91,0,50)
+    ConnectedTello.move_left(91)
+    print(ConnectedTello.get_yaw())
+    print(cfg.xPos,cfg.yPos,cfg.zPos)
+    ConnectedTello.land()
+    print(cfg.xPos,cfg.yPos,cfg.zPos)
+
 
 def WASDInput():
     global tello
@@ -32,7 +60,12 @@ def WASDInput():
         if tello.is_flying:
             z=v
         else:
-            tello.takeoff()
+            print("Takeoff Inititated")
+            try:
+                tello.takeoff()
+                print("Take-off Successful")
+            except:
+                print("Issue with takeoff")
     elif kr.getKey("LSHIFT"):
         z=-v
     if kr.getKey("q"):
@@ -41,6 +74,8 @@ def WASDInput():
         yaw=2*v
     elif kr.getKey("ESCAPE"):
         tello.land()
+    elif kr.getKey("l"):
+        print(cfg.xPos,cfg.yPos,cfg.zPos)
 
     return [y,x,z,yaw]
 
@@ -99,6 +134,7 @@ def EngageMC(ConnectedTello):
         except:
             pass
         
+        #with cfg.suppress_out():
         ConnectedTello.send_rc_control(vals[0],vals[1],vals[2],vals[3])
         #rps.update([tello.get_speed_x(),tello.get_speed_y(),tello.get_speed_z()],dt)
         #print(rps.cart)
