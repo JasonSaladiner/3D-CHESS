@@ -18,7 +18,7 @@ tello.takeoff()
 
 # Parameters
 w, h = 640, 480
-fbRange = [19200, 24000]
+fbRange = [25000, 30000]
 pid = [0.4, 0.4, 0]  # adjust as needed
 pError = 0
 
@@ -26,7 +26,7 @@ pError = 0
 def findFace(img):
     faceCascade = cv2.CascadeClassifier("Resources/facedetect.xml")
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = faceCascade.detectMultiScale(imgGray, 1.2, 8)  # adjust minNeighbors as needed for clarity, OG = 8
+    faces = faceCascade.detectMultiScale(imgGray, 1.2, 7)  # adjust minNeighbors as needed for clarity, OG = 8
 
     myFaceListC = []  # cx, cy = center of face detected
     myFaceListArea = []
@@ -54,14 +54,14 @@ def trackFace(info, w, pid, pError):
 
     error = x - (w // 2)
     speed = pid[0] * error + pid[1] * (error - pError)
-    speed = int(np.clip(speed, -5, 5))  # adjust speed to cover residual drift
+    speed = int(np.clip(speed, -10, 10))  # adjust speed to cover residual drift
 
     if fbRange[0] < area < fbRange[1]:
         fb = 0
     elif area > fbRange[1]:
-        fb = -15  # adjust speed to cover residual drift
+        fb = -10  # adjust speed to cover residual drift
     elif area < fbRange[0] and area != 0:
-        fb = 15  # adjust speed to cover residual drift
+        fb = 10  # adjust speed to cover residual drift
 
     if x == 0:
         speed = 0
@@ -79,11 +79,11 @@ while True:
     img = tello.get_frame_read().frame
     img, info = findFace(img)
     img = cv2.resize(img, (w, h))
-    cv2.imshow("facedetection", img)
-    cv2.waitKey(5)
+    cv2.imshow("tellosight", img)
     pError = trackFace(info, w, pid, pError)
+    cv2.waitKey(5)
     # print("Area", info[1], "Center", info[0])
     # findFace(img)
     if cv2.waitKey(1) & 0xff == ord('q'):
-        # tello.land()
+        tello.land()
         break
