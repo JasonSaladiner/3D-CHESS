@@ -151,7 +151,6 @@ def display(img):
 
 
 while True:
-
     # GET THE IMAGE FROM TELLO
     frame_read = me.get_frame_read()
     myFrame = frame_read.frame

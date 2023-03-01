@@ -30,13 +30,13 @@ y_ui = int(input('Y: '))
 
 # Go to XY Coordinates
 tello.takeoff()
-tello.go_xyz_speed(y_ui, -x_ui, 30, spd)  # ADJUST SPEED AS DESIRED
+tello.go_xyz_speed(y_ui, -x_ui, 0, spd)  # ADJUST SPEED AS DESIRED
 
 # Take a picture
 TakePhoto(tello)
 
 # Return to origin
-tello.go_xyz_speed(-y_ui, x_ui, -30, spd)
+tello.go_xyz_speed(-y_ui, x_ui, 0, spd)
 
 tello.land()
 quit()
