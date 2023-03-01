@@ -12,8 +12,8 @@ import Modules._config_ as cfg  #Shared variables
 
 import Modules.Controls.ManualControl as mc     #Manual Control of the drone
 from Modules.Location import IMU            #Location services
-from Modules.Controls.ReturnToHome import return_to_home as rth
-#Tello.LOGGER.setLevel(logging.WARNING)      #Setting tello outpus to warning only
+#from Modules.Controls.ReturnToHome import return_to_home as rth
+Tello.LOGGER.setLevel(logging.WARNING)      #Setting tello outpus to warning only
 
 #Connect to tello
 tello = Tello()
@@ -48,5 +48,9 @@ if __name__ == "__main__":
     #mc.EngageMC(tello)
     #cfg.OutputAttitudePosition
     print(tello.get_battery())
-   
-    mc.EngageMC(tello)
+    #cfg.OutputAttitudePosition()
+    #tello.takeoff()
+    #tello.rotate_clockwise(360)
+    #cfg.OutputAttitudePosition()
+    #mc.EngageMC(tello)
+    _temp_()

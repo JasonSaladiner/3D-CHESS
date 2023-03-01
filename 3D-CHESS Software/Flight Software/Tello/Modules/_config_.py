@@ -4,6 +4,7 @@ importable list of variables
 from contextlib import contextmanager
 import sys,os
 
+#with cfg.suppress_out():
 @contextmanager
 def suppress_out():
     with open(os.devnull,"w") as devnull:
@@ -13,6 +14,8 @@ def suppress_out():
             yield
         finally:
             sys.stdout = old_stdout
+
+
 xPos = 0
 yPos = 0
 zPos = 0

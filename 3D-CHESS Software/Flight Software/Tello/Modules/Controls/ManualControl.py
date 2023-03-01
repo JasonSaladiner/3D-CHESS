@@ -149,14 +149,8 @@ def EngageMC(ConnectedTello):
     #rps = IMU.location(tello)
     dt = .2
     while not cfg.emOps:
-        try:
-            vals = keybinds[choice]()
-        except:
-            pass
-        
-        #with cfg.suppress_out():
-        ConnectedTello.send_rc_control(vals[0],vals[1],vals[2],vals[3])
-        #rps.update([tello.get_speed_x(),tello.get_speed_y(),tello.get_speed_z()],dt)
-        #print(rps.cart)
-        sleep(dt)
 
+        vals = keybinds[choice]()
+        
+        ConnectedTello.send_rc_control(vals[0],vals[1],vals[2],vals[3])
+        sleep(dt)

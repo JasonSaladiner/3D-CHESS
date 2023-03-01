@@ -8,7 +8,7 @@ def directRTH(ConnectedTello):
     yaw = ConnectedTello.get_yaw()*pi/180
 
     orientationMatrix = np.array([cos(yaw),sin(yaw),0,-sin(yaw),cos(yaw),0,0,0,1]).reshape((3,3))
-    absoluteCart = np.array([cfg.xPos,cfg.yPos,cfg.zPos])
+    absoluteCart = np.array([cfg.xPos,cfg.yPos,cfg.zPos]).reshape((3,1))
     
     relativeCart = np.matmul(np.linalg.inv(orientationMatrix),absoluteCart)
 
