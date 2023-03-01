@@ -18,7 +18,7 @@ tello.takeoff()
 
 # Parameters
 w, h = 640, 480
-fbRange = [6200, 6800]
+fbRange = [3200, 4000]
 pid = [0.4, 0.4, 0]  # adjust as needed
 pError = 0
 
