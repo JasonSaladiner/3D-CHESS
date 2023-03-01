@@ -6,7 +6,7 @@ From here, all other flight modules will be controlled in order to achieve 3D-CH
 
 
 import logging  #For changing the tello outputs
-from djitellopy import Tello    #Tello 
+from djitellopy import Tello, TelloSwarm    #Tello 
 import threading    #For multithreading
 import Modules._config_ as cfg  #Shared variables 
 
@@ -16,10 +16,10 @@ from Modules.Location import IMU            #Location services
 Tello.LOGGER.setLevel(logging.WARNING)      #Setting tello outpus to warning only
 
 #Connect to tello
-tello = Tello()
-tello.connect()
+tello = Tello('192.168.10.1')
 
-
+#tello = TelloSwarm([Tello('192.168.1.4')])
+#tello.takeoff()
 
 
 def _temp_():
@@ -40,9 +40,11 @@ def _temp_():
 #Entrance
 if __name__ == "__main__":
 
+    #tello.connect_to_wifi("tellonet","selvachess")
+
     #initialize and start location services on seperate thread
-    xyz = threading.Thread(target=IMU.init,args=(tello,),)
-    xyz.start()
+    #xyz = threading.Thread(target=IMU.init,args=(tello,),)
+    #xyz.start()
 
     #Start manual control
     #mc.EngageMC(tello)
@@ -53,4 +55,4 @@ if __name__ == "__main__":
     #tello.rotate_clockwise(360)
     #cfg.OutputAttitudePosition()
     #mc.EngageMC(tello)
-    _temp_()
+    #_temp_()
