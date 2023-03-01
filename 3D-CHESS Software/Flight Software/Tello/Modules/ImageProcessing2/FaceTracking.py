@@ -18,7 +18,7 @@ tello.takeoff()
 
 # Parameters
 w, h = 640, 480
-fbRange = [3200, 4000]
+fbRange = [19200, 24000]
 pid = [0.4, 0.4, 0]  # adjust as needed
 pError = 0
 
@@ -26,7 +26,7 @@ pError = 0
 def findFace(img):
     faceCascade = cv2.CascadeClassifier("Resources/facedetect.xml")
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = faceCascade.detectMultiScale(imgGray, 1.2, 5)  # adjust minNeighbors as needed for clarity
+    faces = faceCascade.detectMultiScale(imgGray, 1.2, 8)  # adjust minNeighbors as needed for clarity, OG = 8
 
     myFaceListC = []  # cx, cy = center of face detected
     myFaceListArea = []
@@ -54,24 +54,21 @@ def trackFace(info, w, pid, pError):
 
     error = x - (w // 2)
     speed = pid[0] * error + pid[1] * (error - pError)
-    speed = int(np.clip(speed, -15, 15))
+    speed = int(np.clip(speed, -5, 5))  # adjust speed to cover residual drift
 
     if fbRange[0] < area < fbRange[1]:
         fb = 0
     elif area > fbRange[1]:
-        fb = -20
+        fb = -15  # adjust speed to cover residual drift
     elif area < fbRange[0] and area != 0:
-        fb = 20
+        fb = 15  # adjust speed to cover residual drift
 
     if x == 0:
         speed = 0
         error = 0
 
-    print(fb, speed)
-
     tello.send_rc_control(0, fb, 0, speed)
     return error
-
 
 
 # cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
