@@ -1,22 +1,23 @@
 # import modules
 import time
-
 import numpy as np
 import cv2
-from djitellopy import tello
+from djitellopy import Tello
 
 # Initialization
-me = tello.Tello()
-me.connect()
-print(me.get_battery())
-time.sleep(1)
-me.streamoff()
-me.streamon()
-me.takeoff()
-me.go_xyz_speed(0, 0, 30, 25)  # set height as needed
+tello = Tello()
+tello.connect()
+print(tello.get_battery())
+tello.send_rc_control(0, 0, 0, 0)
+tello.streamoff()
+tello.streamon()
+time.sleep(5)
+tello.set_video_direction(0)
+tello.takeoff()
+# tello.go_xyz_speed(0, 0, 30, 25)  # set height as needed
 
 # Parameters
-w, h = 360, 240
+w, h = 640, 480
 fbRange = [6200, 6800]
 pid = [0.4, 0.4, 0]  # adjust as needed
 pError = 0
@@ -53,7 +54,7 @@ def trackFace(info, w, pid, pError):
 
     error = x - (w // 2)
     speed = pid[0] * error + pid[1] * (error - pError)
-    speed = int(np.clip(speed, -100, 100))
+    speed = int(np.clip(speed, -15, 15))
 
     if fbRange[0] < area < fbRange[1]:
         fb = 0
@@ -66,24 +67,26 @@ def trackFace(info, w, pid, pError):
         speed = 0
         error = 0
 
-    # print(speed, fb)
+    print(fb, speed)
 
-    me.send_rc_control(0, fb, 0, speed)
+    tello.send_rc_control(0, fb, 0, speed)
     return error
 
 
-# cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+
+# cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 # cap.set(cv2.CAP_PROP_FPS, 30.0)  # figuring out if necessary or not
 
 while True:
     # _, img = cap.read()
-    img = me.get_frame_read().frame
-    img = cv2.resize(img, (w, h))
+    img = tello.get_frame_read().frame
     img, info = findFace(img)
-    cv2.imshow("Output", img)
+    img = cv2.resize(img, (w, h))
+    cv2.imshow("facedetection", img)
+    cv2.waitKey(5)
     pError = trackFace(info, w, pid, pError)
     # print("Area", info[1], "Center", info[0])
-    findFace(img)
+    # findFace(img)
     if cv2.waitKey(1) & 0xff == ord('q'):
-        me.land()
+        # tello.land()
         break
