@@ -5,21 +5,19 @@ From here, all other flight modules will be controlled in order to achieve 3D-CH
 
 
 
+import ipaddress
 import logging  #For changing the tello outputs
 from djitellopy import Tello, TelloSwarm    #Tello 
 import threading    #For multithreading
 import Modules._config_ as cfg  #Shared variables 
 
 import Modules.Controls.ManualControl as mc     #Manual Control of the drone
+import Modules.Controls.ComputerControl as cc
 from Modules.Location import IMU            #Location services
-#from Modules.Controls.ReturnToHome import return_to_home as rth
+
 Tello.LOGGER.setLevel(logging.WARNING)      #Setting tello outpus to warning only
 
-#Connect to tello
-tello = Tello('192.168.10.1')
 
-#tello = TelloSwarm([Tello('192.168.1.4')])
-#tello.takeoff()
 
 
 def _temp_():
@@ -37,22 +35,21 @@ def _temp_():
 
 
 
+
 #Entrance
 if __name__ == "__main__":
 
+    #Connect to tello
+    tello = Tello(cfg.telloIP_B)        #TelloB
+    tello.connect()
     #tello.connect_to_wifi("tellonet","selvachess")
 
+
     #initialize and start location services on seperate thread
-    #xyz = threading.Thread(target=IMU.init,args=(tello,),)
-    #xyz.start()
+    locationThread = threading.Thread(target=IMU.init,args=(tello,),)
+    locationThread.start()
+
 
     #Start manual control
-    #mc.EngageMC(tello)
-    #cfg.OutputAttitudePosition
-    print(tello.get_battery())
-    #cfg.OutputAttitudePosition()
-    #tello.takeoff()
-    #tello.rotate_clockwise(360)
-    #cfg.OutputAttitudePosition()
-    #mc.EngageMC(tello)
-    #_temp_()
+    mc.EngageMC(tello)
+    

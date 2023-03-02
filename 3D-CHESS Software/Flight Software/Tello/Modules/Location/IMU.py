@@ -42,10 +42,10 @@ def init(ConnectedTello):
             vz = -tello.get_speed_z()
             yaw = tello.get_yaw()*pi/180
             #s
-            bX = np.array([vdisp(vx,dt),vdisp(vy,dt),vdisp(vz,dt)]).reshape((3,1))
-            orientationMatrix = np.array([cos(yaw),sin(yaw),0,-sin(yaw),cos(yaw),0,0,0,1]).reshape((3,3))
+            bX = [vdisp(vx,dt),vdisp(vy,dt),vdisp(vz,dt)]
+            #orientationMatrix = np.array([cos(yaw),sin(yaw),0,-sin(yaw),cos(yaw),0,0,0,1]).reshape((3,3))
             
-            absolute = np.matmul(orientationMatrix,bX)
+            #absolute = np.matmul(orientationMatrix,bX)
             #print(absolute)
             cfg.xPos += bX[0]
             cfg.yPos += bX[1]

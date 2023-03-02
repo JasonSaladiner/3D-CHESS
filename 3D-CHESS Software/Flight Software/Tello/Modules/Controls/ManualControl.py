@@ -18,7 +18,7 @@ from math import floor
 #global tello variable
 global tello
 
-from Modules.Controls.ReturnToHome import directRTH 
+from Modules.Controls.ComputerControl import go_nXYZ_direct
 
 def RTH(ConnectedTello):
 
@@ -95,7 +95,10 @@ def WASDInput():
         print(cfg.xPos,cfg.yPos,cfg.zPos,tello.get_yaw())
     elif kr.getKey("p"):
         cfg.emOps = True
-        directRTH(tello)
+        print("goto starting")
+        go_nXYZ_direct(tello,0,0)
+        print("goto finished")
+        cfg.emOps=False
     
     return [y,x,z,yaw]
 
