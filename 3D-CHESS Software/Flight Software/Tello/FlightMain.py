@@ -16,7 +16,6 @@ import Modules.Controls.ManualControl as mc         #Manual Control of the drone
 import Modules.Controls.ComputerControl as cc       #Computer Aided drone control
 from Modules.Location import IMU,Mapping            #Location services
 
-Tello.LOGGER.setLevel(logging.WARNING)      #Setting tello outpus to warning only
 
 
 
@@ -27,14 +26,16 @@ Tello.LOGGER.setLevel(logging.WARNING)      #Setting tello outpus to warning onl
 if __name__ == "__main__":
     
     #Enable/Disable Modules
+    haveLogMessages = False
     haveLocation = True
-    haveMap = False
+    haveMap = True
 
 
     ########################################################################
                         ###Module Initializations###
     #Connect to tello
     tello = Tello(cfg.telloIP_B)        #TelloB
+    #tello = Tello()
     tello.connect()
     #tello.connect_to_wifi("tellonet","selvachess")
 
@@ -51,9 +52,13 @@ if __name__ == "__main__":
         mapThread = threading.Thread(target=Mapping.init,args=(showMap,),)
         mapThread.start()
 
+    if not haveLogMessages:
+        Tello.LOGGER.setLevel(logging.WARNING)      #Setting tello outpus to warning only
+
     ########################################################################
                         ###"MISSION" Commands###
-    
+    #testEmThread = threading.Thread(target=mc.EngageMC,args=(tello,),)
+    print(tello.get_battery())
     #Start manual control
     mc.EngageMC(tello)
     

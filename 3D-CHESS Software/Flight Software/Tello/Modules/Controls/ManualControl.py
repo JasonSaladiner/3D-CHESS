@@ -15,7 +15,7 @@ from math import floor
 
 from Modules.Location import IMU
 import Modules._config_ as cfg
-from Modules.Controls.ComputerControl import go_nXYZ_direct
+from Modules.Controls.ComputerControl import go_nXYZ_direct,go_nXYZ_P
 
 #global tello variable
 global tello
@@ -59,13 +59,28 @@ def WASDInput():
         cfg.emOps = True
         print("Current Location:")
         print(cfg.xPos,cfg.yPos,cfg.zPos,tello.get_yaw())
-        a = input("X position:")
-        b= input("Y position:")
-        c = input("Z position:")
+        a = int(input("X position:"))
+        b= int(input("Y position:"))
+        #c = int(input("Z position:"))
         print("goto starting")
-        go_nXYZ_direct(tello,a,b,c)
+        go_nXYZ_direct(tello,a,b)
+        print(cfg.xPos,cfg.yPos,cfg.zPos,tello.get_yaw())
         print("goto finished")
-        cfg.emOps=False
+        tello.land()
+        #cfg.emOps=False
+    elif kr.getKey("h"):
+        cfg.emOps = True
+        print("Current Location:")
+        print(cfg.xPos,cfg.yPos,cfg.zPos,tello.get_yaw())
+        a = int(input("X position:"))
+        b= int(input("Y position:"))
+        #c = int(input("Z position:"))
+        print("goto starting")
+        go_nXYZ_P(tello,a,b,cfg.zPos)
+        print(cfg.xPos,cfg.yPos,cfg.zPos,tello.get_yaw())
+        print("goto finished")
+        tello.land()
+        #cfg.emOps=False
     elif kr.getKey("DELETE"):
         cfg.emOps=True
         tello.emergency()

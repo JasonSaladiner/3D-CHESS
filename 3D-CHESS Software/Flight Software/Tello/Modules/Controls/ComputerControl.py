@@ -28,8 +28,36 @@ def directRTH(ConnectedTello):
     ConnectedTello.send_rc_control(0,0,0,0)
 
 
+def go_nXYZ_P(ConnectedTello: Tello, X: float,Y: float,Z:float = cfg.zPos,velocity:int = 20):
+    relativeO = [X-cfg.xPos,Y-cfg.yPos,Z-cfg.zPos]
+    relative = relativeO
+    #idealTime = np.magnitude(relative)/velocity
+    while np.linalg.norm(relative) > 2:
+        
+        angle = floor(atan2(relative[1],relative[0])*180/pi)
+        relAngle = ConnectedTello.get_yaw()-angle
+        print("relative Angle: ", relAngle)
+        if abs(relAngle)>=360:
+            relAngle = relAngle*(1-360/abs(relAngle))
+        if abs(relAngle)>1:
+            ConnectedTello.rotate_counter_clockwise(relAngle)
 
-def go_nXYZ_direct(ConnectedTello: Tello,X: int,Y: int,Z:int=floor(cfg.zPos), velocity = 30):
+        if relative[2]>.5:
+            vertV = velocity
+        else:
+            vertV = 0
+        ConnectedTello.send_rc_control(0,velocity,vertV,0)
+        sleep(.2)
+        
+        relative = [X-cfg.xPos,Y-cfg.yPos,Z-cfg.zPos]
+        if np.linalg.norm(relative) > np.linalg.norm(relativeO):
+            break
+        else:
+            relativeO = relative
+        print("Relative location:", relative)
+    ConnectedTello.send_rc_control(0,0,0,0)
+
+def go_nXYZ_direct(ConnectedTello: Tello,X: int,Y: int,Z:int=floor(cfg.zPos), velocity:int = 30):
     """
     go_nXYZ_direct draws a straight line from ConnectedTello to the (X,Y,Z) location, rotates tello towards it, and drives straight towards it at velocity
     Inputs:
@@ -70,9 +98,9 @@ def go_nXYZ_direct(ConnectedTello: Tello,X: int,Y: int,Z:int=floor(cfg.zPos), ve
     #Find time to complete movement and the speed to go up/down
     time = distance*10/velocity
     heightVelocity = relativePositionVector[2]*10/time
-
+    print(time)
     #Fly the distance
-    ConnectedTello.send_rc_control(0,floor(velocity),floor(heightVelocity),0)
+    ConnectedTello.send_rc_control(0,velocity,floor(heightVelocity),0)
     sleep(time)
     #Stop
     ConnectedTello.send_rc_control(0,0,0,0)
