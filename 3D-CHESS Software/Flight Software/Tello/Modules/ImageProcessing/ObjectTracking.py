@@ -12,8 +12,10 @@ tello.send_rc_control(0, 0, 0, 0)
 tello.streamoff()
 tello.streamon()
 time.sleep(5)
-tello.set_video_direction(0)
-tello.takeoff()
+tello.set_video_direction(0)  # 0 for front, 1 for down
+time.sleep(3)
+# tello.takeoff()
+
 # tello.go_xyz_speed(0, 0, 30, 25)  # set height as needed
 
 # Parameters
@@ -24,9 +26,9 @@ pError = 0
 
 
 def findFace(img):
-    faceCascade = cv2.CascadeClassifier("Resources/haar_square.xml")
+    faceCascade = cv2.CascadeClassifier("Resources/haar_coaster.xml")  # adjust haar cascade file accordingly
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = faceCascade.detectMultiScale(imgGray, 1.2, 7)  # adjust minNeighbors as needed for clarity, OG = 8
+    faces = faceCascade.detectMultiScale(imgGray, 1.2, 6)  # adjust minNeighbors as needed for clarity, OG = 8
 
     myFaceListC = []  # cx, cy = center of face detected
     myFaceListArea = []
@@ -81,9 +83,9 @@ while True:
     img = cv2.resize(img, (w, h))
     cv2.imshow("tellosight", img)
     pError = trackFace(info, w, pid, pError)
-    cv2.waitKey(5)
+    cv2.waitKey(1)
     # print("Area", info[1], "Center", info[0])
     # findFace(img)
     if cv2.waitKey(1) & 0xff == ord('q'):
-        tello.land()
+        # tello.land()
         break
