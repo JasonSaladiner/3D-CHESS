@@ -26,9 +26,9 @@ pError = 0
 
 
 def findFace(img):
-    faceCascade = cv2.CascadeClassifier("Resources/haar_coaster.xml")  # adjust haar cascade file accordingly
+    faceCascade = cv2.CascadeClassifier("Resources/haar_square.xml")  # adjust haar cascade file accordingly
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = faceCascade.detectMultiScale(imgGray, 1.2, 6)  # adjust minNeighbors as needed for clarity, OG = 8
+    faces = faceCascade.detectMultiScale(imgGray, 1.2, 8)  # adjust minNeighbors as needed for clarity, OG = 8
 
     myFaceListC = []  # cx, cy = center of face detected
     myFaceListArea = []
