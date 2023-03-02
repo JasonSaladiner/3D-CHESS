@@ -11,71 +11,33 @@ time
 import Modules.Controls.KeyReader as kr
 #from djitellopy import Tello
 from time import sleep
+from math import floor
+
 from Modules.Location import IMU
 import Modules._config_ as cfg
+from Modules.Controls.ComputerControl import go_nXYZ_direct
 
-from math import floor
 #global tello variable
 global tello
 
-from Modules.Controls.ReturnToHome import directRTH 
-
-def RTH(ConnectedTello):
-
-    x = floor(cfg.xPos)
-    y = floor(cfg.yPos)
-    z = floor(cfg.zPos)
-    yaw = cfg.yaw
-
-    ConnectedTello.rotate_counter_clockwise(yaw)
-    ConnectedTello.go_xyz_speed(-x,-y,0,10)
-
-def _tempPattern_(ConnectedTello):
-    """
-    Used for testing only. WIll be deleted
-    """
-    #square
-    out = cfg.OutputAttitudePosition
-
-    #Starting location is 0,0,0,0
-    out()
-
-    #Takeoff
-    ConnectedTello.takeoff()
-    out()   #Should be 0,0,h,0
-
-    ConnectedTello.move_forward(91) #~3ft
-    out()
-
-    ConnectedTello.move_right(91)
-    out()
-
-    ConnectedTello.move_back(91)
-    out()
-
-    ConnectedTello.move_left(91)
-    out()
-
-    RTH(ConnectedTello)
-    out()
-    ConnectedTello.land()
+velocity = 50   #cm/s
 
 
 def WASDInput():
     global tello
-    v = 50 #cm/s
+    global velocity
     y,x,z,yaw = 0,0,0,0
     if kr.getKey("a"):
-        y=-v
+        y=-velocity
     elif kr.getKey("d"):
-        y=v
+        y=velocity
     if kr.getKey("w"):
-        x=v
+        x=velocity
     elif kr.getKey("s"):
-        x=-v
+        x=-velocity
     if kr.getKey("SPACE"):
         if tello.is_flying:
-            z=v
+            z=velocity
         else:
             print("Takeoff Inititated")
             try:
@@ -83,20 +45,35 @@ def WASDInput():
                 print("Take-off Successful")
             except:
                 print("Issue with takeoff")
-    elif kr.getKey("LSHIFT"):
-        z=-v
+    elif kr.getKey("LCTRL"):
+        z=-velocity
     if kr.getKey("q"):
-        yaw=-2*v
+        yaw=-2*velocity
     elif kr.getKey("e"):
-        yaw=2*v
+        yaw=2*velocity
     elif kr.getKey("ESCAPE"):
         tello.land()
-    elif kr.getKey("l"):
+    elif kr.getKey("m"):
         print(cfg.xPos,cfg.yPos,cfg.zPos,tello.get_yaw())
-    elif kr.getKey("p"):
+    elif kr.getKey("g"):
         cfg.emOps = True
-        directRTH(tello)
-    
+        print("Current Location:")
+        print(cfg.xPos,cfg.yPos,cfg.zPos,tello.get_yaw())
+        a = input("X position:")
+        b= input("Y position:")
+        c = input("Z position:")
+        print("goto starting")
+        go_nXYZ_direct(tello,a,b,c)
+        print("goto finished")
+        cfg.emOps=False
+    elif kr.getKey("DELETE"):
+        cfg.emOps=True
+        tello.emergency()
+    elif kr.getKey("UP"):
+        velocity += 10
+    elif kr.getKey("DOWN"): 
+        if velocity > 10:
+            velocity -= 10
     return [y,x,z,yaw]
 
 def arrowInput():
@@ -142,11 +119,11 @@ def EngageMC(ConnectedTello):
     EngageMC will begin searching for keyboard inputs to control a connected tello
     Tello ConnectedTello representing the connected tello
     """
-    #tello = ConnectedTello
     choice = init()
     global tello
     tello = ConnectedTello
-    #rps = IMU.location(tello)
+
+
     dt = .2
     while not cfg.emOps:
 
