@@ -23,7 +23,7 @@ global tello
 velocity = 50   #cm/s
 
 
-def WASDInput():
+def _WASDInput_():
     global tello
     global velocity
     y,x,z,yaw = 0,0,0,0
@@ -56,6 +56,7 @@ def WASDInput():
     elif kr.getKey("m"):
         print(cfg.xPos,cfg.yPos,cfg.zPos,tello.get_yaw())
     elif kr.getKey("g"):
+        #Potentially temporary for testing
         cfg.emOps = True
         print("Current Location:")
         print(cfg.xPos,cfg.yPos,cfg.zPos,tello.get_yaw())
@@ -69,6 +70,7 @@ def WASDInput():
         tello.land()
         #cfg.emOps=False
     elif kr.getKey("h"):
+        ##Potentially tempory for testing
         cfg.emOps = True
         print("Current Location:")
         print(cfg.xPos,cfg.yPos,cfg.zPos,tello.get_yaw())
@@ -91,7 +93,7 @@ def WASDInput():
             velocity -= 10
     return [y,x,z,yaw]
 
-def arrowInput():
+def _arrowInput_():
     lr, fb, ud, yv = 0, 0, 0, 0
     spd = 50
     global tello
@@ -110,8 +112,8 @@ def arrowInput():
     return [lr, fb, ud, yv]
 
 #Dictionary of all possible keybinds
-keybinds = {"a":arrowInput,
-            "b":WASDInput}
+keybinds = {"a":_arrowInput_,
+            "b":_WASDInput_}
 
 
 

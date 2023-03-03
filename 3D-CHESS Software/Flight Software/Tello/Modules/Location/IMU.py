@@ -10,9 +10,12 @@ from math import pi, sin,cos
 
 
 
+
+fudgeFactor = 1.2       #a potential solve for the distance issue
+
 def init(ConnectedTello):
     tello = ConnectedTello
-    vdisp = lambda v,t: v*t
+    vdisp = lambda v,t: v*t*fudgeFactor
 
     
     dt = 0.05   #time step

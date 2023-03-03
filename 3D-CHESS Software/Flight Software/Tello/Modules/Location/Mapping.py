@@ -16,6 +16,9 @@ import threading
 _allowMapping_ = True
 _showMap_ = True
 
+#cfg.xPos
+#cfg.yPos
+
 
 def _drawPoints_(img, points):
     for point in points:

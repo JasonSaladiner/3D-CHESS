@@ -28,7 +28,7 @@ def directRTH(ConnectedTello):
     ConnectedTello.send_rc_control(0,0,0,0)
 
 
-def go_nXYZ_P(ConnectedTello: Tello, X: float,Y: float,Z:float = cfg.zPos,velocity:int = 20):
+def go_nXYZ_P(ConnectedTello, X: float,Y: float,Z:float = cfg.zPos,velocity:int = 20):
     relativeO = [X-cfg.xPos,Y-cfg.yPos,Z-cfg.zPos]
     relative = relativeO
     #idealTime = np.magnitude(relative)/velocity
@@ -47,7 +47,7 @@ def go_nXYZ_P(ConnectedTello: Tello, X: float,Y: float,Z:float = cfg.zPos,veloci
         else:
             vertV = 0
         ConnectedTello.send_rc_control(0,velocity,vertV,0)
-        sleep(.2)
+        sleep(.5)
         
         relative = [X-cfg.xPos,Y-cfg.yPos,Z-cfg.zPos]
         if np.linalg.norm(relative) > np.linalg.norm(relativeO):
@@ -57,7 +57,7 @@ def go_nXYZ_P(ConnectedTello: Tello, X: float,Y: float,Z:float = cfg.zPos,veloci
         print("Relative location:", relative)
     ConnectedTello.send_rc_control(0,0,0,0)
 
-def go_nXYZ_direct(ConnectedTello: Tello,X: int,Y: int,Z:int=floor(cfg.zPos), velocity:int = 30):
+def go_nXYZ_direct(ConnectedTello,X: int,Y: int,Z:int=floor(cfg.zPos), velocity:int = 30):
     """
     go_nXYZ_direct draws a straight line from ConnectedTello to the (X,Y,Z) location, rotates tello towards it, and drives straight towards it at velocity
     Inputs:
@@ -105,3 +105,33 @@ def go_nXYZ_direct(ConnectedTello: Tello,X: int,Y: int,Z:int=floor(cfg.zPos), ve
     #Stop
     ConnectedTello.send_rc_control(0,0,0,0)
     
+
+
+
+sampleWaypoints = ['takeoff',
+                   [2,3,-4,0],
+                   [6,3,-4,0],
+                   [6,-2,-4,180],
+                   ['wait',2],
+                   [0,0,0,0],
+                   ['land']]
+
+def move_to_waypoints(ConnectedTello,waypoints:list):
+    """
+    Move through a list of waypoints given in inertial X,Y,Z, yaw
+    """
+    
+    goto = go_nXYZ_P
+    tello = ConnectedTello
+    for way in waypoints:
+        try:
+            goto(tello,way[0],way[1],way[2])
+            if abs(tello.get_yaw()-way[3])>1:
+                tello.rotate_counter_clockwise(floor(abs(tello.get_yaw()-way[3])))
+        except ValueError:
+            if way[0].lower() == "takeoff":
+                tello.takeoff()
+            elif way[0].lower() == "land":
+                tello.land()
+            elif way[0].lower() == "wait":
+                sleep(way[1])
