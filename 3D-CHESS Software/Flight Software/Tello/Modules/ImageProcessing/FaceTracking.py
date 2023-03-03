@@ -14,7 +14,7 @@ tello.streamon()
 time.sleep(5)
 tello.set_video_direction(0)
 tello.takeoff()
-# tello.go_xyz_speed(0, 0, 30, 25)  # set height as needed
+
 
 # Parameters
 w, h = 640, 480
@@ -71,9 +71,6 @@ def trackFace(info, w, pid, pError):
     return error
 
 
-# cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
-# cap.set(cv2.CAP_PROP_FPS, 30.0)  # figuring out if necessary or not
-
 while True:
     # _, img = cap.read()
     img = tello.get_frame_read().frame
@@ -82,8 +79,6 @@ while True:
     cv2.imshow("tellosight", img)
     pError = trackFace(info, w, pid, pError)
     cv2.waitKey(5)
-    # print("Area", info[1], "Center", info[0])
-    # findFace(img)
     if cv2.waitKey(1) & 0xff == ord('q'):
         tello.land()
         break
