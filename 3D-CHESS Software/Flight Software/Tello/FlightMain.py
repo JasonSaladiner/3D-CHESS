@@ -53,7 +53,7 @@ if __name__ == "__main__":
         mapThread.start()
 
     if not haveLogMessages:
-        Tello.LOGGER.setLevel(logging.WARNING)      #Setting tello outpus to warning only
+        Tello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
 
     ########################################################################
                         ###"MISSION" Commands###
