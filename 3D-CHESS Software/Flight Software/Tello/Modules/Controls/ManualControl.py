@@ -1,5 +1,5 @@
 """
-ManualControl.py module gives the user the capabilty to control the drone using simple WASDQE commands
+ManualControl.py module gives the user the capability to control the drone using simple WASDQE commands
 
 Required Imports:
 KeyReader.py
