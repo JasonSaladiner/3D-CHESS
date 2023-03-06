@@ -30,9 +30,9 @@ def init(ConnectedTello):
             position = [vdisp(vx,dt),vdisp(vy,dt),vdisp(vz,dt)]
 
             #update config file
-            cfg.xPos += position[0]
-            cfg.yPos += position[1]
-            cfg.zPos += position[2]
+            cfg.xPos += position[0]*cfg.dmToin
+            cfg.yPos += position[1]*cfg.dmToin
+            cfg.zPos += position[2]*cfg.dmToin
         except:
             pass
 
