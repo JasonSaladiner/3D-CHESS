@@ -7,7 +7,7 @@ From here, all other flight modules will be controlled in order to achieve 3D-CH
 
 import ipaddress
 import logging  #For changing the tello outputs
-#from djitellopy import Tello as djiTello   #Tello 
+from djitellopy import Tello   #Tello 
 from Modules import TelloFlightSoftware as TFS
 import threading    #For multithreading
 import cv2
@@ -24,13 +24,19 @@ from time import sleep
 
 #Entrance
 if __name__ == "__main__":
-    tello_B = TFS(cfg.telloIP_B)
-    #tello_B.wifi()
-    tello_B.threadSetup()
+    #tello_B = TFS(cfg.telloIP_B)
+    
+    #tello_B.threadSetup()
     #tello_B.runMission(mc.EngageMC,tello_B)
     #tello_B.runMission(cc.move_to_waypoints,tello_B,cc.sampleWaypoints)
 
+    #tello_C = Tello()
+    #tello_C.connect()
+    #tello_C.connect_to_wifi('tellonet','selvachess')
+
+    tello_C = Tello(cfg.telloIP_C)
+    tello_C.connect()
 
     #Start manual control
-    mc.EngageMC(tello_B)
+    #mc.EngageMC(tello_B)
     

@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="985737ba-a04d-4107-8905-17c0cc7c7364" name="Changes" comment="" />
+    <list default="true" id="985737ba-a04d-4107-8905-17c0cc7c7364" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/FileContentIndex/055c8c5f-7d8b-45f6-991c-91cb928cefd8.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/FileContentIndex/1a880691-08a1-4176-afcd-901ec6c47bc1.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/FileContentIndex/52d9b4a9-dc23-4d1b-a88e-5f5f94d4c2dc.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/FileContentIndex/5ba11a54-cef6-4348-ba38-0f7fcc6c257b.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/FileContentIndex/5fc3e330-0905-4244-8cc8-5f2089a097ae.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/FileContentIndex/a5838877-826c-4dec-ad67-25f5f487b1e6.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/FileContentIndex/b51ede65-e566-46de-83be-d3460637a0c1.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/FileContentIndex/c1fac603-bfde-4ff6-b135-9ac623f2cf22.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/slnx.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/.vs/slnx.sqlite" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/FlightMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/FlightMain.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/ImageProcessing/LiveVideo.py" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/ImageProcessing/LiveVideo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/__init__.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

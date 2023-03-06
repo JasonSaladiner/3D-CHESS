@@ -79,7 +79,7 @@ class TelloFlightSoftware(djiTello):
             elif self.k == 'showmap':
                 self.showMap = kwargs[self.k]
         if not self.haveLogs:
-            djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello outpus to warning only
+            djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
 
 
 

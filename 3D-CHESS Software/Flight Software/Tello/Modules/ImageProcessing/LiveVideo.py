@@ -8,10 +8,9 @@ global img
 # global tello
 
 
-def LiveVideo(ConnectedTello):
+def startVideo(ConnectedTello, liveStream=True):
     tello = ConnectedTello
-
     tello.streamon()
     tello.set_video_fps(tello.FPS_30)
-    # time.sleep(2)  # is this needed?
     tello.set_video_direction(1)
+
