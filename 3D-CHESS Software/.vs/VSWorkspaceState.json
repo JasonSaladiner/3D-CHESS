@@ -3,11 +3,8 @@
     "",
     "\\Flight Software",
     "\\Flight Software\\Tello",
-    "\\Flight Software\\Tello\\Modules",
-    "\\Flight Software\\Tello\\Modules\\Controls",
-    "\\Flight Software\\Tello\\Modules\\ImageProcessing",
-    "\\Flight Software\\Tello\\Modules\\Location"
+    "\\Flight Software\\Tello\\Modules"
   ],
-  "SelectedNode": "\\Flight Software\\Tello\\Modules\\Location\\Mapping.py",
+  "SelectedNode": "\\Flight Software\\Tello\\Modules\\Controls",
   "PreviewInSolutionExplorer": false
 }

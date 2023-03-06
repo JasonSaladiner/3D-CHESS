@@ -10,7 +10,7 @@ telloIP_A = '192.168.1.11'
 telloIP_B = '192.168.1.12'     
 telloIP_C = '192.168.1.13'
 
-
+dmToin = 10/2.54
 @contextmanager
 def suppress_out():
     """
