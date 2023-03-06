@@ -1,10 +1,11 @@
 import tellopy
 import cv2
+import numpy as np
 
 # Initialize Tello drone
-drone = tellopy.Tello()
-drone.connect()
-drone.wait_for_connection()
+# drone = tellopy.Tello()
+# drone.connect()
+# drone.wait_for_connection()
 
 # Initialize OpenCV video capture
 cap = cv2.VideoCapture(0)
@@ -51,4 +52,4 @@ cap.release()
 cv2.destroyAllWindows()
 
 # Disconnect from Tello drone
-drone.quit()
+# drone.quit()
