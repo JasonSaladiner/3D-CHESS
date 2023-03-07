@@ -4,9 +4,7 @@
     "\\Flight Software",
     "\\Flight Software\\Tello",
     "\\Flight Software\\Tello\\Modules",
-    "\\Flight Software\\Tello\\Modules\\Controls",
-    "\\Flight Software\\Tello\\Modules\\ImageProcessing\\OG Files"
+    "\\Flight Software\\Tello\\Modules\\Controls"
   ],
-  "SelectedNode": "\\Flight Software\\Tello\\Modules\\_config_.py",
   "PreviewInSolutionExplorer": false
 }

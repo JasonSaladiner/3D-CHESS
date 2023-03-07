@@ -118,7 +118,7 @@ xLineWaypoints = [['takeoff'],
                    ['wait',5],
                    [6,0,0,0],
                    ['wait',5],
-                   [0,0,0,0]
+                   [0,0,0,0],
                    ['wait',5],
                    ['land']]
 

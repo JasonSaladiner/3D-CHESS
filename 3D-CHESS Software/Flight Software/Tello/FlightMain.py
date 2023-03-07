@@ -46,5 +46,5 @@ if __name__ == "__main__":
     
     
     #Start manual control
-    #mc.EngageMC(tello_B)
+    mc.EngageMC(tello_B)
     
