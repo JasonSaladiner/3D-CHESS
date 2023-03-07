@@ -12,6 +12,7 @@ global img
 
 # Subject Function
 def findFace(img):
+    # Pull current directory for any user
     current_dir = os.getcwd()
     dir=current_dir+'/Flight Software/Tello/Resources/facedetect.xml'
     faceCascade = cv2.CascadeClassifier(dir)
@@ -34,7 +35,7 @@ def findFace(img):
         return img, [[0, 0], 0]
 
 
-# Royal Function
+# Royal Functions
 def startVideo(ConnectedTello, streamType):
     # Error if streamType not valid
     streamTypes = ['Live', 'FT']
@@ -63,5 +64,10 @@ def startVideo(ConnectedTello, streamType):
         img = cv2.resize(img, (w, h))
         cv2.imshow("LStreamFT"+t_name, img)
         cv2.waitKey(5)
+
+def stopVideo(ConnectedTello):
+    tello = ConnectedTello
+    tello.streamoff()
+    pass
 
 
