@@ -1,3 +1,4 @@
+from sqlite3 import connect
 import Modules._config_ as cfg
 from time import sleep
 import numpy as np
@@ -108,13 +109,40 @@ def go_nXYZ_direct(ConnectedTello,X: int,Y: int,Z:int=floor(cfg.zPos), velocity:
 
 
 
-sampleWaypoints = ['takeoff',
-                   [2,3,-4,0],
-                   [6,3,-4,0],
-                   [6,-2,-4,180],
-                   ['wait',2],
-                   [0,0,0,0],
+xLineWaypoints = [['takeoff'],
+                   [4,0,0,0],
+                   ['wait',5],
+                   [8,0,0,0],
+                   ['wait',5],
+                   [12,0,0,180],
+                   ['wait',5],
+                   [6,0,0,0],
+                   ['wait',5],
+                   [0,0,0,0]
+                   ['wait',5],
                    ['land']]
+
+simpleSquarePoints  =[['takeoff'],
+                [4,8,0,0],
+                ['wait',5],
+                [10,8,0,0],
+                ['wait',5],
+                [10,4,0,0],
+                ['wait',5],
+                [4,4,0,0],
+                ['wait',5],
+                ['land']]
+                
+simpleDiamondPoints = [['takeoff'],
+                 [7,8,0,0],
+                 ['wait',5],
+                 [10,4,0,0],
+                 ['wait',5],
+                 [7,0,0,0],
+                 ['wait',5],
+                 [4,4,0,0],
+                 ['wait',5],
+                 ['land']]
 
 def move_to_waypoints(ConnectedTello,waypoints:list):
     """
@@ -135,3 +163,82 @@ def move_to_waypoints(ConnectedTello,waypoints:list):
                 tello.land()
             elif way[0].lower() == "wait":
                 sleep(way[1])
+            else:
+                print("Unregonized Command")
+                break
+    #Good for the testing I have now. May wish to remove in the future but improves safety            
+    if tello.is_flying:
+        tello.land()
+
+
+
+def lineTest(ConnectedTello,direction):
+    lr,fb,down,yaw = 0,0,0,0
+    direct = {"f":fb,"b":fb,"l":lr,"r":lr}
+    velocity = 40
+    if direction =="b" or direction =="l":
+        velocity *= -1
+    direct[direction] = velocity
+
+    ConnectedTello.takeoff()
+
+    smallTime = 4
+    #Simple line pattern
+    pos0 = [cfg.xPos,cfg.yPos,cfg.zPos]
+    ConnectedTello.send_rc_control(lr,fb,down,yaw)
+    sleep(smallTime)
+    ConnectedTello.send_rc_control(0,0,0,0)
+    expected = pos0 + smallTime*velocity
+    imuOut = [cfg.xPos,cfg.yPos,cfg.zPos]
+    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut)
+    sleep(5)
+
+    pos0 = [cfg.xPos,cfg.yPos,cfg.zPos]
+    ConnectedTello.send_rc_control(lr,fb,down,yaw)
+    sleep(smallTime)
+    ConnectedTello.send_rc_control(0,0,0,0)
+    expected = pos0 + smallTime*velocity
+    imuOut = [cfg.xPos,cfg.yPos,cfg.zPos]
+    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut)
+    sleep(5)
+
+    pos0 = [cfg.xPos,cfg.yPos,cfg.zPos]
+    ConnectedTello.send_rc_control(lr,fb,down,yaw)
+    sleep(smallTime)
+    ConnectedTello.send_rc_control(0,0,0,0)
+    expected = pos0 + smallTime*velocity
+    imuOut = [cfg.xPos,cfg.yPos,cfg.zPos]
+    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut)
+    sleep(5)
+
+    pos0 = [cfg.xPos,cfg.yPos,cfg.zPos]
+    ConnectedTello.send_rc_control(lr,fb,down,yaw)
+    sleep(smallTime)
+    ConnectedTello.send_rc_control(0,0,0,0)
+    expected = pos0 + smallTime*velocity
+    imuOut = [cfg.xPos,cfg.yPos,cfg.zPos]
+    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut)
+    sleep(5)
+
+    ##Return
+    ConnectedTello.rotate_clockwise(180)
+
+    pos0 = [cfg.xPos,cfg.yPos,cfg.zPos]
+    ConnectedTello.send_rc_control(lr,fb,down,yaw)
+    sleep(2*smallTime)
+    ConnectedTello.send_rc_control(0,0,0,0)
+    expected = pos0 + smallTime*velocity
+    imuOut = [cfg.xPos,cfg.yPos,cfg.zPos]
+    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut)
+    sleep(5)
+
+    pos0 = [cfg.xPos,cfg.yPos,cfg.zPos]
+    ConnectedTello.send_rc_control(lr,fb,down,yaw)
+    sleep(2*smallTime)
+    ConnectedTello.send_rc_control(0,0,0,0)
+    expected = pos0 + smallTime*velocity
+    imuOut = [cfg.xPos,cfg.yPos,cfg.zPos]
+    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut)
+    sleep(5)
+
+    ConnectedTello.land()
