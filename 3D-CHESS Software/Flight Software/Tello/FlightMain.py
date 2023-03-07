@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     tello_C = Tello(cfg.telloIP_C)
     tello_C.connect()
-    lv.startVideo(tello_C)
+    lv.startVideo(tello_C, streamType='FT')
 
     #Start manual control
     #mc.EngageMC(tello_B)
