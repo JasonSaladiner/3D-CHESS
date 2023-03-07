@@ -17,7 +17,7 @@ import Modules._config_ as cfg  #Shared variables
 import Modules.Controls.ManualControl as mc         #Manual Control of the drone
 import Modules.Controls.ComputerControl as cc       #Computer Aided drone control
 from Modules.Location import IMU,Mapping            #Location services
-
+import Modules.ImageProcessing.LiveVideo as lv
 from time import sleep
 
 
@@ -36,6 +36,7 @@ if __name__ == "__main__":
 
     tello_C = Tello(cfg.telloIP_C)
     tello_C.connect()
+    lv.startVideo(tello_C)
 
     #Start manual control
     #mc.EngageMC(tello_B)
