@@ -8,20 +8,21 @@ global img
 # global tello
 
 
-def startVideo(ConnectedTello, LiveStream=True):
+def startVideo(ConnectedTello, streamType='Live'):
     tello = ConnectedTello
+    tello.query_battery()  # testing purposes
     tello.streamon()
-    tello.set_video_fps(tello.FPS_30)
-    tello.set_video_direction(1)
+    time.sleep(2)
+    tello.set_video_direction(0)
+    time.sleep(2)
 
-    while LiveStream == True:
+    while streamType == 'Live':
         img = tello.get_frame_read().frame
         img = cv2.resize(img, (360, 240))
         cv2.imshow("Image", img)
-        cv2.waitKey(2)
-        if cv2.waitKey(1) & 0xff == ord('q'):
-            tello.land()
-        break
+        cv2.waitKey(5)
+
+
 
 
 
