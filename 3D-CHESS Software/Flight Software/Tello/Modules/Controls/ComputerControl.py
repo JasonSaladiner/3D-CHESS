@@ -4,6 +4,15 @@ from time import sleep
 import numpy as np
 from math import pi, sin, cos, atan2, sqrt, floor
 from djitellopy import Tello
+import numpy as np
+
+
+def writeLog(f,line):
+    
+    for i in range(0,len(line)-1):
+        f.write(str(line[i])+",")
+    f.write(str(line[len(line)-1])+'\n')
+    
 
 def directRTH(ConnectedTello):
     """
@@ -40,7 +49,7 @@ def go_nXYZ_P(ConnectedTello, X: float,Y: float,Z:float = cfg.zPos,velocity:int 
         print("relative Angle: ", relAngle)
         if abs(relAngle)>=360:
             relAngle = relAngle*(1-360/abs(relAngle))
-        if abs(relAngle)>1:
+        if abs(relAngle)>2:
             ConnectedTello.rotate_counter_clockwise(relAngle)
 
         if relative[2]>.5:
@@ -110,26 +119,26 @@ def go_nXYZ_direct(ConnectedTello,X: int,Y: int,Z:int=floor(cfg.zPos), velocity:
 
 
 xLineWaypoints = [['takeoff'],
-                   [4,0,0,0],
+                   #[24,63,0,0],
+                   #['wait',5],
+                   [75,63,0,0],
                    ['wait',5],
-                   [8,0,0,0],
+                   [126,63,0,180],
                    ['wait',5],
-                   [12,0,0,180],
+                   [75,63,0,0],
                    ['wait',5],
-                   [6,0,0,0],
-                   ['wait',5],
-                   [0,0,0,0],
+                   [24,63,0,0],
                    ['wait',5],
                    ['land']]
 
 simpleSquarePoints  =[['takeoff'],
-                [4,8,0,0],
+                [24,94.5,0,0],
                 ['wait',5],
-                [10,8,0,0],
+                [126,94.5,0,0],
                 ['wait',5],
-                [10,4,0,0],
+                [126,24,0,0],
                 ['wait',5],
-                [4,4,0,0],
+                [24,63,0,0],
                 ['wait',5],
                 ['land']]
                 
@@ -151,12 +160,13 @@ def move_to_waypoints(ConnectedTello,waypoints:list):
     
     goto = go_nXYZ_P
     tello = ConnectedTello
+    cfg.xPos,cfg.yPos = 24,63
     for way in waypoints:
         try:
-            goto(tello,way[0],way[1],way[2])
+            goto(tello,way[0],way[1],cfg.zPos)
             if abs(tello.get_yaw()-way[3])>1:
                 tello.rotate_counter_clockwise(floor(abs(tello.get_yaw()-way[3])))
-        except ValueError:
+        except:
             if way[0].lower() == "takeoff":
                 tello.takeoff()
             elif way[0].lower() == "land":
@@ -175,70 +185,130 @@ def move_to_waypoints(ConnectedTello,waypoints:list):
 def lineTest(ConnectedTello,direction):
     lr,fb,down,yaw = 0,0,0,0
     direct = {"f":fb,"b":fb,"l":lr,"r":lr}
-    velocity = 40
+    velocity = 15
     if direction =="b" or direction =="l":
         velocity *= -1
     direct[direction] = velocity
-
+    fb = 15
     ConnectedTello.takeoff()
+    cfg.xPos = 24
+    cfg.yPos = 63
 
-    smallTime = 4
+    smallTime = 5
+
+    f = open('PositionLog.txt','a')
+
     #Simple line pattern
-    pos0 = [cfg.xPos,cfg.yPos,cfg.zPos]
+    pos0 = np.array([cfg.xPos,cfg.yPos,cfg.zPos])
     ConnectedTello.send_rc_control(lr,fb,down,yaw)
     sleep(smallTime)
     ConnectedTello.send_rc_control(0,0,0,0)
-    expected = pos0 + smallTime*velocity
-    imuOut = [cfg.xPos,cfg.yPos,cfg.zPos]
-    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut)
+    expected = pos0 + smallTime*velocity*cfg.dmToin/10
+    imuOut = np.array([cfg.xPos,cfg.yPos,cfg.zPos])
+    res = abs(expected-imuOut)
+
+    log = [pos0[0],pos0[1],cfg.xPos,cfg.yPos,expected[0],expected[1],res[0],res[1]]
+    writeLog(f,log)
+
+    print()
+    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut,"\nResidual (IMU,Expected):",res)
+    print()
     sleep(5)
 
-    pos0 = [cfg.xPos,cfg.yPos,cfg.zPos]
+    pos0 = np.array([cfg.xPos,cfg.yPos,cfg.zPos])
     ConnectedTello.send_rc_control(lr,fb,down,yaw)
     sleep(smallTime)
     ConnectedTello.send_rc_control(0,0,0,0)
-    expected = pos0 + smallTime*velocity
-    imuOut = [cfg.xPos,cfg.yPos,cfg.zPos]
-    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut)
+    expected = pos0 + smallTime*velocity*cfg.dmToin/10
+    imuOut = np.array([cfg.xPos,cfg.yPos,cfg.zPos])
+    res = abs(expected-imuOut)
+
+    log = [pos0[0],pos0[1],cfg.xPos,cfg.yPos,expected[0],expected[1],res[0],res[1]]
+    writeLog(f,log)
+
+
+    print()
+    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut,"\nResidual (IMU,Expected):",res)
+    print()
     sleep(5)
 
-    pos0 = [cfg.xPos,cfg.yPos,cfg.zPos]
+    pos0 = np.array([cfg.xPos,cfg.yPos,cfg.zPos])
     ConnectedTello.send_rc_control(lr,fb,down,yaw)
     sleep(smallTime)
     ConnectedTello.send_rc_control(0,0,0,0)
-    expected = pos0 + smallTime*velocity
-    imuOut = [cfg.xPos,cfg.yPos,cfg.zPos]
-    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut)
+    expected = pos0 + smallTime*velocity*cfg.dmToin/10
+    imuOut = np.array([cfg.xPos,cfg.yPos,cfg.zPos])
+    res = abs(expected-imuOut)
+
+    log = [pos0[0],pos0[1],cfg.xPos,cfg.yPos,expected[0],expected[1],res[0],res[1]]
+    writeLog(f,log)
+
+
+    print()
+    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut,"\nResidual (IMU,Expected):",res)
+    print()
     sleep(5)
 
-    pos0 = [cfg.xPos,cfg.yPos,cfg.zPos]
+    pos0 = np.array([cfg.xPos,cfg.yPos,cfg.zPos])
     ConnectedTello.send_rc_control(lr,fb,down,yaw)
     sleep(smallTime)
     ConnectedTello.send_rc_control(0,0,0,0)
-    expected = pos0 + smallTime*velocity
-    imuOut = [cfg.xPos,cfg.yPos,cfg.zPos]
-    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut)
+    expected = pos0 + smallTime*velocity*cfg.dmToin/10
+    imuOut = np.array([cfg.xPos,cfg.yPos,cfg.zPos])
+    res = abs(expected-imuOut)
+
+    log = [pos0[0],pos0[1],cfg.xPos,cfg.yPos,expected[0],expected[1],res[0],res[1]]
+    writeLog(f,log)
+
+
+    print()
+    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut,"\nResidual (IMU,Expected):",res)
+    print()
     sleep(5)
 
     ##Return
+    print()
+    print("=================Return==================")
+    print()
+    print()
     ConnectedTello.rotate_clockwise(180)
 
-    pos0 = [cfg.xPos,cfg.yPos,cfg.zPos]
+    pos0 = np.array([cfg.xPos,cfg.yPos,cfg.zPos])
     ConnectedTello.send_rc_control(lr,fb,down,yaw)
     sleep(2*smallTime)
     ConnectedTello.send_rc_control(0,0,0,0)
-    expected = pos0 + smallTime*velocity
-    imuOut = [cfg.xPos,cfg.yPos,cfg.zPos]
-    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut)
+    expected = pos0 - smallTime*velocity*cfg.dmToin/10
+    imuOut = np.array([cfg.xPos,cfg.yPos,cfg.zPos])
+    res = abs(expected-imuOut)
+
+    log = [pos0[0],pos0[1],cfg.xPos,cfg.yPos,expected[0],expected[1],res[0],res[1]]
+    writeLog(f,log)
+
+
+    print()
+    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut,"\nResidual (IMU,Expected):",res)
+    print()
     sleep(5)
 
-    pos0 = [cfg.xPos,cfg.yPos,cfg.zPos]
+    pos0 = np.array([cfg.xPos,cfg.yPos,cfg.zPos])
     ConnectedTello.send_rc_control(lr,fb,down,yaw)
     sleep(2*smallTime)
     ConnectedTello.send_rc_control(0,0,0,0)
-    expected = pos0 + smallTime*velocity
-    imuOut = [cfg.xPos,cfg.yPos,cfg.zPos]
-    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut)
+    expected = pos0 - smallTime*velocity*cfg.dmToin/10
+    imuOut = np.array([cfg.xPos,cfg.yPos,cfg.zPos])
+    res = abs(expected-imuOut)
+
+    log = [pos0[0],pos0[1],cfg.xPos,cfg.yPos,expected[0],expected[1],res[0],res[1]]
+    writeLog(f,log)
+
+
+    print()
+    print("Start:",pos0,"\nExpected:",expected,"\nIMU  Output:",imuOut,"\nResidual (IMU,Expected):",res)
+    print()
     sleep(5)
+
 
     ConnectedTello.land()
+
+
+    f.close()

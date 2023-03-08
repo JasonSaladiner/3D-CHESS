@@ -55,6 +55,7 @@ def _WASDInput_():
         tello.land()
     elif kr.getKey("m"):
         print(cfg.xPos,cfg.yPos,cfg.zPos,tello.get_yaw())
+        print(tello.commandVector)
     elif kr.getKey("g"):
         #Potentially temporary for testing
         cfg.emOps = True
@@ -148,3 +149,13 @@ def EngageMC(ConnectedTello):
         
         ConnectedTello.send_rc_control(vals[0],vals[1],vals[2],vals[3])
         sleep(dt)
+
+def EmergencyControls(ConnectedTello):
+    kr.init()
+    while True:
+        if kr.getKey('ESCAPE'):
+            ConnectedTello.land()
+        elif kr.getKey('DELETE'):
+            ConnectedTello.emergency()
+        else:
+            pass

@@ -21,10 +21,10 @@ from Modules.Location import IMU,Mapping            #Location services
 from time import sleep
 
 
-
 #Entrance
 if __name__ == "__main__":
     tello_B = TFS(cfg.telloIP_B)
+    #tello_B = TFS(Tello.TELLO_IP)
     tello_B.threadSetup()
 
 
@@ -37,7 +37,11 @@ if __name__ == "__main__":
     #cc.lineTest(tello_B,'b')
     #cc.lineTest(tello_B,'l')
 
-
+    tello_B.takeoff()
+    sleep(4)
+    tello_B.move_forward(28,'in')
+    print(tello_B.commandVector)
+    tello_B.land()
     #Code to test waypoints
     #cc.move_to_waypoints(tello_B,cc.xLineWaypoints)
     #cc.move_to_waypoints(tello_B,cc.simpleSquarePoints)
@@ -46,5 +50,5 @@ if __name__ == "__main__":
     
     
     #Start manual control
-    mc.EngageMC(tello_B)
+    #mc.EngageMC(tello_B)
     
