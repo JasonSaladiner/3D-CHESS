@@ -10,14 +10,15 @@ import os
 w, h = 640, 480
 global img
 global buffer
+global current_dir
 start_time = 0
 buffer = 5  # Adjust according to speed of Tello
+current_dir = os.getcwd()
 
 
 # Subject Function
 def findFace(img):
     # Pull current directory for any user
-    current_dir = os.getcwd()
     dir=current_dir+'/Flight Software/Tello/Resources/facedetect.xml'
     faceCascade = cv2.CascadeClassifier(dir)
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -43,11 +44,14 @@ def findFace(img):
 
 
 # Royal Functions
-def startVideo(ConnectedTello, streamType):
-    # Error if streamType not valid
+def startVideo(ConnectedTello, streamType, takePic):
+    # Error if streamType or takePic not valid
     streamTypes = ['Live', 'FT']
+    takePics = [True, False]
     if streamType not in streamTypes:
         raise ValueError("Invalid streamType type. Expected one of: %s" % streamTypes)
+    if takePic not in takePics:
+        raise ValueError("Invalid takePic type. Expected one of: %s" % takePics)
     # Create naming scheme for cv2 windows
     t = time.localtime()
     t_name = time.strftime("%H%M%S", t)
@@ -67,12 +71,18 @@ def startVideo(ConnectedTello, streamType):
         cv2.waitKey(5)
 
     while streamType == 'FT':
-        img = tello.get_frame_read().frame
-        img, info = findFace(img)
+        img_base = tello.get_frame_read().frame
+        img, info = findFace(img_base)
         area_val = info[1]
         if area_val != 0 and start_time == 0:
             start_time = time.time()
             print('OBJECT OF INTEREST DETECTED')
+            if takePic == True:
+                dir=current_dir+'/Flight Software/Tello/Resources/Images'
+                cv2.imwrite(f'dir/{t_name}.jpg', img_base)
+                time.sleep(2)
+            else:
+                pass
         elif area_val == 0 and time.time() - start_time > buffer:
             start_time = 0
         img = cv2.resize(img, (w, h))
