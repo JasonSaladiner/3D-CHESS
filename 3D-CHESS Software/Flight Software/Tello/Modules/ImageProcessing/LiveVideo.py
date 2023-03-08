@@ -1,5 +1,6 @@
 # Import modules
 from os import getcwd
+from queue import Empty
 from djitellopy import Tello
 import time
 import cv2
@@ -8,6 +9,9 @@ import os
 # Global variables + parameters
 w, h = 640, 480
 global img
+global buffer
+start_time = 0
+buffer = 5  # Adjust according to speed of Tello
 
 
 # Subject Function
@@ -26,7 +30,10 @@ def findFace(img):
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
         cx = x + (w // 2)
         cy = y + (h // 2)
+        area = w * h
         cv2.circle(img, (cx, cy), 5, (0, 255, 0), cv2.FILLED)
+        myFaceListC.append([cx, cy])
+        myFaceListArea.append(area)
 
     if len(myFaceListArea) != 0:
         i = myFaceListArea.index(max(myFaceListArea))
@@ -51,6 +58,7 @@ def startVideo(ConnectedTello, streamType):
     time.sleep(2) # adjust as needed
     tello.set_video_direction(0)
     time.sleep(2) # adjust as needed
+    global start_time
 
     while streamType == 'Live':
         img = tello.get_frame_read().frame
@@ -61,10 +69,17 @@ def startVideo(ConnectedTello, streamType):
     while streamType == 'FT':
         img = tello.get_frame_read().frame
         img, info = findFace(img)
+        area_val = info[1]
+        if area_val != 0 and start_time == 0:
+            start_time = time.time()
+            print('OBJECT OF INTEREST DETECTED')
+        elif area_val == 0 and time.time() - start_time > buffer:
+            start_time = 0
         img = cv2.resize(img, (w, h))
         cv2.imshow("LStreamFT"+t_name, img)
         cv2.waitKey(5)
 
+# Untested
 def stopVideo(ConnectedTello):
     tello = ConnectedTello
     tello.streamoff()
