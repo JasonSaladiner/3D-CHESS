@@ -43,7 +43,7 @@ def findFace(img):
 
 
 # Royal Functions
-def startVideo(ConnectedTello, streamType, takePic):
+def startVideo(ConnectedTello, streamType='FT', takePic=False):
     # Error if streamType or takePic not valid
     streamTypes = ['Live', 'FT']
     takePics = [True, False]

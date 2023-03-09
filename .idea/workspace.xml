@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="985737ba-a04d-4107-8905-17c0cc7c7364" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/v17/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/v17/.suo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/VSWorkspaceState.json" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/.vs/VSWorkspaceState.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/slnx.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/.vs/slnx.sqlite" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/Location/IMU.py" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/Location/IMU.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/_config_.py" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/_config_.py" afterDir="false" />
-    </list>
+    <list default="true" id="985737ba-a04d-4107-8905-17c0cc7c7364" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
