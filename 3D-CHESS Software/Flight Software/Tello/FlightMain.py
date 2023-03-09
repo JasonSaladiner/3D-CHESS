@@ -24,17 +24,16 @@ from time import sleep
 
 #Entrance
 if __name__ == "__main__":
-    #tello_B = TFS(cfg.telloIP_B)
-    
-    #tello_B.threadSetup()
-    #tello_B.runMission(mc.EngageMC,tello_B)
-    #tello_B.runMission(cc.move_to_waypoints,tello_B,cc.sampleWaypoints)
-
     #tello_C = Tello()
     #tello_C.connect()
     #tello_C.connect_to_wifi('ConnectoPatronum','73752677')
 
     tello_C = Tello(cfg.telloIP_C)
     tello_C.connect()
-    #mc.EngageMC(tello_C)
-    lv.startVideo(tello_C, streamType='FT', takePic=True)
+   
+    mc = threading.Thread(target=mc.EngageMC, daemon=False, args=(tello_C, ))
+    ft =threading.Thread(target=lv.startVideo, daemon=False, args=(tello_C, 'FT', True))
+    ft.start()
+    sleep(10)
+    mc.start()
+
