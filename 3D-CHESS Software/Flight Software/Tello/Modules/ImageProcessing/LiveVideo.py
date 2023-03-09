@@ -8,18 +8,17 @@ import os
 
 # Global variables + parameters
 w, h = 640, 480
-global img
+global img, img_base
 global buffer
-global current_dir
 start_time = 0
 buffer = 5  # Adjust according to speed of Tello
-current_dir = os.getcwd()
 
 
 # Subject Function
 def findFace(img):
     # Pull current directory for any user
-    dir=current_dir+'/Flight Software/Tello/Resources/facedetect.xml'
+    current_dir = os.getcwd()
+    dir = current_dir + '/Flight Software/Tello/Resources/facedetect.xml'
     faceCascade = cv2.CascadeClassifier(dir)
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = faceCascade.detectMultiScale(imgGray, 1.2, 6)  # adjust minNeighbors as needed for clarity, OG = 8
@@ -78,11 +77,7 @@ def startVideo(ConnectedTello, streamType, takePic):
             start_time = time.time()
             print('OBJECT OF INTEREST DETECTED')
             if takePic == True:
-                dir=current_dir+'/Flight Software/Tello/Resources/Images'
-                cv2.imwrite(f'dir/{t_name}.jpg', img_base)
-                time.sleep(2)
-            else:
-                pass
+                cv2.imwrite(f'Flight Software/Tello/Resources/Images/{time.time()}.jpg', img_base)
         elif area_val == 0 and time.time() - start_time > buffer:
             start_time = 0
         img = cv2.resize(img, (w, h))
