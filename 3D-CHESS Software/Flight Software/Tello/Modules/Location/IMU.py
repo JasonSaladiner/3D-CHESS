@@ -11,7 +11,7 @@ from math import pi, sin,cos
 
 
 
-fudgeFactor = 1.2       #a potential solve for the distance issue
+fudgeFactor = 1       #a potential solve for the distance issue
 
 def init(ConnectedTello):
     tello = ConnectedTello
@@ -29,10 +29,13 @@ def init(ConnectedTello):
             #position vector
             position = [vdisp(vx,dt),vdisp(vy,dt),vdisp(vz,dt)]
 
+            #Update IMUVector
+            ConnectedTello.IMUVector += position
+
             #update config file
-            cfg.xPos += position[0]*cfg.dmToin
-            cfg.yPos += position[1]*cfg.dmToin
-            cfg.zPos += position[2]*cfg.dmToin
+            #cfg.xPos += position[0]*cfg.dmToin
+            #cfg.yPos += position[1]*cfg.dmToin
+            #cfg.zPos += position[2]*cfg.dmToin
         except:
             pass
 

@@ -6,7 +6,7 @@ __all__ = []
 from djitellopy import Tello as djiTello
 import logging
 import threading
-
+import numpy as np
 
 
 class TelloFlightSoftware(djiTello):
@@ -17,6 +17,29 @@ class TelloFlightSoftware(djiTello):
     """
     dmToin = 10/2.54
     cmToin = 1/2.54
+
+
+    ###TODO###
+    #go_xyz_speed()
+    #go_xyz_speed_mid()
+    #go_xyz_speed_yaw_mid()
+    #Dont use these unitl they have been added
+
+    def _rotationMatrix_(self,yaw):
+        import numpy as np
+        from math import sin,cos,radians
+        self.yawrad = radians(yaw)
+        return np.array([cos(self.yawrad),-sin(self.yawrad),0,
+                         sin(self.yawrad),cos(self.yawrad),0,
+                         0,0,1]).reshape((3,3))
+
+    def _newCommand_(self,bodyVector,yaw):
+        self.rotationMatrix = self._rotationMatrix_(yaw)
+        self.Nvect = np.matmul(self.rotationMatrix,bodyVector)
+
+        self.commandVector += self.Nvect
+
+
     def move_forward(self,travelDistance:float,unit:str = 'cm'):
         #Get travelDistance in proper form/unit
         self.x = travelDistance
@@ -24,8 +47,14 @@ class TelloFlightSoftware(djiTello):
             self.x /= self.cmToin
         from math import floor
         self.x = floor(self.x)
+        
+        #get orientation
+        self.yaw = self.t.get_yaw()
+        self.bodyVector = np.array([self.x,0,0])
+
         #Apply to the commandVector
-        self.commandVector[0] += self.x
+        self._newCommand_(self.bodyVector,self.yaw)
+        
         #Apply the move distance using super class
         self.t.move_forward(self.x)
 
@@ -36,8 +65,15 @@ class TelloFlightSoftware(djiTello):
             self.x /= self.cmToin
         from math import floor
         self.x = floor(self.x)
+        
+        #get orientation
+        self.yaw = self.t.get_yaw()
+        self.bodyVector = np.array([-self.x,0,0])
+
         #Apply to the commandVector
-        self.commandVector[0] -= self.x
+        self._newCommand_(self.bodyVector,self.yaw)
+        
+
         #Apply the move distance using super class
         self.t.move_back(self.x)
 
@@ -48,8 +84,14 @@ class TelloFlightSoftware(djiTello):
             self.x /= self.cmToin
         from math import floor
         self.x = floor(self.x)
+        
+        #get orientation
+        self.yaw = self.t.get_yaw()
+        self.bodyVector = np.array([0,-self.x,0])
+
         #Apply to the commandVector
-        self.commandVector[1] -= self.x
+        self._newCommand_(self.bodyVector,self.yaw)
+        
         #Apply the move distance using super class
         self.t.move_left(self.x)
 
@@ -60,8 +102,14 @@ class TelloFlightSoftware(djiTello):
             self.x /= self.cmToin
         from math import floor
         self.x = floor(self.x)
+        
+        #get orientation
+        self.yaw = self.t.get_yaw()
+        self.bodyVector = np.array([0,self.x,0])
+
         #Apply to the commandVector
-        self.commandVector[1] += self.x
+        self._newCommand_(self.bodyVector,self.yaw)
+        
         #Apply the move distance using super class
         self.t.move_right(self.x)
 
@@ -73,14 +121,66 @@ class TelloFlightSoftware(djiTello):
             if unit == 'in':
                 self.rcIn[self.i] /= self.cmToin
             self.rcIn[self.i] = floor(self.rcIn[self.i])
+        
+        #Get current time    
+        import time
+        self.curTime = time.ctime()
+
+        if not abs(self.curTime-self.lastRCcommandTime) < 1e-8:
+            #Get change in time
+            self.dt = self.curTime-self.lastRCcommandTime
+
+            self.bV = np.array([self.lastRCcommand[1]*self.dt,self.lastRCcommand[0]*self.dt,self.lastRCcommand[2]*self.dt]).reshape((3,1))
+            self.yaw = self.t.get_yaw()
+            #Apply the last RC command over the change in time
+            self._newCommand_(self.bV,self.yaw)
             
+            #reset last RC command
+            self.lastRCcommand = self.rcIn
+            self.lastRCcommandTime = self.curTime
 
-        self.commandVector[0] += self.rcIn[1]
-        self.commandVector[1] += self.rcIn[0]
-        self.commandVector[2] += self.rcIn[2]
-        #Apply the move distance using super class
-        self.t.send_rc_control(self.rcIn[0],self.rcIn[1],self.rcIn[2],self.rcIn[3])
+            #Apply the move distance using super class
+            self.t.send_rc_control(self.rcIn[0],self.rcIn[1],self.rcIn[2],self.rcIn[3])
 
+    def takeoff(self,*takeoffLocation:float):
+        """
+        Command connected tello to takeoff
+        Optional:
+        *takeoff location: X,Y,Z float of the takeoff location
+        """
+        
+        for i in range(len(takeoffLocation)):
+            self.position[i] = takeoffLocation[i]
+            self.IMUVector[i]= takeoffLocation[i]
+            self.commandVector[i] = takeoffLocation[i]
+        self.t.takeoff()
+
+
+    def _updatePosition_(self,dt = .5,IMU_weight = .2,Command_weight=.8):
+        """
+        Meant to run as a seperate thread. Starts the IMU thread if necessary and continually takes the weighted average of IMU and Commands
+        Updates location and the IMU and Command at time steps equalt to dt
+        """
+        
+        import numpy as np
+        from time import sleep
+        from Modules.Location import IMU
+        
+        if IMU_weight > 0:
+            self.IMUThread = threading.Thread(target=IMU.init,args=(self.t,),)
+            self.IMUThread.start()
+
+        while True:
+            print("IMU:",self.IMUVector,"\tCommand:",self.CommandVector,"\tAvgPosition:",self.position)
+            self.deltaIMU = np.array(self.IMUVector-self.position)
+            self.deltaCommand = np.array(self.commandVector-self.position)
+
+            self.delta = IMU_weight*self.deltaIMU + Command_weight*self.deltaCommand
+
+            self.position += self.delta
+            self.commandVector = self.position
+            self.IMUVector = self.position
+            sleep(dt)
 
     def threadSetup(self):
         """
@@ -91,8 +191,9 @@ class TelloFlightSoftware(djiTello):
         """
 
         if self.haveLocation:
-            from Modules.Location import IMU
-            self.locationThread = threading.Thread(target=IMU.init,args=(self.t,),)
+            #from Modules.Location import IMU
+            #self.locationThread = threading.Thread(target=IMU.init,args=(self.t,),)
+            self.locationThread = threading.Thread(target=self._updatePosition_)
             self.locationThread.start()
 
         #Initialize the map and determine if it will be seen
@@ -102,10 +203,15 @@ class TelloFlightSoftware(djiTello):
             self.mapThread = threading.Thread(target=Mapping.init,args=(self.showMap,),)
             self.mapThread.start()
         
+
+        #Emergency Vs Manual Control (One is required)
         if self.emControl:
             from Modules.Controls.ManualControl import EmergencyControls as emc
-            self.emcThread = threading.Thread(target=emc,args=(self.t,),)
-            self.emcThread.start()
+            self.controlThread = threading.Thread(target=emc,args=(self,),)
+            self.controlThread.start()
+        else:
+            from Modules.Controls.ManualControl import EngageMC as mc
+            self.controlThread = threading.Thread(target=mc,args=(self,),)
 
     def wifi(self,SSID:str = 'tellonet',password:str = 'selvachess'):
         """
@@ -127,10 +233,12 @@ class TelloFlightSoftware(djiTello):
 
 
     def __init__(self,IP:str,**kwargs):
+        import time
+        
         """
         initialize the drone and connect to it
         """
-        self.haveLogs = True
+        self.haveLogs = False
         #Location Thread
         self.haveLocation = True
         #Mapping Thread
@@ -148,8 +256,10 @@ class TelloFlightSoftware(djiTello):
                 self.haveMap = kwargs[self.k]
             elif self.k == 'showmap':
                 self.showMap = kwargs[self.k]
-            elif self.k == 'emergency':
+            elif self.k == 'emControl':
                 self.emControl = kwargs[self.k]
+            elif self.k == 'manControl':
+                self.emControl = not kwargs[self.k]
         if not self.haveLogs:
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
 
@@ -161,9 +271,16 @@ class TelloFlightSoftware(djiTello):
 
         print(self.t.get_battery())
 
-
+        
+        #Command input and IMU locations
         self.commandVector = [0,0,0]        #X,Y,Z in cm
+        self.IMUVector = [0,0,0]            #X,Y,Z in cm
 
+        #Actual Position
+        self.position = [0,0,0]             #X,Y,Z in cm
+
+        self.lastRCcommand = 0,0,0,0
+        self.lastRCcommandTime = time.ctime()
 
 
 
