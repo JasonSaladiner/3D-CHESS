@@ -37,7 +37,7 @@ class TelloFlightSoftware(djiTello):
         self.rotationMatrix = self._rotationMatrix_(yaw)
         self.Nvect = np.matmul(self.rotationMatrix,bodyVector)
 
-        self.commandVector += self.Nvect
+        self.commandVector = self.commandVector + self.Nvect
 
 
     def move_forward(self,travelDistance:float,unit:str = 'cm'):
@@ -124,7 +124,7 @@ class TelloFlightSoftware(djiTello):
         
         #Get current time    
         import time
-        self.curTime = time.ctime()
+        self.curTime = time.time()
 
         if not abs(self.curTime-self.lastRCcommandTime) < 1e-8:
             #Get change in time
@@ -156,7 +156,7 @@ class TelloFlightSoftware(djiTello):
         self.t.takeoff()
 
 
-    def _updatePosition_(self,dt = .5,IMU_weight = .2,Command_weight=.8):
+    def _updatePosition_(self,dt = .5,IMU_weight = .05,command_weight=.95):
         """
         Meant to run as a seperate thread. Starts the IMU thread if necessary and continually takes the weighted average of IMU and Commands
         Updates location and the IMU and Command at time steps equalt to dt
@@ -171,13 +171,14 @@ class TelloFlightSoftware(djiTello):
             self.IMUThread.start()
 
         while True:
-            print("IMU:",self.IMUVector,"\tCommand:",self.CommandVector,"\tAvgPosition:",self.position)
-            self.deltaIMU = np.array(self.IMUVector-self.position)
-            self.deltaCommand = np.array(self.commandVector-self.position)
+            #print("IMU:",self.IMUVector,"\tCommand:",self.commandVector,"\tAvgPosition:",self.position)
+            #print(self.position)
+            self.deltaIMU = self.IMUVector-self.position
+            self.deltaCommand = self.commandVector-self.position
 
-            self.delta = IMU_weight*self.deltaIMU + Command_weight*self.deltaCommand
+            self.delta = IMU_weight*self.deltaIMU + command_weight*self.deltaCommand
 
-            self.position += self.delta
+            self.position = self.position + self.delta
             self.commandVector = self.position
             self.IMUVector = self.position
             sleep(dt)
@@ -200,7 +201,7 @@ class TelloFlightSoftware(djiTello):
                     ###THIS IS UNTESTED###
         if self.haveMap and self.haveLocation:        #map depends on Location
             from Modules.Location import Mapping
-            self.mapThread = threading.Thread(target=Mapping.init,args=(self.showMap,),)
+            self.mapThread = threading.Thread(target=Mapping.mapping,args=(self,self.showMap,),)
             self.mapThread.start()
         
 
@@ -212,6 +213,7 @@ class TelloFlightSoftware(djiTello):
         else:
             from Modules.Controls.ManualControl import EngageMC as mc
             self.controlThread = threading.Thread(target=mc,args=(self,),)
+            self.controlThread.start()
 
     def wifi(self,SSID:str = 'tellonet',password:str = 'selvachess'):
         """
@@ -242,7 +244,7 @@ class TelloFlightSoftware(djiTello):
         #Location Thread
         self.haveLocation = True
         #Mapping Thread
-        self.haveMap = False
+        self.haveMap = True
         self.showMap = True
         #Manual Control
         self.emControl = True
@@ -273,14 +275,14 @@ class TelloFlightSoftware(djiTello):
 
         
         #Command input and IMU locations
-        self.commandVector = [0,0,0]        #X,Y,Z in cm
-        self.IMUVector = [0,0,0]            #X,Y,Z in cm
+        self.commandVector = np.array([0,0,0]).reshape((3,1))        #X,Y,Z in cm
+        self.IMUVector = np.array([0,0,0]).reshape((3,1))            #X,Y,Z in cm
 
         #Actual Position
-        self.position = [0,0,0]             #X,Y,Z in cm
+        self.position = np.array([0,0,0]).reshape((3,1))             #X,Y,Z in cm
 
         self.lastRCcommand = 0,0,0,0
-        self.lastRCcommandTime = time.ctime()
+        self.lastRCcommandTime = time.time()
 
 
 

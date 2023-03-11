@@ -56,6 +56,7 @@ def _WASDInput_():
     elif kr.getKey("m"):
         print(cfg.xPos,cfg.yPos,cfg.zPos,tello.get_yaw())
         print(tello.commandVector)
+        print(tello.position)
     elif kr.getKey("g"):
         #Potentially temporary for testing
         cfg.emOps = True

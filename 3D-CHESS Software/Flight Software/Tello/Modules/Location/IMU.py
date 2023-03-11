@@ -27,10 +27,10 @@ def init(ConnectedTello):
             vz = -tello.get_speed_z()
             
             #position vector
-            position = [vdisp(vx,dt),vdisp(vy,dt),vdisp(vz,dt)]
+            position = np.array([vdisp(vx,dt),vdisp(vy,dt),vdisp(vz,dt)]).reshape((3,1))
 
             #Update IMUVector
-            ConnectedTello.IMUVector += position
+            ConnectedTello.IMUVector = ConnectedTello.IMUVector + position
 
             #update config file
             #cfg.xPos += position[0]*cfg.dmToin
