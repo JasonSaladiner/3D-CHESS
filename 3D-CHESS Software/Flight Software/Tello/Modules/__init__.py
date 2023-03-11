@@ -14,6 +14,8 @@ class TelloFlightSoftware(djiTello):
     """
     Subclass that inherits all of the djitellopy Tello class (here called djiTello)
     also has internet and thread intializations specific to 3dChess
+    Optional Args:
+        'logs','location','map','showmap','emControl' (or 'manControl')
     """
     dmToin = 10/2.54
     cmToin = 1/2.54
@@ -171,8 +173,7 @@ class TelloFlightSoftware(djiTello):
             self.IMUThread.start()
 
         while True:
-            #print("IMU:",self.IMUVector,"\tCommand:",self.commandVector,"\tAvgPosition:",self.position)
-            #print(self.position)
+
             self.deltaIMU = self.IMUVector-self.position
             self.deltaCommand = self.commandVector-self.position
 
@@ -239,6 +240,7 @@ class TelloFlightSoftware(djiTello):
         
         """
         initialize the drone and connect to it
+        
         """
         self.haveLogs = False
         #Location Thread
@@ -285,5 +287,3 @@ class TelloFlightSoftware(djiTello):
         self.lastRCcommandTime = time.time()
 
 
-
-#Write log to CSV

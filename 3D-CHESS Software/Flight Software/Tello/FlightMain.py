@@ -23,7 +23,7 @@ from time import sleep
 
 #Entrance
 if __name__ == "__main__":
-    tello_B = TFS(cfg.telloIP_B,emControl = False)
+    tello_B = TFS(cfg.telloIP_B,emControl = True)
     tello_B.threadSetup()
 
 
