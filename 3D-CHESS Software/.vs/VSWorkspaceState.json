@@ -3,18 +3,7 @@
     "",
     "\\Flight Software",
     "\\Flight Software\\Tello",
-<<<<<<< Updated upstream
     "\\Flight Software\\Tello\\Modules"
   ],
-  "SelectedNode": "\\Flight Software\\Tello\\Modules\\_config_.py",
-=======
-    "\\Flight Software\\Tello\\Modules",
-    "\\Flight Software\\Tello\\Modules\\Controls",
-    "\\Flight Software\\Tello\\Modules\\ImageProcessing",
-    "\\Flight Software\\Tello\\Modules\\ImageProcessing\\OG Files",
-    "\\Flight Software\\Tello\\Resources"
-  ],
-  "SelectedNode": "\\Flight Software\\Tello\\Modules\\ImageProcessing\\OG Files\\FaceTracking.py",
->>>>>>> Stashed changes
   "PreviewInSolutionExplorer": false
 }
