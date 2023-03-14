@@ -21,10 +21,18 @@ from Modules.Location import IMU,Mapping            #Location services
 from time import sleep
 
 
+def gui():
+    import tkinter as tk
+    window = tk.Tk()
+    logs = tk.Label()
+
 #Entrance
 if __name__ == "__main__":
-    tello_B = TFS(cfg.telloIP_B,emControl = True)
-    tello_B.threadSetup()
 
+    tello_B = TFS(cfg.telloIP_B,emControl = False,logs = False,map=True)
+    tello_B.threadSetup()
+    
+    #input("Start?")
+    #print("this now runs")
 
    

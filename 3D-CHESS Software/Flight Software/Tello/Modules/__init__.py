@@ -8,7 +8,14 @@ import logging
 import threading
 import numpy as np
 
+import tkinter as tk
+import queue
+from tkinter.scrolledtext import ScrolledText
+from tkinter import ttk, VERTICAL, HORIZONTAL, N, S, E, W
+import signal
 
+from PIL import Image,ImageTk
+import cv2
 class TelloFlightSoftware(djiTello):
     
     """
@@ -26,6 +33,30 @@ class TelloFlightSoftware(djiTello):
     #go_xyz_speed_mid()
     #go_xyz_speed_yaw_mid()
     #Dont use these unitl they have been added
+
+    def _showframes_(self):
+        # Get the latest frame and convert into Image
+        #cv2image= cv2.cvtColor(cap.read()[1],cv2.COLOR_BGR2RGB)
+        self.img = self.t.get_frame_read().frame
+        self.img = cv2.resize(self.img, (600, 350))
+        # Convert image to PhotoImage
+        self.imgtk = ImageTk.PhotoImage(image = self.img)
+        #self.lab.imgtk = self.img
+        self.lab.configure(image=self.imgtk)
+        
+
+    def gui(self):
+        self.t.streamon()
+        self.win = tk.Tk()
+        self.win.geometry('700x350')
+        self.lab = tk.Label(self.win)
+        
+        self.lab.after(20,self._showframes_)
+        
+        self._showframes_()
+        
+        self.win.mainloop()
+
 
     def _rotationMatrix_(self,yaw):
         import numpy as np
@@ -216,6 +247,14 @@ class TelloFlightSoftware(djiTello):
             self.controlThread = threading.Thread(target=mc,args=(self,),)
             self.controlThread.start()
 
+        if self.haveVideo:
+            from Modules.ImageProcessing.LiveVideo import startVideo
+            if self.livestream:
+                self.videoThread = threading.Thread(target = startVideo,args=(self,'Live'),)
+            else:
+                self.videoThread = threading.Thread(target=startVideo,args=(self,),)
+
+            self.videoThread.start()
     def wifi(self,SSID:str = 'tellonet',password:str = 'selvachess'):
         """
         connect the drone to the specific wifi (default is tellonet)
@@ -250,6 +289,9 @@ class TelloFlightSoftware(djiTello):
         self.showMap = True
         #Manual Control
         self.emControl = True
+        #Live Video
+        self.haveVideo = True
+        self.livestream = True
 
         for self.k in kwargs:
             if self.k == 'logs':
@@ -266,6 +308,7 @@ class TelloFlightSoftware(djiTello):
                 self.emControl = not kwargs[self.k]
         if not self.haveLogs:
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
+
 
 
 
@@ -287,3 +330,6 @@ class TelloFlightSoftware(djiTello):
         self.lastRCcommandTime = time.time()
 
 
+
+#https://beenje.github.io/blog/posts/logging-to-a-tkinter-scrolledtext-widget/
+#LOOK into this for logging console outputs

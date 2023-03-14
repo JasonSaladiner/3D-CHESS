@@ -22,17 +22,19 @@ _showMap_ = True
 
 def _drawPoints_(img, points):
     for point in points:
-        cv2.circle(img, point, 5, (0, 0, 255), cv2.FILLED)  # BGR
-    cv2.circle(img, points[-1], 8, (0, 255, 0), cv2.FILLED)
-    cv2.putText(img, f'({(points[-1][0] - 500) / 100}, {-1 *((points[-1][1] - 500) / 100)}m',
-                (points[-1][0] + 10, points[-1][1] + 30), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 255), 1)  # m NOT cm
+        cv2.circle(img, (point[1]+500,-1*point[0]+500), 5, (0, 0, 255), cv2.FILLED)  # BGR
+    prevpoint = points[-1]
+    cv2.circle(img, (prevpoint[1]+500,-1*prevpoint[0]+500), 8, (0, 255, 0), cv2.FILLED)
+    cv2.putText(img, f'{(points[-1][0])/100 }, {(points[-1][1])/100}m',
+                (points[-1][1] + 500, -1*points[-1][0] + 500), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 255), 1)  # m NOT cm
 
 def mapping(ConnectedTello,showMap=True):
     from math import floor
-    
+    start = ConnectedTello.position     #Take off position. Represents 500x500
     points = [(0, 0), (0, 0)]
     while _allowMapping_:
-        pos = ConnectedTello.position
+        pos = ConnectedTello.position-start
+        
         img = np.zeros((1000, 1000, 3), np.uint8)
         
         if points[-1][0] != pos[0] or points[-1][1] != pos[1]:
