@@ -23,7 +23,7 @@ import os
 
 def samplePattern(ConnectedTello):
     tello = ConnectedTello
-    os.system('clear')
+    #os.system('clear')
     sleep(3)
     tello.set_speed(40)
     tello.takeoff()
@@ -31,28 +31,29 @@ def samplePattern(ConnectedTello):
     tello.move_forward(200)
     sleep(1)
     print("Rotate 180 degrees")
-    tello.rotate_clockwise(90)
+    tello.rotate_counter_clockwise(90)
     print("Move Left 1.5m")
-    tello.move_left(150)
+    tello.move_forward(150)
     sleep(1)
     print("Rotate 90 degrees")
-    tello.rotate_clockwise(90)
+    tello.rotate_counter_clockwise(90)
     sleep(1)
     print("Move Back 2m")
     tello.move_forward(200)
     sleep(1)
     print("Rotate another 90 degrees")
-    tello.rotate_clockwise(90)
+    tello.rotate_counter_clockwise(90)
     sleep(1)
     print("Move Right 1.5m")
     tello.move_forward(150)
     sleep(1)
+    tello.rotate_counter_clockwise(90)
     tello.land()
 
 #Entrance
 if __name__ == "__main__":
 
-    tello_B = TFS(cfg.telloIP_B,emControl = False,logs = False,map=True)
+    tello_B = TFS(cfg.telloIP_B,emControl = True,logs = False,map=True)
     tello_B.threadSetup()
     
     input("Start?")
