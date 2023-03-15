@@ -19,12 +19,33 @@ import Modules.Controls.ComputerControl as cc       #Computer Aided drone contro
 from Modules.Location import IMU,Mapping            #Location services
 
 from time import sleep
+import os
 
-
-def gui():
-    import tkinter as tk
-    window = tk.Tk()
-    logs = tk.Label()
+def samplePattern(ConnectedTello):
+    tello = ConnectedTello
+    os.system('clear')
+    sleep(3)
+    tello.set_speed(40)
+    tello.takeoff()
+    print("Move Forward 4m")
+    tello.move_forward(400)
+    sleep(1)
+    print("Move Left 3m")
+    tello.move_left(300)
+    sleep(1)
+    print("Rotate 180 degrees")
+    tello.rotate_clockwise(180)
+    sleep(1)
+    print("Move \'Forward\' 4m")
+    tello.move_forward(400)
+    sleep(1)
+    print("Rotate another 90 degrees")
+    tello.rotate_clockwise(90)
+    sleep(1)
+    print("Move \'Forward\' 3m")
+    tello.move_forward(300)
+    sleep(1)
+    tello.land()
 
 #Entrance
 if __name__ == "__main__":
@@ -32,7 +53,7 @@ if __name__ == "__main__":
     tello_B = TFS(cfg.telloIP_B,emControl = False,logs = False,map=True)
     tello_B.threadSetup()
     
-    #input("Start?")
-    #print("this now runs")
+    input("Start?")
+    samplePattern(tello_B)
 
    
