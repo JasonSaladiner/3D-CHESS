@@ -8,6 +8,6 @@
     "\\Flight Software\\Tello\\Modules\\ImageProcessing",
     "\\Flight Software\\Tello\\Modules\\Location"
   ],
-  "SelectedNode": "\\Flight Software\\Tello\\Modules\\Location\\Mapping.py",
+  "SelectedNode": "\\Flight Software\\Tello\\Modules\\Location\\IMU.py",
   "PreviewInSolutionExplorer": false
 }
