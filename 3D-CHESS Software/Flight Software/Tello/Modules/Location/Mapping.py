@@ -36,13 +36,15 @@ def mapping(ConnectedTello,showMap=True):
         pos = ConnectedTello.position-start
         
         img = np.zeros((1000, 1000, 3), np.uint8)
-        
-        if points[-1][0] != pos[0] or points[-1][1] != pos[1]:
+        try:
+            if points[-1][0] != pos[0] or points[-1][1] != pos[1]:
             
-            points.append((floor(pos[0]), floor(pos[1])))
-        _drawPoints_(img, points)
-        if _showMap_:
-            cv2.imshow("Output", img)
+                points.append((floor(pos[0]), floor(pos[1])))
+            _drawPoints_(img, points)
+            if _showMap_:
+                cv2.imshow("Output", img)
+        except:
+            pass
         cv2.waitKey(1)
     #End thread
     return

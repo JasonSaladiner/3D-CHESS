@@ -29,6 +29,7 @@ def samplePattern(ConnectedTello):
     tello.takeoff()
     print("Move Forward 2m")
     tello.move_forward(200)
+    
     sleep(1)
     print("Rotate 180 degrees")
     tello.rotate_counter_clockwise(90)
@@ -53,10 +54,15 @@ def samplePattern(ConnectedTello):
 #Entrance
 if __name__ == "__main__":
 
-    tello_B = TFS(cfg.telloIP_B,emControl = True,logs = False,map=True)
+    tello_B = TFS(cfg.telloIP_B,emControl = True,logs = False,map=True,video = False)
     tello_B.threadSetup()
     
     input("Start?")
-    samplePattern(tello_B)
-
-   
+    #samplePattern(tello_B)
+    tello_B.takeoff()
+    print(tello_B.position)
+    tello_B.move_forward(100)
+    print(tello_B.position)
+    tello_B.move_back(75)
+    print(tello_B.position)
+    tello_B.land()
