@@ -109,6 +109,9 @@ def _arrowInput_():
     if kr.getKey("e"): tello.takeoff()
     if kr.getKey("q"): tello.land()
 
+    # just for fun
+    if kr.getKey('p'): tello.flip('r')
+
     return [lr, fb, ud, yv]
 
 #Dictionary of all possible keybinds
