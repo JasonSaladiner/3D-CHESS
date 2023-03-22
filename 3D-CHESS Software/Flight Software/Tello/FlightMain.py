@@ -28,10 +28,10 @@ if __name__ == "__main__":
     #tello_C = Tello(cfg.telloIP_C)
     tello_C = Tello('192.168.10.1') 
     tello_C.connect()
-    mc = threading.Thread(target=mc.EngageMC, daemon=False, args=(tello_C, ))
-    lv =threading.Thread(target=lv.startVideo, daemon=False, args=(tello_C, 'tello_C', 'FT', False))
+    #mc = threading.Thread(target=mc.EngageMC, daemon=False, args=(tello_C, ))
+    lv =threading.Thread(target=lv.startVideo, daemon=False, args=(tello_C, 'tello_C', 'Live', False))  # second arg is rudimentary naming scheme for purposes of demo
     lv.start()
     sleep(10)
-    mc.start()
+    #mc.start()
 
    

@@ -6,6 +6,7 @@ import time
 import cv2
 import os
 
+
 # Global variables + parameters
 w, h = 640, 480
 global img, img_base
@@ -55,6 +56,16 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
     if takePic not in takePics:
         raise ValueError("Invalid takePic type. Expected one of: %s" % takePics)
 
+    # Color identities for each Tello
+    TelloColors = [(0, 0, 255), (0, 255, 0), (255, 0, 0)]
+    TelloColor = None
+    if TelloName == TelloNames[0]:
+        TelloColor = TelloColors[0]
+    elif TelloName == TelloNames[1]:
+        TelloColor = TelloColors[1]
+    elif TelloName == TelloNames[2]:
+        TelloColor = TelloColors[2]
+
     # Create naming scheme for cv2 windows
     t = time.localtime()
     t_name = time.strftime("%H%M%S", t)
@@ -72,7 +83,10 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
     while streamType == 'Live':
         img = tello.get_frame_read().frame
         img = cv2.resize(img, (w, h))
-        cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
+        telloPOS = TFC(tello_C)
+        currentPOS = tello.position
+        print(currentPOS)
+        cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, TelloColor, 2)
         cv2.imshow("LStream" + t_name, img)
         cv2.waitKey(5)
 
@@ -90,7 +104,7 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
             alert_status = False
             start_time = 0
         img = cv2.resize(img, (w, h))
-        cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
+        cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, TelloColor, 2)
         if alert_status == True:
             cv2.putText(img, alert, (300, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 255), 2)
         cv2.imshow("FTStream" + t_name, img)
