@@ -8,21 +8,13 @@ import logging
 import threading
 import numpy as np
 
-import tkinter as tk
-import queue
-from tkinter.scrolledtext import ScrolledText
-from tkinter import ttk, VERTICAL, HORIZONTAL, N, S, E, W
-import signal
-
-from PIL import Image,ImageTk
-import cv2
 class TelloFlightSoftware(djiTello):
     
     """
     Subclass that inherits all of the djitellopy Tello class (here called djiTello)
     also has internet and thread intializations specific to 3dChess
     Optional Args:
-        'logs','location','map','showmap','emControl' (or 'manControl')
+        'logs','location','map','showmap','emControl' (or 'manControl'),'video','livestream'
     """
     dmToin = 10/2.54
     cmToin = 1/2.54
@@ -250,12 +242,35 @@ class TelloFlightSoftware(djiTello):
             return self.re
 
 
+
+    def _tempPattern_(self):
+        from time import sleep
+        sleep(3)
+        self.takeoff()
+        
+        self.move_forward(100)
+        sleep(1)
+        self.rotate_counter_clockwise(90)
+
+        self.move_forward(100)
+        sleep(1)
+        self.rotate_counter_clockwise(90)
+
+        self.move_forward(100)
+        sleep(1)
+        self.rotate_counter_clockwise(90)
+
+        self.move_forward(100)
+        sleep(1)
+        self.rotate_counter_clockwise(90)
+
+        self.land()
+
     def __init__(self,IP:str,**kwargs):
         import time
         
         """
         initialize the drone and connect to it
-        
         """
         self.haveLogs = False
         #Location Thread
@@ -308,6 +323,18 @@ class TelloFlightSoftware(djiTello):
 
         self.lastRCcommand = 0,0,0,0
         self.lastRCcommandTime = time.time()
+
+
+
+        if self.emControl:
+            self._tempPattern_()
+
+
+
+
+
+
+
 
 
 
