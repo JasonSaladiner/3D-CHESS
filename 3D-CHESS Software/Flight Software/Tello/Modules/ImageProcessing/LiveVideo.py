@@ -70,9 +70,10 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
     while streamType == 'Live':
         img = tello.get_frame_read().frame
         img = cv2.resize(img, (w, h))
-        cv2.imshow(TelloName + " LStream " + t_name, img)
+        cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
+        cv2.imshow("LStream" + t_name, img)
         cv2.waitKey(5)
-        
+
     while streamType == 'FT':
         img_base = tello.get_frame_read().frame
         img, info = findFace(img_base)
@@ -85,7 +86,8 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
         elif area_val == 0 and time.time() - start_time > buffer:
             start_time = 0
         img = cv2.resize(img, (w, h))
-        cv2.imshow(TelloName + " FTStream " + t_name, img)
+        cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
+        cv2.imshow("FTStream" + t_name, img)
         cv2.waitKey(5)
 
 # Untested w/ threading
