@@ -260,10 +260,11 @@ class TelloFlightSoftware(djiTello):
                 self.haveMap = kwargs[self.k]
             elif self.k == 'showmap':
                 self.showMap = kwargs[self.k]
-            elif self.k == 'emControl':
-                self.emControl = kwargs[self.k]
             elif self.k == 'manControl':
                 self.emControl = not kwargs[self.k]
+            elif self.k == 'emControl':
+                self.emControl = kwargs[self.k]
+
         if not self.haveLogs:
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
 
