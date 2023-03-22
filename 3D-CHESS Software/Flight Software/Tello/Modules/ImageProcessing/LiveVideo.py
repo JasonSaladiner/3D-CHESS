@@ -54,6 +54,7 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
         raise ValueError("Invalid streamType type. Expected one of: %s" % streamTypes)
     if takePic not in takePics:
         raise ValueError("Invalid takePic type. Expected one of: %s" % takePics)
+
     # Create naming scheme for cv2 windows
     t = time.localtime()
     t_name = time.strftime("%H%M%S", t)
@@ -66,6 +67,7 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
     tello.set_video_direction(0)
     time.sleep(2) # adjust as needed
     global start_time
+    alert_status = False
 
     while streamType == 'Live':
         img = tello.get_frame_read().frame
@@ -78,15 +80,19 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
         img_base = tello.get_frame_read().frame
         img, info = findFace(img_base)
         area_val = info[1]
-        alert = 'OBJECT OF INTEREST DETECTED'
+        alert = 'OBJECT DETECTED'
         if area_val != 0 and start_time == 0:
+            alert_status = True
             start_time = time.time()
             if takePic == True:
                 cv2.imwrite(f'Flight Software/Tello/Resources/Images/{time.time()}.jpg', img_base)
         elif area_val == 0 and time.time() - start_time > buffer:
+            alert_status = False
             start_time = 0
         img = cv2.resize(img, (w, h))
         cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
+        if alert_status == True:
+            cv2.putText(img, alert, (300, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 255), 2)
         cv2.imshow("FTStream" + t_name, img)
         cv2.waitKey(5)
 
