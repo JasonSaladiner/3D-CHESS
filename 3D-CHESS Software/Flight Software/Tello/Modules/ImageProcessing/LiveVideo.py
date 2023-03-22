@@ -66,6 +66,7 @@ def startVideo(ConnectedTello, streamType='FT', takePic=False):
     while streamType == 'Live':
         img = tello.get_frame_read().frame
         img = cv2.resize(img, (w, h))
+        
         cv2.imshow("LStream"+t_name, img)
         cv2.waitKey(5)
 

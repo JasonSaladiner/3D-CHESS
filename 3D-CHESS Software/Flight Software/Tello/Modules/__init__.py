@@ -8,7 +8,14 @@ import logging
 import threading
 import numpy as np
 
+import tkinter as tk
+import queue
+from tkinter.scrolledtext import ScrolledText
+from tkinter import ttk, VERTICAL, HORIZONTAL, N, S, E, W
+import signal
 
+from PIL import Image,ImageTk
+import cv2
 class TelloFlightSoftware(djiTello):
     
     """
@@ -37,8 +44,8 @@ class TelloFlightSoftware(djiTello):
 
     def _newCommand_(self,bodyVector,yaw):
         self.rotationMatrix = self._rotationMatrix_(yaw)
-        self.Nvect = np.matmul(self.rotationMatrix,bodyVector)
-
+        self.Nvect = np.matmul(self.rotationMatrix,bodyVector).reshape((3,1))
+        
         self.commandVector = self.commandVector + self.Nvect
 
 
@@ -158,7 +165,7 @@ class TelloFlightSoftware(djiTello):
         self.t.takeoff()
 
 
-    def _updatePosition_(self,dt = .5,IMU_weight = .05,command_weight=.95):
+    def _updatePosition_(self,dt = .5,IMU_weight = 0,command_weight=1):
         """
         Meant to run as a seperate thread. Starts the IMU thread if necessary and continually takes the weighted average of IMU and Commands
         Updates location and the IMU and Command at time steps equalt to dt
@@ -173,12 +180,12 @@ class TelloFlightSoftware(djiTello):
             self.IMUThread.start()
 
         while True:
-
+            
             self.deltaIMU = self.IMUVector-self.position
             self.deltaCommand = self.commandVector-self.position
 
             self.delta = IMU_weight*self.deltaIMU + command_weight*self.deltaCommand
-
+            self.delta = self.delta.reshape((3,1))
             self.position = self.position + self.delta
             self.commandVector = self.position
             self.IMUVector = self.position
@@ -216,6 +223,14 @@ class TelloFlightSoftware(djiTello):
             self.controlThread = threading.Thread(target=mc,args=(self,),)
             self.controlThread.start()
 
+        if self.haveVideo:
+            from Modules.ImageProcessing.LiveVideo import startVideo
+            if self.livestream:
+                self.videoThread = threading.Thread(target = startVideo,args=(self,'Live'),)
+            else:
+                self.videoThread = threading.Thread(target=startVideo,args=(self,),)
+
+            self.videoThread.start()
     def wifi(self,SSID:str = 'tellonet',password:str = 'selvachess'):
         """
         connect the drone to the specific wifi (default is tellonet)
@@ -250,6 +265,9 @@ class TelloFlightSoftware(djiTello):
         self.showMap = True
         #Manual Control
         self.emControl = True
+        #Live Video
+        self.haveVideo = True
+        self.livestream = True
 
         for self.k in kwargs:
             if self.k == 'logs':
@@ -260,13 +278,17 @@ class TelloFlightSoftware(djiTello):
                 self.haveMap = kwargs[self.k]
             elif self.k == 'showmap':
                 self.showMap = kwargs[self.k]
-            elif self.k == 'manControl':
-                self.emControl = not kwargs[self.k]
             elif self.k == 'emControl':
                 self.emControl = kwargs[self.k]
-
+            elif self.k == 'manControl':
+                self.emControl = not kwargs[self.k]
+            elif self.k =='video':
+                self.haveVideo = kwargs[self.k]
+            elif self.k == 'livestream':
+                self.livestream = kwargs[self.k]
         if not self.haveLogs:
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
+
 
 
 
@@ -288,3 +310,6 @@ class TelloFlightSoftware(djiTello):
         self.lastRCcommandTime = time.time()
 
 
+
+#https://beenje.github.io/blog/posts/logging-to-a-tkinter-scrolledtext-widget/
+#LOOK into this for logging console outputs

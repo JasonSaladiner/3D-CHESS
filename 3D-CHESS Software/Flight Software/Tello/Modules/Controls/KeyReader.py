@@ -2,7 +2,7 @@ import pygame as pg
 
 def init():
     pg.init()
-    win = pg.display.set_mode((400,400))
+    win = pg.display.set_mode((480,480))
 
 
 def getKey(keyName):
