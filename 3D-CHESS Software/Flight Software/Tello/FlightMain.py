@@ -61,8 +61,8 @@ if __name__ == "__main__":
     
     #configs is representative of the kwargs for TFS. These are default values and if nothing is passed, these will be used
     #Drones may have different requirements so creating beforehand may not be the most effective method. Potentially create the dicrionary in the Process line at kwargs={}
-    configs = {"TIR":True,
-               "TIR_Resolution":10
+    configs = {"TIR":True
+               #"TIR_Resolution":10
                }
     #select drones
     A = True
@@ -74,19 +74,21 @@ if __name__ == "__main__":
                                    location= False,
                                    map= False,
                                    emControl= True,
-                                   video= False,
+                                   video= True,
                                    livestream= False
                                    )
+        TelloA.setConstraints(con="hi")
         TA_thread = Thread(target=drone,args=(TelloA,),)
         TA_thread.start()
     if B:
         TelloB = TFS(cfg.telloIP_B,logs= True,
                                    location= False,
                                    map= False,
-                                   emControl= True,
-                                   video= False,
+                                   emControl= False,
+                                   video= True,
                                    livestream= False
                                    )
+        TelloB.setConstraints(**configs)
         TB_thread = Thread(target=drone,args=(TelloB,),)
         TB_thread.start()
     if C:
@@ -101,4 +103,4 @@ if __name__ == "__main__":
         TC_thread.start()
     
     input("Ready?")
-    cfg.task_requests.append(self.nominal)
+    cfg.task_requests.append(1)

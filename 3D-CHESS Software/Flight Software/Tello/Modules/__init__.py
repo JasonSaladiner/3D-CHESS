@@ -273,9 +273,11 @@ class TelloFlightSoftware(djiTello):
         totalTask = 0
         while True:
             if len(cfg.task_requests) > totalTask:
-                cfg.task_requests[-1]()
+                if cfg.task_requests[-1] == 1:
+                    self.nominal()
                 totalTask+=1
 
+            sleep(1)
 
 
     def __init__(self,IP,**kwargs):
@@ -356,7 +358,7 @@ class TelloFlightSoftware(djiTello):
         else:
             from Modules.Controls.ManualControl import EngageMC as mc
             self.controlThread = threading.Thread(target=mc,args=(self,),)
-            self.controlThread.start()
+            #self.controlThread.start()
 
         if self.haveVideo:
             from Modules.ImageProcessing.LiveVideo import startVideo
@@ -367,6 +369,8 @@ class TelloFlightSoftware(djiTello):
 
             self.videoThread.start()
 
+        self.updateThread = threading.Thread(target=self._getTask_)
+        self.updateThread.start()
         
 
 
