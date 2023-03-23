@@ -27,7 +27,7 @@ class TelloFlightSoftware(djiTello):
     dmToin = 10/2.54
     cmToin = 1/2.54
 
-
+    #Depreceated. Failed experiment. Will remove 
     udp_port = {'192.168.1.11':8869,   #A
                 '192.168.1.12':8879,   #B
                 '192.168.1.13':8889}   #C
@@ -196,22 +196,7 @@ class TelloFlightSoftware(djiTello):
             self.IMUVector = self.position
             sleep(dt)
 
-    def threadSetup(self):
-        """
-        Initalizes selected threads
-        allowLocation = True : initializes the IMU location service thread to update cfg.X,Y,Z
-        allowMap = True : starts the live mapping service
-            showMap = True : outputs the map. 
-        """
 
-        
-    def wifi(self,SSID:str = 'tellonet',password:str = 'selvachess'):
-        """
-        connect the drone to the specific wifi (default is tellonet)
-        """
-        
-        self.t.connect_to_wifi(SSID,password)
-    
 
     def runMission(self,mission,*args,**kwargs):
         """
@@ -226,22 +211,21 @@ class TelloFlightSoftware(djiTello):
 
 
     def _squarePattern_(self):
-        
+        """
+        NOTE: Temp pattern for PDR
+        """
         sleep(3)
         self.takeoff()
-        
+      
         self.move_forward(100)
         sleep(1)
         self.rotate_counter_clockwise(90)
-
         self.move_forward(100)
         sleep(1)
         self.rotate_counter_clockwise(90)
-
         self.move_forward(100)
         sleep(1)
         self.rotate_counter_clockwise(90)
-
         self.move_forward(100)
         sleep(1)
         self.rotate_counter_clockwise(90)
@@ -249,6 +233,9 @@ class TelloFlightSoftware(djiTello):
         self.land()
 
     def _linePattern_(self):
+        """
+        NOTE: Temp Pattern For PDR
+        """
         sleep(3)
         self.takeoff()
         self.move_forward(100)
@@ -262,7 +249,7 @@ class TelloFlightSoftware(djiTello):
         Needs functionality
         Anything not found is assumed false
         """
-
+        ####NOTE: Likely going to change after PDR#####
         for self.k in kwargs:
             if self.k == "TIR":
                 self.nominal = self._squarePattern_
@@ -270,6 +257,8 @@ class TelloFlightSoftware(djiTello):
                 self.nominal = self._linePattern_
 
     def _getTask_(self):
+        ####NOTE: Likely Going to change after PDR ######
+
         totalTask = 0
         while True:
             if len(cfg.task_requests) > totalTask:

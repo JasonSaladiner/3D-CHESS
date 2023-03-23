@@ -21,35 +21,6 @@ from Modules.Location import IMU,Mapping            #Location services
 from time import sleep
 import os
 
-def simpleSquare(ConnectedTello):
-    tello = ConnectedTello
-    #os.system('clear')
-    sleep(3)
-    tello.set_speed(40)
-    tello.takeoff()
-    print("Move Forward 2m")
-    tello.move_forward(100)
-    
-    sleep(1)
-    print("Rotate 90 degrees")
-    tello.rotate_counter_clockwise(90)
-    print("Move Left 1.5m")
-    tello.move_forward(75)
-    sleep(1)
-    print("Rotate 90 degrees")
-    tello.rotate_counter_clockwise(90)
-    sleep(1)
-    print("Move Back 2m")
-    tello.move_forward(100)
-    sleep(1)
-    print("Rotate 90 degrees")
-    tello.rotate_counter_clockwise(90)
-    sleep(1)
-    print("Move Right 1.5m")
-    tello.move_forward(75)
-    sleep(1)
-    tello.rotate_counter_clockwise(90)
-    tello.land()
 
 
 def drone(ConnectedTello):
@@ -59,10 +30,9 @@ def drone(ConnectedTello):
 #Entrance
 if __name__ == "__main__":
     
-    #configs is representative of the kwargs for TFS. These are default values and if nothing is passed, these will be used
-    #Drones may have different requirements so creating beforehand may not be the most effective method. Potentially create the dicrionary in the Process line at kwargs={}
+    
+    #Config may be used to add artificial constraints in near future updates but for now its used to distiguse between Different Tellos
     configs = {"TIR":True
-               #"TIR_Resolution":10
                }
     #select drones
     A = True
@@ -99,8 +69,13 @@ if __name__ == "__main__":
                                    video= False,
                                    livestream= False
                                    )
+        TelloC.setConstraints(bleh="meh")
         TC_thread = Thread(target=drone,args=(TelloC,),)
         TC_thread.start()
     
+    ###Known ISSUE###
+    #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
+
+
     input("Ready?")
     cfg.task_requests.append(1)
