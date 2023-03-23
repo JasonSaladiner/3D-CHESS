@@ -12,7 +12,7 @@ w, h = 640, 480
 global img, img_base
 global buffer
 start_time = 0
-buffer = 3  # Adjust according to speed of Tello
+buffer = 2  # Adjust according to speed of Tello
 
 
 # Subject Function
@@ -22,7 +22,7 @@ def findFace(img):
     dir = current_dir + '/Flight Software/Tello/Resources/facedetect.xml'
     faceCascade = cv2.CascadeClassifier(dir)
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = faceCascade.detectMultiScale(imgGray, 1.2, 6)  # adjust minNeighbors as needed for clarity, OG = 8
+    faces = faceCascade.detectMultiScale(imgGray, 1.2, 15)  # adjust minNeighbors as needed for clarity, OG = 8
 
     myFaceListC = []  # cx, cy = center of face detected
     myFaceListArea = []
@@ -83,9 +83,6 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
     while streamType == 'Live':
         img = tello.get_frame_read().frame
         img = cv2.resize(img, (w, h))
-        telloPOS = TFC(tello_C)
-        currentPOS = tello.position
-        print(currentPOS)
         cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, TelloColor, 2)
         cv2.imshow("LStream" + t_name, img)
         cv2.waitKey(5)
