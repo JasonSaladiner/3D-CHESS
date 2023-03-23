@@ -5,7 +5,7 @@ from djitellopy import Tello
 import time
 import cv2
 import os
-
+import Modules._config_ as cfg
 
 # Global variables + parameters
 w, h = 640, 480
@@ -75,8 +75,8 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
     tello.query_battery()  # testing purposes | DEMO
     tello.streamon()
     time.sleep(2) # adjust as needed
-    tello.set_video_direction(0)
-    time.sleep(2) # adjust as needed
+    #tello.set_video_direction(0)
+    #time.sleep(2) # adjust as needed
     global start_time
     alert_status = False
 
@@ -96,6 +96,7 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
             alert_status = True
             start_time = time.time()
             print(alert, TelloName)
+            cfg.task_requests.append([TelloName,ConnectedTello.position])
             if takePic == True:
                 cv2.imwrite(f'Flight Software/Tello/Resources/Images/{time.time()}.jpg', img_base)
         elif area_val == 0 and time.time() - start_time > buffer:
@@ -105,7 +106,7 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
         cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, TelloColor, 2)
         if alert_status == True:
             cv2.putText(img, alert, (300, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 255), 2)
-        #cv2.imshow("FTStream" + t_name, img)
+        cv2.imshow("FTStream" + t_name, img)
         cv2.waitKey(5)
 
 

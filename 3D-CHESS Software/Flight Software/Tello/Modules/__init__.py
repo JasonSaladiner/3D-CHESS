@@ -257,8 +257,10 @@ class TelloFlightSoftware(djiTello):
         for self.k in kwargs:
             if self.k == "TIR":
                 self.nominal = self._squarePattern_
+                #self.respond = sleep(.5)
             else:
-                self.nominal = self._linePattern_
+                #self.nominal = sleep(.5)
+                self.respond = self._linePattern_
 
     def _getTask_(self):
         ####NOTE: Likely Going to change after PDR ######
@@ -267,11 +269,27 @@ class TelloFlightSoftware(djiTello):
         while True:
             if len(cfg.task_requests) > totalTask:
                 if cfg.task_requests[-1] == 1:
-                    self.nominal()
+                    try:
+                        self.nominal()
+                    except:
+                        pass
+                elif cfg.task_requests[-1][0] is not self.name:
+                    print("I got a task at:",cfg.task_requests[-1][1])
+                    self.respond()
                 totalTask+=1
 
             sleep(1)
 
+
+    def setColor(self):
+        if self.name == "tello_A":
+            self.r,self.g,self.b = 255,0,0
+        elif self.name == "tello_B":
+            self.r,self.g,self.b = 0,255,0
+        else:
+            self.r,self.g,self.b = 0,0,255
+
+        self.t.send_expansion_command("led %i %i %i" % (self.r,self.g,self.b))
 
     def __init__(self,IP,**kwargs):
         import time
@@ -358,7 +376,7 @@ class TelloFlightSoftware(djiTello):
             if self.livestream:
                 self.videoThread = threading.Thread(target = startVideo,args=(self,self.name,'Live'),)
             else:
-                self.videoThread = threading.Thread(target=startVideo,args=(self,self.name),)
+                self.videoThread = threading.Thread(target=startVideo,args=(self,self.name),kwargs=({"takePic":True}))
 
             self.videoThread.start()
 

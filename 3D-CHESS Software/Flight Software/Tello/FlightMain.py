@@ -39,27 +39,27 @@ if __name__ == "__main__":
     C = False
     #turn on drones
     if A:
-        TelloA = TFS(cfg.telloIP_A,logs= True,
-                                   location= False,
+        TelloA = TFS(cfg.telloIP_A,logs= False,
+                                   location= True,
                                    map= False,
                                    emControl= True,
                                    video= False,
-                                   livestream= True
+                                   livestream= False
                                    )
         TelloA.setConstraints(con="hi")
-        TA_thread = Thread(target=drone,args=(TelloA,),)
-        TA_thread.start()
+        #TA_thread = Thread(target=drone,args=(TelloA,),)
+        #TA_thread.start()
     if B:
-        TelloB = TFS(cfg.telloIP_B,logs= True,
-                                   location= False,
+        TelloB = TFS(cfg.telloIP_B,logs= False,
+                                   location= True,
                                    map= False,
                                    emControl= False,
-                                   video= False,
-                                   livestream= True
+                                   video= True,
+                                   livestream= False
                                    )
         TelloB.setConstraints(**configs)
-        TB_thread = Thread(target=drone,args=(TelloB,),)
-        TB_thread.start()
+        #TB_thread = Thread(target=drone,args=(TelloB,),)
+        #TB_thread.start()
     if C:
         TelloC = TFS(cfg.telloIP_C,logs= True,
                                    location= False,
@@ -69,12 +69,15 @@ if __name__ == "__main__":
                                    livestream= False
                                    )
         TelloC.setConstraints(bleh="meh")
-        TC_thread = Thread(target=drone,args=(TelloC,),)
-        TC_thread.start()
+        #TC_thread = Thread(target=drone,args=(TelloC,),)
+        #TC_thread.start()
     
     ###Known ISSUE###
     #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
 
 
     input("Ready?")
+    #TelloB.setColor()
     cfg.task_requests.append(1)
+    #TelloA.end()
+    #TelloB.end()
