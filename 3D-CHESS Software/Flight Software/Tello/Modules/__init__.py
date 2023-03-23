@@ -299,9 +299,6 @@ class TelloFlightSoftware(djiTello):
 
         self.lastRCcommand = 0,0,0,0
 
-
-        #djiTello.CONTROL_UDP_PORT = TelloFlightSoftware.udp_port[IP]
-        #djiTello.STATE_UDP_PORT = TelloFlightSoftware.udp_port[IP]+1
         super().__init__(IP)
         self.connect()
 

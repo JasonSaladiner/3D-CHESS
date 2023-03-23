@@ -9,7 +9,7 @@ import ipaddress
 import logging  #For changing the tello outputs
 from djitellopy import Tello   #Tello 
 from Modules import TelloFlightSoftware as TFS
-import threading    #For multithreading
+from threading  import Thread    #For multithreading
 import multiprocessing as mp
 
 import Modules._config_ as cfg  #Shared variables 
@@ -61,7 +61,7 @@ def startDrone(TelloLetter:str,**kwargs):
     
     IP = {"a":'192.168.1.11',"b": '192.168.1.12',"c":'192.168.1.13'}
     tello = TFS(IP[TelloLetter.lower()],**kwargs)
-    tello.threadSetup()
+    #tello.threadSetup()
     if TelloLetter == 'b':
         tello.takeoff()
         tello.rotate_clockwise(30)
@@ -81,10 +81,11 @@ if __name__ == "__main__":
                "livestream":False
                }
     
-    #processA = mp.Process(target=startDrone,args=("a",),kwargs={"logs":True,"emControl":False,"video":False,"first":True})
-    #processB = mp.Process(target=startDrone,args=("b",),kwargs=configs)
+    #droneA = Thread(target=startDrone,args=("a",),kwargs={"logs":True,"emControl":False,"video":False,"first":True})
+    #droneB = Thread(target=startDrone,args=("b",),kwargs=configs)
     
-    #processA.start()
-   # processB.start()
+    ##droneA.start()
+    #droneB.start()
 
-    t = TFS(cfg.telloIP_B,logs=True)#,configs)
+    da = TFS(cfg.telloIP_A,logs=True)
+    db = TFS(cfg.telloIP_B,logs=True)
