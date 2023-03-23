@@ -266,17 +266,18 @@ class TelloFlightSoftware(djiTello):
 
         self.land()
 
-    def __init__(self,IP:str,**kwargs):
+    def __init__(self,IP,**kwargs):
         import time
         
         """
         initialize the drone and connect to it
+        IP : str
         """
         self.haveLogs = False
         #Location Thread
         self.haveLocation = True
         #Mapping Thread
-        self.haveMap = True
+        self.haveMap = False
         self.showMap = True
         #Manual Control
         self.emControl = True
@@ -305,13 +306,32 @@ class TelloFlightSoftware(djiTello):
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
 
 
+        
+
+        
 
 
+        self.udp_port = {'192.168.1.11':8869,   #A
+                         '192.168.1.12':8879,   #B
+                         '192.168.1.13':8889}   #C
         self.t = super()
-        self.t.__init__(IP)
-        self.t.connect()
+        self.address = (IP,self.udp_port[IP])
 
-        print(self.t.get_battery())
+
+
+        #self.t.__init__(IP)
+        self.t.send_command_without_return('port {} {}'.format(self.udp_port[IP],11111))
+        #Set IP and Port
+
+        djiTello.CONTROL_UDP_PORT = self.udp_port[IP]
+        djiTello.STATE_UDP_PORT=self.udp_port[IP] + 1
+        self.t.__init__(IP)
+        #self.CONTROL_UDP_PORT = self.udp_port[IP]
+        #self.STATE_UDP_PORT = self.udp_port[IP] + 1
+        #self.CONTROL_UDP_PORT = 8889
+        self.connect()
+
+        print(self.get_battery())
 
         
         #Command input and IMU locations
@@ -326,8 +346,7 @@ class TelloFlightSoftware(djiTello):
 
 
 
-        if self.emControl:
-            self._tempPattern_()
+
 
 
 

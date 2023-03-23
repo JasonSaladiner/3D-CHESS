@@ -61,21 +61,26 @@ def startDrone(TelloLetter:str,**kwargs):
     
     IP = {"a":'192.168.1.11',"b": '192.168.1.12',"c":'192.168.1.13'}
     tello = TFS(IP[TelloLetter.lower()],**kwargs)
-    
+    tello.threadSetup()
+    if TelloLetter == 'b':
+        tello._tempPattern_()
 
 #Entrance
 if __name__ == "__main__":
     
     #configs is representative of the kwargs for TFS. These are default values and if nothing is passed, these will be used
     #Drones may have different requirements so creating beforehand may not be the most effective method. Potentially create the dicrionary in the Process line at kwargs={}
-    configs = {"logs": False,
+    configs = {"logs": True,
                "location": True,
                "map": False,
                "emControl":True,
                "video":True,
-               "livestream":True
+               "livestream":True,
+               "first" : True
                }
     
-    processA = mp.Process(target=startDrone,args=("a",),kwargs={"emControl":False,"video":False})
+    processA = mp.Process(target=startDrone,args=("a",),kwargs={"logs":True,"emControl":False,"video":False,"first":True})
     processB = mp.Process(target=startDrone,args=("b",),kwargs=configs)
     
+    processA.start()
+    processB.start()

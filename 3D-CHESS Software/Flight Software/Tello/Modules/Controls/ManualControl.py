@@ -124,7 +124,8 @@ keybinds = {"a":_arrowInput_,
 def init():
     
     while True:
-        choice = input("Which keyboard input Arrows (a) or WASD (b): ").lower()
+        #choice = input("Which keyboard input Arrows (a) or WASD (b): ").lower()
+        choice = "b"
         if choice == "a" or choice == "b":
             break
         else:
