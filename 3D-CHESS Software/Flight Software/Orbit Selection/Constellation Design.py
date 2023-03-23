@@ -229,8 +229,8 @@ def constellationTradeStudy():
     #start/finish walker constellations
     o = np.array([2,1,1])
     f = np.array([24,24,24])
-    
-    maxIterations = np.prod(f-o)
+    iteration = 1
+    maxIterations = np.prod(f-o)+1
 
     #Basic orbital parameters
     a = Re + 700            #Semimajor Axis
@@ -258,7 +258,7 @@ def constellationTradeStudy():
             for k in range(o[2],j+1):
                 if k > f[2]:
                     break
-                print("Start ",i*j*k,"of %i. (%i,%i,%i)"%(maxIterations,i,j,k))
+                print("Start ",iteration,"of %i. (%i,%i,%i)"%(maxIterations,i,j,k))
                 walkerOEs = OEfromWalker(i,j,k)
                 for sat in walkerOEs:
                     currentConst.append([a,e,inc,w,sat[0],sat[1]])
@@ -266,6 +266,7 @@ def constellationTradeStudy():
                 RT = findMaxRT_STK(currentConst)
                 results.append([[i,j,k],RT,satUSD(i)])
                 print("Finished")
+                iteration+=1
     results = np.array(results)
 
     print(results)
