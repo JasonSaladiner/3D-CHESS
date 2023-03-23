@@ -91,10 +91,11 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
         img_base = tello.get_frame_read().frame
         img, info = findFace(img_base)
         area_val = info[1]
-        alert = 'OBJECT DETECTED'
+        alert = 'OBJECT DETECTED BY'
         if area_val != 0 and start_time == 0:
             alert_status = True
             start_time = time.time()
+            print(alert, TelloName)
             if takePic == True:
                 cv2.imwrite(f'Flight Software/Tello/Resources/Images/{time.time()}.jpg', img_base)
         elif area_val == 0 and time.time() - start_time > buffer:
@@ -104,7 +105,7 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
         cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, TelloColor, 2)
         if alert_status == True:
             cv2.putText(img, alert, (300, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 255), 2)
-        cv2.imshow("FTStream" + t_name, img)
+        #cv2.imshow("FTStream" + t_name, img)
         cv2.waitKey(5)
 
 
