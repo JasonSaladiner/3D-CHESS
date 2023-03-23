@@ -28,7 +28,7 @@ class TelloFlightSoftware(djiTello):
     dmToin = 10/2.54
     cmToin = 1/2.54
 
-    #Depreceated. Failed experiment. Will remove 
+    #Depreciated. Failed experiment. Will remove 
     udp_port = {'192.168.1.11':8869,   #A
                 '192.168.1.12':8879,   #B
                 '192.168.1.13':8889}   #C

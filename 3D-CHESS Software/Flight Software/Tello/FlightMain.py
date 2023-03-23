@@ -30,13 +30,13 @@ def drone(ConnectedTello):
 if __name__ == "__main__":
     
     
-    #Config may be used to add artificial constraints in near future updates but for now its used to distiguse between Different Tellos
+    #Config may be used to add artificial constraints in near future updates but for now its used to distinguish between Different Tellos
     configs = {"TIR":True
                }
     #select drones
-    A = True
-    B = True
-    C = False
+    A = False
+    B = False
+    C = True
     #turn on drones
     if A:
         TelloA = TFS(cfg.telloIP_A,logs= False,
@@ -62,11 +62,11 @@ if __name__ == "__main__":
         #TB_thread.start()
     if C:
         TelloC = TFS(cfg.telloIP_C,logs= True,
-                                   location= False,
+                                   location= True,
                                    map= False,
                                    emControl= True,
-                                   video= False,
-                                   livestream= False
+                                   video= True,
+                                   livestream= True
                                    )
         TelloC.setConstraints(bleh="meh")
         #TC_thread = Thread(target=drone,args=(TelloC,),)
