@@ -43,8 +43,8 @@ if __name__ == "__main__":
                                    location= False,
                                    map= False,
                                    emControl= True,
-                                   video= True,
-                                   livestream= False
+                                   video= False,
+                                   livestream= True
                                    )
         TelloA.setConstraints(con="hi")
         TA_thread = Thread(target=drone,args=(TelloA,),)
@@ -54,8 +54,8 @@ if __name__ == "__main__":
                                    location= False,
                                    map= False,
                                    emControl= False,
-                                   video= True,
-                                   livestream= False
+                                   video= False,
+                                   livestream= True
                                    )
         TelloB.setConstraints(**configs)
         TB_thread = Thread(target=drone,args=(TelloB,),)

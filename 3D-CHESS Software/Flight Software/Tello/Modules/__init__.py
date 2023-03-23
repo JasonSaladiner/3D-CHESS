@@ -6,6 +6,7 @@ __all__ = []
 from djitellopy import Tello as djiTello
 import logging
 import threading
+from djitellopy.tello import Tello
 import numpy as np
 import socket
 from typing import Optional 
@@ -32,7 +33,9 @@ class TelloFlightSoftware(djiTello):
                 '192.168.1.12':8879,   #B
                 '192.168.1.13':8889}   #C
 
-    
+    telloName = {'192.168.1.11':"tello_A",   #A
+                '192.168.1.12':"tello_B",   #B
+                '192.168.1.13':"tello_C"}   #C
     ###TODO###
     #go_xyz_speed()
     #go_xyz_speed_mid()
@@ -176,6 +179,7 @@ class TelloFlightSoftware(djiTello):
         Updates location and the IMU and Command at time steps equalt to dt
         """
         
+
         import numpy as np
         from time import sleep
         from Modules.Location import IMU
@@ -214,7 +218,7 @@ class TelloFlightSoftware(djiTello):
         """
         NOTE: Temp pattern for PDR
         """
-        sleep(3)
+        sleep(1)
         self.takeoff()
       
         self.move_forward(100)
@@ -271,7 +275,7 @@ class TelloFlightSoftware(djiTello):
 
     def __init__(self,IP,**kwargs):
         import time
-        
+        self.name = TelloFlightSoftware.telloName[IP]
         """
         initialize the drone and connect to it
         IP : str
@@ -352,9 +356,9 @@ class TelloFlightSoftware(djiTello):
         if self.haveVideo:
             from Modules.ImageProcessing.LiveVideo import startVideo
             if self.livestream:
-                self.videoThread = threading.Thread(target = startVideo,args=(self,'Live'),)
+                self.videoThread = threading.Thread(target = startVideo,args=(self,self.name,'Live'),)
             else:
-                self.videoThread = threading.Thread(target=startVideo,args=(self,),)
+                self.videoThread = threading.Thread(target=startVideo,args=(self,self.name),)
 
             self.videoThread.start()
 

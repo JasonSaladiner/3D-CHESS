@@ -45,7 +45,7 @@ def findFace(img):
 
 # Royal Functions
 def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
-    # Error if NameTello, streamType, or takePic not valid
+    # Error if NameTello, streamType, or takePic not valid   
     TelloNames = ['tello_A', 'tello_B', 'tello_C']
     streamTypes = ['Live', 'FT']
     takePics = [True, False]
@@ -83,11 +83,11 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
     while streamType == 'Live':
         img = tello.get_frame_read().frame
         img = cv2.resize(img, (w, h))
-        telloPOS = TFC(tello_C)
-        currentPOS = tello.position
-        print(currentPOS)
+        #telloPOS = TFC(tello_C)
+        #currentPOS = tello.position
+        #print(currentPOS)
         cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, TelloColor, 2)
-        cv2.imshow("LStream" + t_name, img)
+        cv2.imshow(TelloName + "LStream" + t_name, img)
         cv2.waitKey(5)
 
     while streamType == 'FT':
