@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="985737ba-a04d-4107-8905-17c0cc7c7364" name="Changes" comment="" />
+    <list default="true" id="985737ba-a04d-4107-8905-17c0cc7c7364" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/FileContentIndex/62a5f3ab-be58-4316-a859-4ef1a823c04c.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/FileContentIndex/7bbb7e88-391e-440a-aa4b-4f6acf472a4c.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/v17/.wsuo" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/.vs/3D-CHESS Software/v17/.wsuo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/VSWorkspaceState.json" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/.vs/VSWorkspaceState.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/.vs/slnx.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/.vs/slnx.sqlite" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/FlightMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/FlightMain.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/ImageProcessing/LiveVideo.py" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/ImageProcessing/LiveVideo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/ImageProcessing/OG Files/ColorDetection.py" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/ImageProcessing/OG Files/ColorDetection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/ImageProcessing/OG Files/FaceTracking.py" beforeDir="false" afterPath="$PROJECT_DIR$/3D-CHESS Software/Flight Software/Tello/Modules/ImageProcessing/OG Files/FaceTracking.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
