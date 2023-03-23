@@ -228,7 +228,7 @@ def constellationTradeStudy():
     """
     #start/finish walker constellations
     o = np.array([2,1,1])
-    f = np.array([24,24,24])
+    f = np.array([24,12,3])
     iteration = 1
     maxIterations = np.prod(f-o)+1
 

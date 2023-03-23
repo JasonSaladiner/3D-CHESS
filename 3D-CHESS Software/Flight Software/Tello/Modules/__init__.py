@@ -7,6 +7,13 @@ from djitellopy import Tello as djiTello
 import logging
 import threading
 import numpy as np
+import socket
+from typing import Optional 
+
+#from .enforce_types import enforce_types
+
+
+
 
 class TelloFlightSoftware(djiTello):
     
@@ -19,6 +26,10 @@ class TelloFlightSoftware(djiTello):
     dmToin = 10/2.54
     cmToin = 1/2.54
 
+
+    udp_port = {'192.168.1.11':8869,   #A
+                '192.168.1.12':8879,   #B
+                '192.168.1.13':8889}   #C
 
     ###TODO###
     #go_xyz_speed()
@@ -191,38 +202,7 @@ class TelloFlightSoftware(djiTello):
             showMap = True : outputs the map. 
         """
 
-        if self.haveLocation:
-            #from Modules.Location import IMU
-            #self.locationThread = threading.Thread(target=IMU.init,args=(self.t,),)
-            self.locationThread = threading.Thread(target=self._updatePosition_)
-            self.locationThread.start()
-
-        #Initialize the map and determine if it will be seen
-                    ###THIS IS UNTESTED###
-        if self.haveMap and self.haveLocation:        #map depends on Location
-            from Modules.Location import Mapping
-            self.mapThread = threading.Thread(target=Mapping.mapping,args=(self,self.showMap,),)
-            self.mapThread.start()
         
-
-        #Emergency Vs Manual Control (One is required)
-        if self.emControl:
-            from Modules.Controls.ManualControl import EmergencyControls as emc
-            self.controlThread = threading.Thread(target=emc,args=(self,),)
-            self.controlThread.start()
-        else:
-            from Modules.Controls.ManualControl import EngageMC as mc
-            self.controlThread = threading.Thread(target=mc,args=(self,),)
-            self.controlThread.start()
-
-        if self.haveVideo:
-            from Modules.ImageProcessing.LiveVideo import startVideo
-            if self.livestream:
-                self.videoThread = threading.Thread(target = startVideo,args=(self,'Live'),)
-            else:
-                self.videoThread = threading.Thread(target=startVideo,args=(self,),)
-
-            self.videoThread.start()
     def wifi(self,SSID:str = 'tellonet',password:str = 'selvachess'):
         """
         connect the drone to the specific wifi (default is tellonet)
@@ -307,33 +287,9 @@ class TelloFlightSoftware(djiTello):
 
 
         
+        #self.last_rc_control_timestamp = time.time()
+        self.lastRCcommandTime = time.time()        #Duplicate??
 
-        
-
-
-        self.udp_port = {'192.168.1.11':8869,   #A
-                         '192.168.1.12':8879,   #B
-                         '192.168.1.13':8889}   #C
-        self.t = super()
-        self.address = (IP,self.udp_port[IP])
-
-
-
-        #self.t.__init__(IP)
-        self.t.send_command_without_return('port {} {}'.format(self.udp_port[IP],11111))
-        #Set IP and Port
-
-        djiTello.CONTROL_UDP_PORT = self.udp_port[IP]
-        djiTello.STATE_UDP_PORT=self.udp_port[IP] + 1
-        self.t.__init__(IP)
-        #self.CONTROL_UDP_PORT = self.udp_port[IP]
-        #self.STATE_UDP_PORT = self.udp_port[IP] + 1
-        #self.CONTROL_UDP_PORT = 8889
-        self.connect()
-
-        print(self.get_battery())
-
-        
         #Command input and IMU locations
         self.commandVector = np.array([0,0,0]).reshape((3,1))        #X,Y,Z in cm
         self.IMUVector = np.array([0,0,0]).reshape((3,1))            #X,Y,Z in cm
@@ -342,7 +298,53 @@ class TelloFlightSoftware(djiTello):
         self.position = np.array([0,0,0]).reshape((3,1))             #X,Y,Z in cm
 
         self.lastRCcommand = 0,0,0,0
-        self.lastRCcommandTime = time.time()
+
+
+        #djiTello.CONTROL_UDP_PORT = TelloFlightSoftware.udp_port[IP]
+        #djiTello.STATE_UDP_PORT = TelloFlightSoftware.udp_port[IP]+1
+        super().__init__(IP)
+        self.connect()
+
+
+        if self.haveLocation:
+            #from Modules.Location import IMU
+            self.locationThread = threading.Thread(target=IMU.init,args=(self.t,),)
+            self.locationThread = threading.Thread(target=self._updatePosition_)
+            self.locationThread.start()
+
+        #Initialize the map and determine if it will be seen
+        if self.haveMap and self.haveLocation:        #map depends on Location
+            from Modules.Location import Mapping
+            self.mapThread = threading.Thread(target=Mapping.mapping,args=(self,self.showMap,),)
+            self.mapThread.start()
+        
+
+        #Emergency Vs Manual Control (One is required)
+        if self.emControl:
+            from Modules.Controls.ManualControl import EmergencyControls as emc
+            self.controlThread = threading.Thread(target=emc,args=(self,),)
+            self.controlThread.start()
+        else:
+            from Modules.Controls.ManualControl import EngageMC as mc
+            self.controlThread = threading.Thread(target=mc,args=(self,),)
+            self.controlThread.start()
+
+        if self.haveVideo:
+            from Modules.ImageProcessing.LiveVideo import startVideo
+            if self.livestream:
+                self.videoThread = threading.Thread(target = startVideo,args=(self,'Live'),)
+            else:
+                self.videoThread = threading.Thread(target=startVideo,args=(self,),)
+
+            self.videoThread.start()
+
+        
+
+
+
+        
+        
+        
 
 
 
