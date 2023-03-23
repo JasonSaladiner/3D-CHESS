@@ -79,14 +79,15 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = False, t
     time.sleep(2) # adjust as needed
     global start_time
     alert_status = False
-    tello.send_expansion_command("led 255 0 0")
 
     while streamType == 'Live':
-        img = tello.get_frame_read().frame
-        img = cv2.resize(img, (w, h))
+        imgL = tello.get_frame_read().frame
+        imgL = cv2.resize(imgL, (w, h))
         cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, TelloColor, 2)
         if streamShow == True:
-            cv2.imshow("LStream" + t_name, img)
+            winNameL = TelloName + " LStream" + t_name
+            cv2.namedWindow(winNameL)
+            cv2.imshow(winNameL, imgL)
         cv2.waitKey(5)
 
     while streamType == 'FT':
@@ -108,7 +109,8 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = False, t
         if alert_status == True:
             cv2.putText(img, alert, (300, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 255), 2)
         if streamShow == True:
-            cv2.imshow("FTStream" + t_name, imgFT)
+            winNameFT = TelloName + " FTStream" + t_name
+            cv2.imshow(winNameFT, imgFT)
         else:
             print(TelloName, alert)
         cv2.waitKey(5)
