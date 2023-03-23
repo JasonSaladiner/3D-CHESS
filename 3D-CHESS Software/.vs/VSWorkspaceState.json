@@ -4,8 +4,16 @@
     "\\Flight Software",
     "\\Flight Software\\Tello",
     "\\Flight Software\\Tello\\Modules",
+<<<<<<< HEAD
     "\\Flight Software\\Tello\\Modules\\ImageProcessing"
   ],
   "SelectedNode": "\\Flight Software\\Tello\\Modules\\ImageProcessing\\LiveVideo.py",
+=======
+    "\\Flight Software\\Tello\\Modules\\Controls",
+    "\\Flight Software\\Tello\\Modules\\ImageProcessing",
+    "\\Flight Software\\Tello\\Modules\\Location"
+  ],
+  "SelectedNode": "\\Flight Software\\Tello\\Modules\\Controls\\ComputerControl.py",
+>>>>>>> system_architecture
   "PreviewInSolutionExplorer": false
 }

@@ -7,6 +7,13 @@ from djitellopy import Tello as djiTello
 import logging
 import threading
 import numpy as np
+import socket
+from typing import Optional 
+from time import sleep
+import Modules._config_ as cfg
+#from .enforce_types import enforce_types
+
+
 
 
 class TelloFlightSoftware(djiTello):
@@ -15,12 +22,17 @@ class TelloFlightSoftware(djiTello):
     Subclass that inherits all of the djitellopy Tello class (here called djiTello)
     also has internet and thread intializations specific to 3dChess
     Optional Args:
-        'logs','location','map','showmap','emControl' (or 'manControl')
+        'logs','location','map','showmap','emControl' (or 'manControl'),'video','livestream'
     """
     dmToin = 10/2.54
     cmToin = 1/2.54
 
+    #Depreceated. Failed experiment. Will remove 
+    udp_port = {'192.168.1.11':8869,   #A
+                '192.168.1.12':8879,   #B
+                '192.168.1.13':8889}   #C
 
+    
     ###TODO###
     #go_xyz_speed()
     #go_xyz_speed_mid()
@@ -37,8 +49,8 @@ class TelloFlightSoftware(djiTello):
 
     def _newCommand_(self,bodyVector,yaw):
         self.rotationMatrix = self._rotationMatrix_(yaw)
-        self.Nvect = np.matmul(self.rotationMatrix,bodyVector)
-
+        self.Nvect = np.matmul(self.rotationMatrix,bodyVector).reshape((3,1))
+        
         self.commandVector = self.commandVector + self.Nvect
 
 
@@ -158,7 +170,7 @@ class TelloFlightSoftware(djiTello):
         self.t.takeoff()
 
 
-    def _updatePosition_(self,dt = .5,IMU_weight = .05,command_weight=.95):
+    def _updatePosition_(self,dt = .5,IMU_weight = 0,command_weight=1):
         """
         Meant to run as a seperate thread. Starts the IMU thread if necessary and continually takes the weighted average of IMU and Commands
         Updates location and the IMU and Command at time steps equalt to dt
@@ -173,56 +185,18 @@ class TelloFlightSoftware(djiTello):
             self.IMUThread.start()
 
         while True:
-
+            
             self.deltaIMU = self.IMUVector-self.position
             self.deltaCommand = self.commandVector-self.position
 
             self.delta = IMU_weight*self.deltaIMU + command_weight*self.deltaCommand
-
+            self.delta = self.delta.reshape((3,1))
             self.position = self.position + self.delta
             self.commandVector = self.position
             self.IMUVector = self.position
             sleep(dt)
 
-    def threadSetup(self):
-        """
-        Initalizes selected threads
-        allowLocation = True : initializes the IMU location service thread to update cfg.X,Y,Z
-        allowMap = True : starts the live mapping service
-            showMap = True : outputs the map. 
-        """
 
-        if self.haveLocation:
-            #from Modules.Location import IMU
-            #self.locationThread = threading.Thread(target=IMU.init,args=(self.t,),)
-            self.locationThread = threading.Thread(target=self._updatePosition_)
-            self.locationThread.start()
-
-        #Initialize the map and determine if it will be seen
-                    ###THIS IS UNTESTED###
-        if self.haveMap and self.haveLocation:        #map depends on Location
-            from Modules.Location import Mapping
-            self.mapThread = threading.Thread(target=Mapping.mapping,args=(self,self.showMap,),)
-            self.mapThread.start()
-        
-
-        #Emergency Vs Manual Control (One is required)
-        if self.emControl:
-            from Modules.Controls.ManualControl import EmergencyControls as emc
-            self.controlThread = threading.Thread(target=emc,args=(self,),)
-            self.controlThread.start()
-        else:
-            from Modules.Controls.ManualControl import EngageMC as mc
-            self.controlThread = threading.Thread(target=mc,args=(self,),)
-            self.controlThread.start()
-
-    def wifi(self,SSID:str = 'tellonet',password:str = 'selvachess'):
-        """
-        connect the drone to the specific wifi (default is tellonet)
-        """
-        
-        self.t.connect_to_wifi(SSID,password)
-    
 
     def runMission(self,mission,*args,**kwargs):
         """
@@ -235,21 +209,84 @@ class TelloFlightSoftware(djiTello):
             return self.re
 
 
-    def __init__(self,IP:str,**kwargs):
+
+    def _squarePattern_(self):
+        """
+        NOTE: Temp pattern for PDR
+        """
+        sleep(3)
+        self.takeoff()
+      
+        self.move_forward(100)
+        sleep(1)
+        self.rotate_counter_clockwise(90)
+        self.move_forward(100)
+        sleep(1)
+        self.rotate_counter_clockwise(90)
+        self.move_forward(100)
+        sleep(1)
+        self.rotate_counter_clockwise(90)
+        self.move_forward(100)
+        sleep(1)
+        self.rotate_counter_clockwise(90)
+
+        self.land()
+
+    def _linePattern_(self):
+        """
+        NOTE: Temp Pattern For PDR
+        """
+        sleep(3)
+        self.takeoff()
+        self.move_forward(100)
+        sleep(2)
+        self.move_back(100)
+        self.land()
+
+    def setConstraints(self,**kwargs):
+        """
+        Set the artificial constraints of the system
+        Needs functionality
+        Anything not found is assumed false
+        """
+        ####NOTE: Likely going to change after PDR#####
+        for self.k in kwargs:
+            if self.k == "TIR":
+                self.nominal = self._squarePattern_
+            else:
+                self.nominal = self._linePattern_
+
+    def _getTask_(self):
+        ####NOTE: Likely Going to change after PDR ######
+
+        totalTask = 0
+        while True:
+            if len(cfg.task_requests) > totalTask:
+                if cfg.task_requests[-1] == 1:
+                    self.nominal()
+                totalTask+=1
+
+            sleep(1)
+
+
+    def __init__(self,IP,**kwargs):
         import time
         
         """
         initialize the drone and connect to it
-        
+        IP : str
         """
         self.haveLogs = False
         #Location Thread
         self.haveLocation = True
         #Mapping Thread
-        self.haveMap = True
+        self.haveMap = False
         self.showMap = True
         #Manual Control
         self.emControl = True
+        #Live Video
+        self.haveVideo = True
+        self.livestream = True
 
         for self.k in kwargs:
             if self.k == 'logs':
@@ -264,18 +301,18 @@ class TelloFlightSoftware(djiTello):
                 self.emControl = kwargs[self.k]
             elif self.k == 'manControl':
                 self.emControl = not kwargs[self.k]
+            elif self.k =='video':
+                self.haveVideo = kwargs[self.k]
+            elif self.k == 'livestream':
+                self.livestream = kwargs[self.k]
         if not self.haveLogs:
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
 
 
-
-        self.t = super()
-        self.t.__init__(IP)
-        self.t.connect()
-
-        print(self.t.get_battery())
-
         
+        #self.last_rc_control_timestamp = time.time()
+        self.lastRCcommandTime = time.time()        #Duplicate??
+
         #Command input and IMU locations
         self.commandVector = np.array([0,0,0]).reshape((3,1))        #X,Y,Z in cm
         self.IMUVector = np.array([0,0,0]).reshape((3,1))            #X,Y,Z in cm
@@ -284,6 +321,65 @@ class TelloFlightSoftware(djiTello):
         self.position = np.array([0,0,0]).reshape((3,1))             #X,Y,Z in cm
 
         self.lastRCcommand = 0,0,0,0
-        self.lastRCcommandTime = time.time()
+        self.t = super()
+        self.t.__init__(IP)
+        self.connect()
 
 
+        if self.haveLocation:
+            #from Modules.Location import IMU
+            #self.locationThread = threading.Thread(target=IMU.init,args=(self.t,),)
+            self.locationThread = threading.Thread(target=self._updatePosition_)
+            self.locationThread.start()
+
+        #Initialize the map and determine if it will be seen
+        if self.haveMap and self.haveLocation:        #map depends on Location
+            from Modules.Location import Mapping
+            self.mapThread = threading.Thread(target=Mapping.mapping,args=(self,self.showMap,),)
+            self.mapThread.start()
+        
+
+        #Emergency Vs Manual Control (One is required)
+        if self.emControl:
+            from Modules.Controls.ManualControl import EmergencyControls as emc
+            self.controlThread = threading.Thread(target=emc,args=(self,),)
+            self.controlThread.start()
+        else:
+            from Modules.Controls.ManualControl import EngageMC as mc
+            self.controlThread = threading.Thread(target=mc,args=(self,),)
+            #self.controlThread.start()
+
+        if self.haveVideo:
+            from Modules.ImageProcessing.LiveVideo import startVideo
+            if self.livestream:
+                self.videoThread = threading.Thread(target = startVideo,args=(self,'Live'),)
+            else:
+                self.videoThread = threading.Thread(target=startVideo,args=(self,),)
+
+            self.videoThread.start()
+
+        self.updateThread = threading.Thread(target=self._getTask_)
+        self.updateThread.start()
+        
+
+
+
+        
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#https://beenje.github.io/blog/posts/logging-to-a-tkinter-scrolledtext-widget/
+#LOOK into this for logging console outputs
