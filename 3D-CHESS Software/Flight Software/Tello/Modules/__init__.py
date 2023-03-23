@@ -298,14 +298,14 @@ class TelloFlightSoftware(djiTello):
         self.position = np.array([0,0,0]).reshape((3,1))             #X,Y,Z in cm
 
         self.lastRCcommand = 0,0,0,0
-
-        super().__init__(IP)
+        self.t = super()
+        self.t.__init__(IP)
         self.connect()
 
 
         if self.haveLocation:
             #from Modules.Location import IMU
-            self.locationThread = threading.Thread(target=IMU.init,args=(self.t,),)
+            #self.locationThread = threading.Thread(target=IMU.init,args=(self.t,),)
             self.locationThread = threading.Thread(target=self._updatePosition_)
             self.locationThread.start()
 

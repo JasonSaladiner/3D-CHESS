@@ -81,11 +81,11 @@ if __name__ == "__main__":
                "livestream":False
                }
     
-    #droneA = Thread(target=startDrone,args=("a",),kwargs={"logs":True,"emControl":False,"video":False,"first":True})
-    #droneB = Thread(target=startDrone,args=("b",),kwargs=configs)
+    droneA = Thread(target=startDrone,args=("a",),kwargs={"logs":True,"emControl":False,"video":False,"first":True})
+    droneB = Thread(target=startDrone,args=("b",),kwargs=configs)
     
-    ##droneA.start()
-    #droneB.start()
+    droneA.start()
+    droneB.start()
 
-    da = TFS(cfg.telloIP_A,logs=True)
-    db = TFS(cfg.telloIP_B,logs=True)
+    #da = TFS(cfg.telloIP_A,logs=True)
+    #db = TFS(cfg.telloIP_B,logs=True)
