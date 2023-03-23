@@ -107,10 +107,4 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', takePic=False):
         cv2.imshow("FTStream" + t_name, img)
         cv2.waitKey(5)
 
-# Untested w/ threading
-def stopVideo(ConnectedTello):
-    tello = ConnectedTello
-    tello.streamoff()
-    pass
-
 

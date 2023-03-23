@@ -33,5 +33,8 @@ if __name__ == "__main__":
     lv.start()
     sleep(10)
     mc.start()
+    sleep(30)
+    lv.stopVideo(tello_C)
+
 
    
