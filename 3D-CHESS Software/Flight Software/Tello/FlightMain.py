@@ -15,7 +15,7 @@ import multiprocessing as mp
 import Modules._config_ as cfg  #Shared variables 
 
 import Modules.Controls.ManualControl as mc         #Manual Control of the drone
-import Modules.Controls.ComputerControl as cc       #Computer Aided drone control
+#import Modules.Controls.ComputerControl as cc       #Computer Aided drone control
 from Modules.Location import IMU,Mapping            #Location services
 
 from time import sleep
@@ -52,40 +52,53 @@ def simpleSquare(ConnectedTello):
     tello.land()
 
 
-
-def startDrone(TelloLetter:str,**kwargs):
-    """
-    startDrone will connect to and set up the selected drone and then will execute all drone specific functionality. 
-    Intended to be the target of a process
-    """
-    
-    IP = {"a":'192.168.1.11',"b": '192.168.1.12',"c":'192.168.1.13'}
-    tello = TFS(IP[TelloLetter.lower()],**kwargs)
-    #tello.threadSetup()
-    if TelloLetter == 'b':
-        tello.takeoff()
-        tello.rotate_clockwise(30)
-        sleep(1)
-        tello.land()
+def drone(ConnectedTello):
+    ###DO stuff###
+    tello = ConnectedTello
 
 #Entrance
 if __name__ == "__main__":
     
     #configs is representative of the kwargs for TFS. These are default values and if nothing is passed, these will be used
     #Drones may have different requirements so creating beforehand may not be the most effective method. Potentially create the dicrionary in the Process line at kwargs={}
-    configs = {"logs": True,
-               "location": False,
-               "map": False,
-               "emControl":True,
-               "video":False,
-               "livestream":False
+    configs = {"TIR":True,
+               "TIR_Resolution":10
                }
+    #select drones
+    A = True
+    B = True
+    C = False
+    #turn on drones
+    if A:
+        TelloA = TFS(cfg.telloIP_A,logs= True,
+                                   location= False,
+                                   map= False,
+                                   emControl= True,
+                                   video= False,
+                                   livestream= False
+                                   )
+        TA_thread = Thread(target=drone,args=(TelloA,),)
+        TA_thread.start()
+    if B:
+        TelloB = TFS(cfg.telloIP_B,logs= True,
+                                   location= False,
+                                   map= False,
+                                   emControl= True,
+                                   video= False,
+                                   livestream= False
+                                   )
+        TB_thread = Thread(target=drone,args=(TelloB,),)
+        TB_thread.start()
+    if C:
+        TelloC = TFS(cfg.telloIP_C,logs= True,
+                                   location= False,
+                                   map= False,
+                                   emControl= True,
+                                   video= False,
+                                   livestream= False
+                                   )
+        TC_thread = Thread(target=drone,args=(TelloC,),)
+        TC_thread.start()
     
-    droneA = Thread(target=startDrone,args=("a",),kwargs={"logs":True,"emControl":False,"video":False,"first":True})
-    droneB = Thread(target=startDrone,args=("b",),kwargs=configs)
-    
-    droneA.start()
-    droneB.start()
-
-    #da = TFS(cfg.telloIP_A,logs=True)
-    #db = TFS(cfg.telloIP_B,logs=True)
+    input("Ready?")
+    cfg.task_requests.append(self.nominal)

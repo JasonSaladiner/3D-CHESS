@@ -9,7 +9,8 @@ import threading
 import numpy as np
 import socket
 from typing import Optional 
-
+from time import sleep
+import Modules._config_ as cfg
 #from .enforce_types import enforce_types
 
 
@@ -31,6 +32,7 @@ class TelloFlightSoftware(djiTello):
                 '192.168.1.12':8879,   #B
                 '192.168.1.13':8889}   #C
 
+    
     ###TODO###
     #go_xyz_speed()
     #go_xyz_speed_mid()
@@ -223,8 +225,8 @@ class TelloFlightSoftware(djiTello):
 
 
 
-    def _tempPattern_(self):
-        from time import sleep
+    def _squarePattern_(self):
+        
         sleep(3)
         self.takeoff()
         
@@ -245,6 +247,36 @@ class TelloFlightSoftware(djiTello):
         self.rotate_counter_clockwise(90)
 
         self.land()
+
+    def _linePattern_(self):
+        sleep(3)
+        self.takeoff()
+        self.move_forward(100)
+        sleep(2)
+        self.move_back(100)
+        self.land()
+
+    def setConstraints(self,**kwargs):
+        """
+        Set the artificial constraints of the system
+        Needs functionality
+        Anything not found is assumed false
+        """
+
+        for self.k in kwargs:
+            if self.k == "TIR":
+                self.nominal = self._squarePattern_
+            else:
+                self.nominal = self._linePattern_
+
+    def _getTask_(self):
+        totalTask = 0
+        while True:
+            if len(cfg.task_requests) > totalTask:
+                cfg.task_requests[-1]()
+                totalTask+=1
+
+
 
     def __init__(self,IP,**kwargs):
         import time
