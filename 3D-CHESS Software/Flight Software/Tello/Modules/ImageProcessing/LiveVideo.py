@@ -8,7 +8,6 @@ import os
 
 
 # Global variables + parameters
-w, h = 640, 480
 global img, img_base
 global buffer
 start_time = 0
@@ -44,7 +43,7 @@ def findFace(img):
 
 
 # Royal Functions
-def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = False, takePic=False):
+def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = True, takePic=False):
     # Error if NameTello, streamType, or takePic not valid
     TelloNames = ['tello_A', 'tello_B', 'tello_C']
     streamTypes = ['Live', 'FT']
@@ -78,24 +77,25 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = False, t
     tello.set_video_direction(0)
     time.sleep(2) # adjust as needed
     global start_time
-    alert_status = False
+
+    # Idea: premade window with 3 concatenated views (hor/ver, figure it out), get respective tello to
+    # display in respective area?
 
     while streamType == 'Live':
         imgL = tello.get_frame_read().frame
-        imgL = cv2.resize(imgL, (w, h))
-        cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, TelloColor, 2)
+        imgL = cv2.resize(imgL, (640, 480))
+        cv2.putText(imgL, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, TelloColor, 2)
         if streamShow == True:
-            winNameL = TelloName + " LStream" + t_name
-            cv2.namedWindow(winNameL)
-            cv2.imshow(winNameL, imgL)
+            cv2.imshow(TelloName + " LStream" + t_name, imgL)
         cv2.waitKey(5)
 
     while streamType == 'FT':
+        alert_status = False
         time.sleep(2)
-        img_base = tello.get_frame_read().frame
-        imgFT, info = findFace(img_base)
+        imgFT = tello.get_frame_read().frame
+        imgFT, info = findFace(imgFT)
         area_val = info[1]
-        alert = ': OBJECT DETECTED'
+        alert = 'OBJECT DETECTED'
         if area_val != 0 and start_time == 0:
             alert_status = True
             start_time = time.time()
@@ -104,13 +104,12 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = False, t
         elif area_val == 0 and time.time() - start_time > buffer:
             alert_status = False
             start_time = 0
-        img = cv2.resize(img, (w, h))
-        cv2.putText(img, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, TelloColor, 2)
+        imgFT = cv2.resize(imgFT, (640, 480))
         if alert_status == True:
-            cv2.putText(img, alert, (300, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 255), 2)
+            cv2.putText(imgFT, alert, (300, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 255), 2)
         if streamShow == True:
-            winNameFT = TelloName + " FTStream" + t_name
-            cv2.imshow(winNameFT, imgFT)
+            cv2.putText(imgFT, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, TelloColor, 2)
+            cv2.imshow(TelloName + " FTStream" + t_name, imgFT)
         else:
             print(TelloName, alert)
         cv2.waitKey(5)

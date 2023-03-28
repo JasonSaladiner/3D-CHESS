@@ -22,6 +22,11 @@ import os
 
 
 
+  # Connecting drones to my wifi
+#tello_C = Tello()
+#tello_C.connect()
+#tello_C.connect_to_wifi('ConnectoPatronum','73752677')
+
 def drone(ConnectedTello):
     ###DO stuff###
     tello = ConnectedTello
@@ -40,11 +45,11 @@ if __name__ == "__main__":
     #turn on drones
     if A:
         TelloA = TFS(cfg.telloIP_A,logs= False,
-                                   location= True,
+                                   location= False,
                                    map= False,
                                    emControl= True,
-                                   video= False,
-                                   livestream= False
+                                   video= True,
+                                   livestream= True
                                    )
         TelloA.setConstraints(con="hi")
         #TA_thread = Thread(target=drone,args=(TelloA,),)
@@ -62,11 +67,11 @@ if __name__ == "__main__":
         #TB_thread.start()
     if C:
         TelloC = TFS(cfg.telloIP_C,logs= True,
-                                   location= True,
+                                   location= False,
                                    map= False,
-                                   emControl= True,
+                                   emControl= False,
                                    video= True,
-                                   livestream= True
+                                   livestream= False
                                    )
         TelloC.setConstraints(bleh="meh")
         #TC_thread = Thread(target=drone,args=(TelloC,),)
@@ -76,8 +81,10 @@ if __name__ == "__main__":
     #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
 
 
-    input("Ready?")
+  
+
+    #input("Ready?")
     #TelloB.setColor()
-    cfg.task_requests.append(1)
+    #cfg.task_requests.append(1)
     #TelloA.end()
     #TelloB.end()
