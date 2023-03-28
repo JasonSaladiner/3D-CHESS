@@ -48,7 +48,7 @@ if __name__ == "__main__":
                                    location= False,
                                    map= False,
                                    emControl= False,
-                                   video= True,
+                                   video= False,
                                    livestream= True
                                    )
         TelloA.setConstraints(con="hi")
@@ -71,7 +71,7 @@ if __name__ == "__main__":
                                    map= False,
                                    emControl= False,
                                    video= True,
-                                   livestream= True
+                                   livestream= False
                                    )
         TelloC.setConstraints(bleh="meh")
         #TC_thread = Thread(target=drone,args=(TelloC,),)
