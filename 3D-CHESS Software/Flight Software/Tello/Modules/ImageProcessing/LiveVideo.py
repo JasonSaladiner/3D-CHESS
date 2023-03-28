@@ -80,6 +80,8 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = True, ta
 
     # Idea: premade window with 3 concatenated views (hor/ver, figure it out), get respective tello to
     # display in respective area?
+   
+
 
     while streamType == 'Live':
         imgL = tello.get_frame_read().frame
