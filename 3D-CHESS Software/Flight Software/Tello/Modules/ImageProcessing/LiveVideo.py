@@ -55,6 +55,11 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = True, ta
     if takePic not in takePics:
         raise ValueError("Invalid takePic type. Expected one of: %s" % takePics)
 
+    ## Create cv2 window for TelloVision
+    #cv2.namedWindow("TelloVision", cv2.WINDOW_NORMAL)
+    #cv2.moveWindow("TelloVision", 0, 0)
+    #cv2.resizeWindow("TelloVision", 640, 1440)
+
     # Color identities for each Tello
     TelloColors = [(0, 0, 255), (0, 255, 0), (255, 0, 0)]
     TelloColor = None
@@ -74,26 +79,29 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = True, ta
     tello.query_battery()  # testing purposes | DEMO
     tello.streamon()
     time.sleep(2) # adjust as needed
-    tello.set_video_direction(0)
+    #tello.set_video_direction(0) # Errors out randomly
     time.sleep(2) # adjust as needed
     global start_time
 
-    # Idea: premade window with 3 concatenated views (hor/ver, figure it out), get respective tello to
-    # display in respective area?
-   
-
-
     while streamType == 'Live':
         imgL = tello.get_frame_read().frame
-        imgL = cv2.resize(imgL, (640, 480))
-        cv2.putText(imgL, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, TelloColor, 2)
+        imgL = cv2.resize(imgL, (400, 300))
+        
         if streamShow == True:
-            cv2.imshow(TelloName + " LStream" + t_name, imgL)
+            if TelloName == TelloNames[0]:
+                cv2.imshow(TelloName, imgL)
+                cv2.moveWindow(TelloName, 0, 0)
+            elif TelloName == TelloNames[1]:
+                cv2.imshow(TelloName, imgL)
+                cv2.moveWindow(TelloName, 0, 300)
+            elif TelloName == TelloNames[2]:
+                cv2.imshow(TelloName, imgL)
+                cv2.moveWindow(TelloName, 0, 600)
         cv2.waitKey(5)
 
     while streamType == 'FT':
         alert_status = False
-        time.sleep(2)
+        #time.sleep(2) # if errors w/ first frame grab
         imgFT = tello.get_frame_read().frame
         imgFT, info = findFace(imgFT)
         area_val = info[1]

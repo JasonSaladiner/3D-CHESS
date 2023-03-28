@@ -23,9 +23,9 @@ import os
 
 
   # Connecting drones to my wifi
-#tello_C = Tello()
-#tello_C.connect()
-#tello_C.connect_to_wifi('ConnectoPatronum','73752677')
+#tello_A = Tello()
+#tello_A.connect()
+#tello_A.connect_to_wifi('ConnectoPatronum','73752677')
 
 def drone(ConnectedTello):
     ###DO stuff###
@@ -39,15 +39,15 @@ if __name__ == "__main__":
     configs = {"TIR":True
                }
     #select drones
-    A = False
+    A = True
     B = False
     C = True
     #turn on drones
     if A:
-        TelloA = TFS(cfg.telloIP_A,logs= False,
+        TelloA = TFS(cfg.telloIP_A,logs= True,
                                    location= False,
                                    map= False,
-                                   emControl= True,
+                                   emControl= False,
                                    video= True,
                                    livestream= True
                                    )
@@ -60,7 +60,7 @@ if __name__ == "__main__":
                                    map= False,
                                    emControl= False,
                                    video= True,
-                                   livestream= False
+                                   livestream= True
                                    )
         TelloB.setConstraints(**configs)
         #TB_thread = Thread(target=drone,args=(TelloB,),)
@@ -71,7 +71,7 @@ if __name__ == "__main__":
                                    map= False,
                                    emControl= False,
                                    video= True,
-                                   livestream= False
+                                   livestream= True
                                    )
         TelloC.setConstraints(bleh="meh")
         #TC_thread = Thread(target=drone,args=(TelloC,),)
