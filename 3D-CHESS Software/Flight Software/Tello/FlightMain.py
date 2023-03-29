@@ -35,7 +35,7 @@ if __name__ == "__main__":
     configs = {"TIR":True
                }
     #select drones
-    A = True
+    A = False
     B = True
     C = False
     #turn on drones
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         TA_thread = Thread(target=drone,args=(TelloA,),)
         TA_thread.start()
     if B:
-        TelloB = TFS(cfg.telloIP_B,logs= True,
+        TelloB = TFS(cfg.telloIP_B,logs= False,
                                    location= False,
                                    map= False,
                                    emControl= False,
@@ -78,4 +78,4 @@ if __name__ == "__main__":
 
 
     input("Ready?")
-    cfg.task_requests.append(1)
+    cfg.task_requests.append(0)
