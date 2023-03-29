@@ -36,6 +36,12 @@ class TelloFlightSoftware(djiTello):
     telloName = {'192.168.1.11':"tello_A",   #A
                 '192.168.1.12':"tello_B",   #B
                 '192.168.1.13':"tello_C"}   #C
+    
+    vs_port = {'192.168.1.11':11111,   #A
+                '192.168.1.12':11112,   #B
+                '192.168.1.13':11113}   #C
+
+    
     ###TODO###
     #go_xyz_speed()
     #go_xyz_speed_mid()
@@ -372,6 +378,9 @@ class TelloFlightSoftware(djiTello):
             #self.controlThread.start()
 
         if self.haveVideo:
+            self.VS_UDP_PORT = self.vs_port[IP]
+            self.send_command_with_return("port 8890 " + str(self.vs_port[IP]))
+            
             from Modules.ImageProcessing.LiveVideo import startVideo
             if self.livestream:
                 self.videoThread = threading.Thread(target = startVideo,args=(self,self.name,'Live'),)
