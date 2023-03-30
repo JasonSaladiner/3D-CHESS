@@ -11,7 +11,7 @@ import os
 global img, img_base
 global buffer
 start_time = 0
-buffer = 2  # Adjust according to speed of Tello
+buffer = 3  # Adjust according to speed of Tello
 
 
 # Subject Function
@@ -82,6 +82,7 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = True, ta
     #tello.set_video_direction(0) # Errors out randomly
     time.sleep(2) # adjust as needed
     global start_time
+    alert_status = False
 
     while streamType == 'Live':
         imgL = tello.get_frame_read().frame
@@ -100,7 +101,6 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = True, ta
         cv2.waitKey(5)
 
     while streamType == 'FT':
-        alert_status = False
         #time.sleep(2) # if errors w/ first frame grab
         imgFT = tello.get_frame_read().frame
         imgFT, info = findFace(imgFT)
@@ -114,12 +114,19 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = True, ta
         elif area_val == 0 and time.time() - start_time > buffer:
             alert_status = False
             start_time = 0
-        imgFT = cv2.resize(imgFT, (640, 480))
+        imgFT = cv2.resize(imgFT, (400, 300))
         if alert_status == True:
-            cv2.putText(imgFT, alert, (300, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 255), 2)
+            cv2.putText(imgFT, alert, (250, 30), cv2.FONT_HERSHEY_PLAIN, .85, (0, 255, 255), 2)
         if streamShow == True:
-            cv2.putText(imgFT, TelloName, (20, 30), cv2.FONT_HERSHEY_PLAIN, 2, TelloColor, 2)
-            cv2.imshow(TelloName + " FTStream" + t_name, imgFT)
+            if TelloName == TelloNames[0]:
+                cv2.imshow(TelloName, imgFT)
+                cv2.moveWindow(TelloName, 0, 0)
+            elif TelloName == TelloNames[1]:
+                cv2.imshow(TelloName, imgFT)
+                cv2.moveWindow(TelloName, 0, 300)
+            elif TelloName == TelloNames[2]:
+                cv2.imshow(TelloName, imgFT)
+                cv2.moveWindow(TelloName, 0, 600)
         else:
             print(TelloName, alert)
         cv2.waitKey(5)
