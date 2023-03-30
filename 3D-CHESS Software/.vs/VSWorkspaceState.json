@@ -2,8 +2,11 @@
   "ExpandedNodes": [
     "",
     "\\Flight Software",
-    "\\Flight Software\\Orbit Selection"
+    "\\Flight Software\\Tello",
+    "\\Flight Software\\Tello\\Modules",
+    "\\Flight Software\\Tello\\Modules\\Controls",
+    "\\Flight Software\\Tello\\Modules\\Missions"
   ],
-  "SelectedNode": "\\Flight Software\\Orbit Selection\\Constellation Design.py",
+  "SelectedNode": "\\Flight Software\\Tello\\Modules\\Controls\\__init__.py",
   "PreviewInSolutionExplorer": false
 }
