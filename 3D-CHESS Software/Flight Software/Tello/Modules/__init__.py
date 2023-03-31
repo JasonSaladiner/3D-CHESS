@@ -22,15 +22,15 @@ class TelloFlightSoftware(djiTello):
     Subclass that inherits all of the djitellopy Tello class (here called djiTello)
     also has internet and thread intializations specific to 3dChess
     Optional Args:
-        'logs','location','map','showmap','emControl' (or 'manControl'),'video','livestream'
+        'logs','location','map','showmap','emControl' (or 'manControl'),'video','livestream' (or 'tracking'), 'showstream', 'takepic'
     """
     dmToin = 10/2.54
     cmToin = 1/2.54
 
-    #Depreceated. Failed experiment. Will remove 
-    udp_port = {'192.168.1.11':8869,   #A
-                '192.168.1.12':8879,   #B
-                '192.168.1.13':8889}   #C
+    
+    TelloName = {'192.168.1.11':"Tello_A",   #A
+                '192.168.1.12':"Tello_B",   #B
+                '192.168.1.13':"Tello_C"}   #C
 
     vs_port = {'192.168.1.11':11111,   #A
                 '192.168.1.12':11112,   #B
@@ -197,7 +197,7 @@ class TelloFlightSoftware(djiTello):
 
         self.send_rc_control(self.bUV[1]*self.velocity,self.bUv[0]*self.velocity,self.bUV[2]*self.velocity,0)
         while np.linalg.norm(self.bodygotoVector) > 0.1:
-            sleep(0.1/self.velocity)
+            sleep(10/self.velocity) #Check units. velocity is cm/s but can't remeber what position is. I think cm
             self.nextgotoVector = self.gotoVector = self.position-self.waypoint
             
             self.furtherCheck = self.previousgotoVector -self.nextgotoVector
@@ -295,9 +295,12 @@ class TelloFlightSoftware(djiTello):
         self.showMap = True
         #Manual Control
         self.emControl = True
-        #Live Video
+        #Video
         self.haveVideo = True
         self.livestream = True
+        self.showStream = True
+        self.takePic = False
+
 
         for self.k in kwargs:
             if self.k == 'logs':
@@ -316,8 +319,20 @@ class TelloFlightSoftware(djiTello):
                 self.haveVideo = kwargs[self.k]
             elif self.k == 'livestream':
                 self.livestream = kwargs[self.k]
+            elif self.k == 'tracking':
+                self.livestream = not kwargs[self.k]
+            elif self.k == 'showstream':
+                self.showStream = kwargs[self.k]
+            elif self.k == 'takepic':
+                self.takePic = kwargs[self.k]
+
+
         if not self.haveLogs:
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
+
+
+        #TelloName
+        self.name = self.TelloName[IP]
 
 
         self.velocity = 20 #cm/s
@@ -366,10 +381,16 @@ class TelloFlightSoftware(djiTello):
             self.send_command_with_return("port 8890 " + str(self.vs_port[IP]))
             
             from Modules.ImageProcessing.LiveVideo import startVideo
+           
+
             if self.livestream:
-                self.videoThread = threading.Thread(target = startVideo,args=(self,'Live'),)
+                 self.videoThread = threading.Thread(target = startVideo,args=(self,),kwargs=({'streamType':'Live',
+                                                                                               'streamShow':self.showStream,
+                                                                                               'takePic':self.takePic}),)
             else:
-                self.videoThread = threading.Thread(target=startVideo,args=(self,),)
+                self.videoThread = threading.Thread(target = startVideo,args=(self,),kwargs=({'streamType':'FT',
+                                                                                               'streamShow':self.showStream,
+                                                                                               'takePic':self.takePic}),)
 
             self.videoThread.start()
 

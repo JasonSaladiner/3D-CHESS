@@ -30,6 +30,16 @@ def drone(ConnectedTello):
 #Entrance
 if __name__ == "__main__":
     
+    #All drone kwargs are contained within the docustring of TFS. Below is a sample with all the default values (only different values need be passed)
+    #kwargs =   logs= False
+    #           location= True
+    #           map= False
+    #           showmap = True
+    #           emControl= True        (manControl = False)
+    #           video= True
+    #           livestream= True       (tracking = Flase)
+    #           showstream=True
+    #           takepic = False
     
     #Config may be used to add artificial constraints in near future updates but for now its used to distiguse between Different Tellos
     configs = {"TIR":True
@@ -45,7 +55,9 @@ if __name__ == "__main__":
                                    map= False,
                                    emControl= True,
                                    video= True,
-                                   livestream= False
+                                   livestream= False,
+                                   showstream=True,
+                                   takepic = False
                                    )
         TelloA.setConstraints(con="hi")
         TA_thread = Thread(target=drone,args=(TelloA,),)
