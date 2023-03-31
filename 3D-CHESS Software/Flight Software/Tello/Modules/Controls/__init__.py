@@ -4,10 +4,7 @@
 
 __all__ = ["KeyReader","ManualControl"]
 
-
-squareVert = [(0.,0.),(10.,0.),(10.,10.),(0.,10.)]
-triV = [(0,0),(10,5),(0,10)]
-wV = [(0,0),(5,7),(5,10),(0,10)]
+from time import sleep
 def lineIntersection(L1,L2):
     x1 = L1[0][0]
     y1 = L1[0][1]
@@ -193,3 +190,38 @@ def pattern_decendingSpiral(verticies:list,swath:float=1,margin:float=0.1) -> li
     #    a+=1
     #plt.legend()
     #plt.show()
+
+
+
+def _squarePattern_(self):
+    """
+    NOTE: Temp pattern for PDR
+    """
+    sleep(3)
+    self.takeoff()
+      
+    self.move_forward(100)
+    sleep(1)
+    self.rotate_counter_clockwise(90)
+    self.move_forward(100)
+    sleep(1)
+    self.rotate_counter_clockwise(90)
+    self.move_forward(100)
+    sleep(1)
+    self.rotate_counter_clockwise(90)
+    self.move_forward(100)
+    sleep(1)
+    self.rotate_counter_clockwise(90)
+
+    self.land()
+
+def _linePattern_(self):
+    """
+    NOTE: Temp Pattern For PDR
+    """
+    sleep(3)
+    self.takeoff()
+    self.move_forward(100)
+    sleep(2)
+    self.move_back(100)
+    self.land()

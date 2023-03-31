@@ -9,7 +9,7 @@ import threading
 import numpy as np
 import socket
 from typing import Optional 
-from time import sleep
+from time import sleep,time
 import Modules._config_ as cfg
 #from .enforce_types import enforce_types
 
@@ -37,11 +37,14 @@ class TelloFlightSoftware(djiTello):
                 '192.168.1.13':11113}   #C
 
     
-    ###TODO###
+
+
+    ############################################# Movement ###############################################
+        ###Not Adding. Do not Use###
     #go_xyz_speed()
     #go_xyz_speed_mid()
     #go_xyz_speed_yaw_mid()
-    #Dont use these unitl they have been added
+
 
     def _rotationMatrix_(self,yaw):
         import numpy as np
@@ -160,6 +163,51 @@ class TelloFlightSoftware(djiTello):
             #Apply the move distance using super class
             self.t.send_rc_control(self.rcIn[0],self.rcIn[1],self.rcIn[2],self.rcIn[3])
 
+
+    def goto(self, waypoint:list,timeout:float = 60):
+        """
+        goto will fly tello until its internal position is within 0.1m of waypoint. Uses self.velocity for speed.
+        Assumption:
+            - If len(waypoint) == 2: (x,y)
+            - If len(waypoint) == 3: (x,y,z)
+            - Else error
+        input:
+            timeout is maximum time to complete. If moving slow and need to go really far maybe adjust
+        """
+
+
+        if len(waypoint) == 2:
+            self.waypoint = waypoint
+            self.waypoint.append(self.position[2])
+        elif len(waypoint) == 3:
+            self.waypoint = waypoint
+        else:
+            print("Error goto expected positional data with len of 2 or 3. Got something else")
+            return None
+        self.waypoint = np.array(self.waypoint).reshape((3,1))
+        self.gotoVector = self.position-self.waypoint
+
+        self.bodygotoVector = np.matmul(np.linalg.inv(self._rotationMatrix_(self.get_yaw())),self.gotoVector)
+
+        self.bUV = self.bodygotoVector / np.linalg.norm(self.bodygotoVector)        #body unit vector
+
+        self.previousgotoVector = self.gotoVector
+
+        self.gotoTimeOut = time.time()+timeout
+
+        self.send_rc_control(self.bUV[1]*self.velocity,self.bUv[0]*self.velocity,self.bUV[2]*self.velocity,0)
+        while np.linalg.norm(self.bodygotoVector) > 0.1:
+            sleep(0.1/self.velocity)
+            self.nextgotoVector = self.gotoVector = self.position-self.waypoint
+            
+            self.furtherCheck = self.previousgotoVector -self.nextgotoVector
+            if self.furtherCheck[0] < -0.1 or self.furtherCheck[1] < -0.1 or self.furtherCheck[2] < -0.1:
+                #growing further away
+                print("Some distance is getting bigger")
+                ####Could try again. Should I?
+                break
+        self.send_rc_control(0,0,0,0)
+
     def takeoff(self,*takeoffLocation:float):
         """
         Command connected tello to takeoff
@@ -173,6 +221,8 @@ class TelloFlightSoftware(djiTello):
             self.commandVector[i] = takeoffLocation[i]
         self.t.takeoff()
 
+
+    ################################## Update functions  ######################################
 
     def _updatePosition_(self,dt = .5,IMU_weight = 0,command_weight=1):
         """
@@ -200,52 +250,21 @@ class TelloFlightSoftware(djiTello):
             self.IMUVector = self.position
             sleep(dt)
 
+    
+    def _getTask_(self):
+        ####NOTE: Likely Going to change after PDR ######
+
+        totalTask = 0
+        while True:
+            if len(cfg.task_requests) > totalTask:
+                if cfg.task_requests[-1] == 1:
+                    self.nominal()
+                totalTask+=1
+
+            sleep(1)
 
 
-    def runMission(self,mission,*args,**kwargs):
-        """
-        Runs a specific mission function
-        Very basic first set up. Might delete or update 
-        """
-
-        self.re = mission(*args,**kwargs)
-        if self.re != None:
-            return self.re
-
-
-
-    def _squarePattern_(self):
-        """
-        NOTE: Temp pattern for PDR
-        """
-        sleep(3)
-        self.takeoff()
-      
-        self.move_forward(100)
-        sleep(1)
-        self.rotate_counter_clockwise(90)
-        self.move_forward(100)
-        sleep(1)
-        self.rotate_counter_clockwise(90)
-        self.move_forward(100)
-        sleep(1)
-        self.rotate_counter_clockwise(90)
-        self.move_forward(100)
-        sleep(1)
-        self.rotate_counter_clockwise(90)
-
-        self.land()
-
-    def _linePattern_(self):
-        """
-        NOTE: Temp Pattern For PDR
-        """
-        sleep(3)
-        self.takeoff()
-        self.move_forward(100)
-        sleep(2)
-        self.move_back(100)
-        self.land()
+    ########################### Setup #######################################
 
     def setConstraints(self,**kwargs):
         """
@@ -260,22 +279,10 @@ class TelloFlightSoftware(djiTello):
             else:
                 self.nominal = self._linePattern_
 
-    def _getTask_(self):
-        ####NOTE: Likely Going to change after PDR ######
-
-        totalTask = 0
-        while True:
-            if len(cfg.task_requests) > totalTask:
-                if cfg.task_requests[-1] == 1:
-                    self.nominal()
-                totalTask+=1
-
-            sleep(1)
-
 
     def __init__(self,IP,**kwargs):
         import time
-        
+
         """
         initialize the drone and connect to it
         IP : str
@@ -313,6 +320,7 @@ class TelloFlightSoftware(djiTello):
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
 
 
+        self.velocity = 20 #cm/s
         
         #self.last_rc_control_timestamp = time.time()
         self.lastRCcommandTime = time.time()        #Duplicate??
