@@ -43,13 +43,10 @@ def findFace(img):
 
 
 # Royal Functions
-def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = True, takePic=False):
-    # Error if NameTello, streamType, or takePic not valid
-    TelloNames = ['tello_A', 'tello_B', 'tello_C']
+def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False):
+    # Error if streamType or takePic not valid
     streamTypes = ['Live', 'FT']
     takePics = [True, False]
-    if TelloName not in TelloNames:
-        raise ValueError("Invalid TelloName type. Expected one of: %s" % TelloNames)
     if streamType not in streamTypes:
         raise ValueError("Invalid streamType type. Expected one of: %s" % streamTypes)
     if takePic not in takePics:
@@ -63,11 +60,11 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = True, ta
     # Color identities for each Tello
     TelloColors = [(0, 0, 255), (0, 255, 0), (255, 0, 0)]
     TelloColor = None
-    if TelloName == TelloNames[0]:
+    if ConnectedTello.name == "Tello_A":
         TelloColor = TelloColors[0]
-    elif TelloName == TelloNames[1]:
+    elif ConnectedTello.name == "Tello_B":
         TelloColor = TelloColors[1]
-    elif TelloName == TelloNames[2]:
+    elif ConnectedTello.name == Tello_C:
         TelloColor = TelloColors[2]
 
     # Create naming scheme for cv2 windows
@@ -89,15 +86,15 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = True, ta
         imgL = cv2.resize(imgL, (400, 300))
         
         if streamShow == True:
-            if TelloName == TelloNames[0]:
-                cv2.imshow(TelloName, imgL)
-                cv2.moveWindow(TelloName, 0, 0)
-            elif TelloName == TelloNames[1]:
-                cv2.imshow(TelloName, imgL)
-                cv2.moveWindow(TelloName, 0, 300)
-            elif TelloName == TelloNames[2]:
-                cv2.imshow(TelloName, imgL)
-                cv2.moveWindow(TelloName, 0, 600)
+            if ConnectedTello.name == "Tello_A":
+                cv2.imshow("ConnectedTello.name", imgL)
+                cv2.moveWindow("ConnectedTello.name", 0, 0)
+            if ConnectedTello.name == "Tello_B":
+                cv2.imshow("ConnectedTello.name", imgL)
+                cv2.moveWindow("ConnectedTello.name", 0, 300)
+            if ConnectedTello.name == "Tello_C":
+                cv2.imshow("ConnectedTello.name", imgL)
+                cv2.moveWindow("ConnectedTello.name", 0, 600)
         cv2.waitKey(5)
 
     while streamType == 'FT':
@@ -105,7 +102,7 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = True, ta
         imgFT = tello.get_frame_read().frame
         imgFT, info = findFace(imgFT)
         area_val = info[1]
-        alert = 'OBJECT DETECTED'
+        alert = ': OBJECT DETECTED'
         if area_val != 0 and start_time == 0:
             alert_status = True
             start_time = time.time()
@@ -118,17 +115,17 @@ def startVideo(ConnectedTello, TelloName, streamType='FT', streamShow = True, ta
         if alert_status == True:
             cv2.putText(imgFT, alert, (250, 30), cv2.FONT_HERSHEY_PLAIN, .85, (0, 255, 255), 2)
         if streamShow == True:
-            if TelloName == TelloNames[0]:
-                cv2.imshow(TelloName, imgFT)
-                cv2.moveWindow(TelloName, 0, 0)
-            elif TelloName == TelloNames[1]:
-                cv2.imshow(TelloName, imgFT)
-                cv2.moveWindow(TelloName, 0, 300)
-            elif TelloName == TelloNames[2]:
-                cv2.imshow(TelloName, imgFT)
-                cv2.moveWindow(TelloName, 0, 600)
+            if ConnectedTello.name == "Tello_A":
+                cv2.imshow("ConnectedTello.name", imgL)
+                cv2.moveWindow("ConnectedTello.name", 0, 0)
+            if ConnectedTello.name == "Tello_B":
+                cv2.imshow("ConnectedTello.name", imgL)
+                cv2.moveWindow("ConnectedTello.name", 0, 300)
+            if ConnectedTello.name == "Tello_C":
+                cv2.imshow("ConnectedTello.name", imgL)
+                cv2.moveWindow("ConnectedTello.name", 0, 600)
         else:
-            print(TelloName, alert)
+            print(ConnectedTello.name, alert)
         cv2.waitKey(5)
 
 
