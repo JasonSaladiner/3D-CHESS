@@ -11,8 +11,8 @@ import socket
 from typing import Optional 
 from time import sleep,time
 import Modules._config_ as cfg
-#from .enforce_types import enforce_types
-
+from math import cos,sin,pi
+import Modules
 
 
 
@@ -21,8 +21,8 @@ class TelloFlightSoftware(djiTello):
     """
     Subclass that inherits all of the djitellopy Tello class (here called djiTello)
     also has internet and thread intializations specific to 3dChess
-    Optional Args:
-        'logs','location','map','showmap','emControl' (or 'manControl'),'video','livestream' (or 'tracking'), 'showstream', 'takepic'
+    Optional kwargs:
+        'logs','location','map','showmap','emControl' (or 'manControl'),'video','livestream' (or 'tracking'), 'showstream', 'takepic', 'takeoffLocation'
     """
     dmToin = 10/2.54
     cmToin = 1/2.54
@@ -221,8 +221,61 @@ class TelloFlightSoftware(djiTello):
             self.commandVector[i] = takeoffLocation[i]
         self.t.takeoff()
 
+    def addArea(self,location,wayIndex = 0):
+        """
+        Add an area centered around location to waypoints at the index of wayIndex
+        """
+        self.vert = []
+        for self.v in range(4):
+            self.vert.append([location[0]+5*cos(self.v*pi/2+pi/4),location[1]+5*cos(self.v*pi/2+pi/4)])
+        
+        self.newWay = Modules.Controls.pattern_decendingSpiral(self.v)
 
-    ################################## Update functions  ######################################
+        for self.v in range(len(self.newWay)):
+            self.waypoints.insert(wayIndex+self.v,self.newWay[self.v])
+
+
+
+    ################################## Task functions  ######################################
+
+    def _findDistance_(self,location):
+        """
+        Find the shortest distance from any point in the waypoints
+        """
+        self.shortestPoint = 0
+        self.dis = 1e8
+        for self.x in self.waypoints:
+            self.testDis = np.linalg.norm(self.x-location)
+            if self.testDis<self.dis:
+                self.shortestPoint = self.waypoints.index(self.x)
+                self.dis = self.testDis
+        return self.shortestPoint,self.dis
+
+    def _taskBid_(self,Task):
+         """
+         will bid on the given task request
+         """
+         self.bid = 0
+
+         #TODO add requirement check and create utility function
+         #Temporarily just distance
+         self.spi,self.dis = self._findDistance_(Task.taskLocation)
+
+         self.bid = self.dis
+
+
+         Task.offers.append((self,self.bid))
+
+         while len(Task.offers) < Task.maxDrones:
+             sleep(1)
+            
+         self.o = np.array(Task.offers)
+
+         if self.o[np.argmax(self.o[:,0])][1] == self:
+             self.addArea(Task.taskLocation,self.spi)
+
+
+    ################################## Thread functions  ######################################
 
     def _updatePosition_(self,dt = .5,IMU_weight = 0,command_weight=1):
         """
@@ -250,18 +303,37 @@ class TelloFlightSoftware(djiTello):
             self.IMUVector = self.position
             sleep(dt)
 
-    
-    def _getTask_(self):
-        ####NOTE: Likely Going to change after PDR ######
-
-        totalTask = 0
+    def _moveThroughWay_(self):
+        """
+        Target of movement thread. Will cycle through self.waypoints and goto the next one
+        """
+        
         while True:
-            if len(cfg.task_requests) > totalTask:
-                if cfg.task_requests[-1] == 1:
-                    self.nominal()
-                totalTask+=1
+            if len(self.waypoints) > 0:
+                if self.is_flying:
+                    self.goto(self.waypoints.pop(0))
+                else:
+                    self.takeoff(self.takeoffLocation)
+                    self.goto(self.waypoints.pop(0))
+            elif np.linalg.norm(self.position-self.takeoffLocation) > 1:
+                self.goto(self.takeoffLocation)
+            else:
+                if self.is_flying:
+                    self.land
+                else:
+                    sleep(1)
 
-            sleep(1)
+
+    def _telloTasks_(self):
+        """
+        Target of tasks thread. Will check for new task and bid on it
+        """
+        self.tasksAnalysed = 0
+        while True:
+            if self.tasksAnalysed < len(cfg.task_requests):
+                self.tasksAnalysed+=1
+                self._taskBid_(cfg.task_requests[-1])
+                
 
 
     ########################### Setup #######################################
@@ -300,7 +372,13 @@ class TelloFlightSoftware(djiTello):
         self.livestream = True
         self.showStream = True
         self.takePic = False
+        #Automatic control
+        self.auto = False
+        self.waypoints = []
 
+        self.takeoffLocation = np.array([0,0,0]).reshape((3,1))
+        self.swath = 1
+        self.margin = 0.1
 
         for self.k in kwargs:
             if self.k == 'logs':
@@ -325,8 +403,12 @@ class TelloFlightSoftware(djiTello):
                 self.showStream = kwargs[self.k]
             elif self.k == 'takepic':
                 self.takePic = kwargs[self.k]
-
-
+            elif self.k == "takeoffLocation":
+                self.takeoffLocation = np.array(kwargs[self.k]).reshape((3,1))
+            elif self.k == "coverageArea":
+                self.waypoints = Modules.Controls.pattern_decendingSpiral(kwargs[self.k],self.swath,self.margin)
+            elif self.k == "auto":
+                self.auto = kwargs[self.k]
         if not self.haveLogs:
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
 
@@ -337,6 +419,8 @@ class TelloFlightSoftware(djiTello):
 
         self.velocity = 20 #cm/s
         
+        
+
         #self.last_rc_control_timestamp = time.time()
         self.lastRCcommandTime = time.time()        #Duplicate??
 
@@ -393,6 +477,13 @@ class TelloFlightSoftware(djiTello):
                                                                                                'takePic':self.takePic}),)
 
             self.videoThread.start()
+
+        if self.auto:
+            self.taskThread = threading.Thread(target = self._telloTasks_,args=(self,))
+            self.moveThread = threading.Thread(target = self._moveThroughWay_, args=(self,))
+            self.taskThread.start()
+            self.moveThread.start()
+
 
         self.updateThread = threading.Thread(target=self._getTask_)
         self.updateThread.start()

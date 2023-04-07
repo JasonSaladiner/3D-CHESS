@@ -14,3 +14,19 @@ telloIP_C = '192.168.1.13'
 task_requests=[]
 
 
+class Task:
+
+
+
+
+
+    def __init__(self,location):
+
+        #Initialize offer list and number of active drones (how long to wait)
+        self.offers = []
+        self.maxDrones = 2
+
+
+        self.taskLocation = location
+
+        ##TODO: Task Requirements##

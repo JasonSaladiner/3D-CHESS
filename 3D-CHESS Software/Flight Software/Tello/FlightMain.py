@@ -40,7 +40,11 @@ if __name__ == "__main__":
     #           livestream= True       (tracking = Flase)
     #           showstream=True
     #           takepic = False
-    
+    #           takeOffLocation = (0,0,0)
+    #           coverageArea = [] (list of verticies)
+    #           auto = False
+
+
     #Config may be used to add artificial constraints in near future updates but for now its used to distiguse between Different Tellos
     configs = {"TIR":True
                }
