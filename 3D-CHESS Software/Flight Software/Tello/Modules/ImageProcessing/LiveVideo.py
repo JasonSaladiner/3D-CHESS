@@ -6,16 +6,17 @@ import time
 import cv2
 import os
 import cvzone
+import Modules._config_ as cfg  #Shared variables 
 
 
 # Global variables + parameters
-global img, img_base
-global buffer
+global img, img_base, buffer
 start_time = 0
 buffer = 3  # Adjust according to speed of Tello
 currentDir = os.getcwd()
 myClassifier = cvzone.Classifier(currentDir + '\\Flight Software/Tello/Resources/keras_model.h5', currentDir + '\\Flight Software/Tello/Resources/labels.txt')
-
+ind1 = 0
+ind2 = 0
 
 # Royal Function
 def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False):
@@ -46,7 +47,7 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
     tello.query_battery()  # testing purposes | DEMO
     tello.streamon()
     time.sleep(2) # adjust as needed
-    global start_time
+    global start_time, ind1, ind2
     alert_status = False
 
     while streamType == 'Live':
@@ -68,18 +69,22 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
         #time.sleep(2) # if errors w/ first frame grab
         imgFT = tello.get_frame_read().frame
         predictions, index = myClassifier.getPrediction(imgFT, scale=1, pos=(0, 30))
-        alert = 'OBJECT DETECTED'
-        #if index != 0 and start_time == 0:
-        #    alert_status = True
-        #    start_time = time.time()
-        #    if takePic == True:
-        #        cv2.imwrite(f'Flight Software/Tello/Resources/Images/{time.time()}.jpg', imgFT)
-        #elif area_val == 0 and time.time() - start_time > buffer:
-        #    alert_status = False
-        #    start_time = 0
+        if start_time == 0 and index != 0:
+            start_time = time.time()
+        if time.time() - start_time < buffer:
+            if index == 1:
+                ind1 += 1
+            elif index ==2:
+                ind2 += 1
+        elif time.time() - start_time > buffer:
+            start_time = 0
+            if ind1 > ind2:
+                print('HIGH DETECTION: CUP')
+            elif ind2 > ind1:
+                print('HIGH DETECTION: SLEEVE')
+            ind1 = 0
+            ind2 = 0
         imgFT = cv2.resize(imgFT, (400, 300))
-        #if alert_status == True:
-        #    cv2.putText(imgFT, alert, (250, 30), cv2.FONT_HERSHEY_PLAIN, .85, (0, 255, 255), 2)
         if streamShow == True:
             if ConnectedTello.name == "Tello_A":
                 cv2.imshow(ConnectedTello.name, imgFT)
@@ -91,7 +96,8 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
                 cv2.imshow(ConnectedTello.name, imgFT)
                 cv2.moveWindow(ConnectedTello.name, 0, 600)
         else:
-            print(ConnectedTello.name + ': ' + alert)
+
+            print(ConnectedTello.name + ': OBJECT OF INTEREST ADDED TO TASK REQUESTS')
         cv2.waitKey(5)
 
 
