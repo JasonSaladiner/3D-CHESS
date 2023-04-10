@@ -288,13 +288,15 @@ class TelloFlightSoftware(djiTello):
          will bid on the given task request
          """
          self.bid = 0
+         if np.linalg.norm(self.position - Task.taskLocation) < 20:
+             self.bid = 0
+         else:
+             #TODO add requirement check and create utility function
+            #Temporarily just distance
+            self.spi,self.dis = self._findDistance_(Task.taskLocation)
 
-         #TODO add requirement check and create utility function
-         #Temporarily just distance
-         self.spi,self.dis = self._findDistance_(Task.taskLocation)
-
-         self.bid = self.dis
-         print(self.bid)
+            self.bid = 1/self.dis
+            #print(self.bid)
 
          Task.offers.append((self,self.bid))
 
@@ -364,8 +366,9 @@ class TelloFlightSoftware(djiTello):
         self.tasksAnalysed = 0
         while True:
             if self.tasksAnalysed < len(cfg.task_requests):
+                
+                self._taskBid_(cfg.task_requests[self.tasksAnalysed])
                 self.tasksAnalysed+=1
-                self._taskBid_(cfg.task_requests[-1])
                 
 
 

@@ -13,14 +13,13 @@ telloIP_C = '192.168.1.13'
 
 task_requests=[]
 
-
 class Task:
 
 
 
 
 
-    def __init__(self,location):
+    def __init__(self,location,**constraints):
 
         #Initialize offer list and number of active drones (how long to wait)
         self.offers = []
@@ -28,5 +27,6 @@ class Task:
 
         self.loc = location.append(0.)
         self.taskLocation = np.array(self.loc).reshape((3,1))
+
 
         ##TODO: Task Requirements##

@@ -30,8 +30,6 @@ if __name__ == "__main__":
     #All drone kwargs are contained within the docustring of TFS. Below is a sample with all the default values (only different values need be passed)
     #kwargs =   logs= False
     #           location= True
-    #           map= False
-    #           showmap = True
     #           emControl= True        (manControl = False)
     #           video= True
     #           livestream= True       (tracking = Flase)
@@ -92,6 +90,7 @@ if __name__ == "__main__":
         from Modules.Location.Mapping import init
         mapThread = Thread(target=init,args=(Tellos,))
         mapThread.start()
+    
     ###Known ISSUE###
     #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
     #t = Tello()
