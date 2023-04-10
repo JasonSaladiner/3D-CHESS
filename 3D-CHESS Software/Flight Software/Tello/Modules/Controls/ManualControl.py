@@ -125,12 +125,55 @@ def EngageMC(ConnectedTello):
         ConnectedTello.send_rc_control(vals[0],vals[1],vals[2],vals[3])
         sleep(dt)
 
-def EmergencyControls(ConnectedTello):
+def EmergencyControls(Tellos):
     kr.init()
+    import os
     while True:
         if kr.getKey('ESCAPE'):
-            ConnectedTello.land()
+            for t in Tellos:
+                t.land()
+            cfg.emerg = True
+             #os._exit()
         elif kr.getKey('DELETE'):
-            ConnectedTello.emergency()
+            for t in Tellos:
+                t.emergency()
+            cfg.emerg = True    
+            #os._exit()
+        elif kr.getKey('1'):
+            try:
+                Tellos[0].land()
+                cfg.emerg = True
+            except:
+                pass
+        elif kr.getKey('2'):
+            try:
+                Tellos[1].land()
+                cfg.emerg = True
+            except:
+                pass
+        elif kr.getKey('3'):
+            try:
+                Tellos[2].land()
+                cfg.emerg = True
+            except:
+                pass
+        elif kr.getKey('9'):
+            try:
+                Tellos[0].emergency()
+                cfg.emerg = True
+            except:
+                pass
+        elif kr.getKey('8'):
+            try:
+                Tellos[1].emergency()
+                cfg.emerg = True
+            except:
+                pass
+        elif kr.getKey('7'):
+            try:
+                Tellos[2].emergency()
+                cfg.emerg = True
+            except:
+                pass
         else:
             pass
