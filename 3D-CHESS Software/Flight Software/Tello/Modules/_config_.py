@@ -3,7 +3,7 @@ importable list of variables/functions
 """
 from contextlib import contextmanager
 import sys,os
-
+import numpy as np
 
 #Tello IP addresses
 telloIP_A = '192.168.1.11'
@@ -24,9 +24,9 @@ class Task:
 
         #Initialize offer list and number of active drones (how long to wait)
         self.offers = []
-        self.maxDrones = 2
+        self.maxDrones = 1
 
 
-        self.taskLocation = location
+        self.taskLocation = np.array(location).reshape((3,1))
 
         ##TODO: Task Requirements##

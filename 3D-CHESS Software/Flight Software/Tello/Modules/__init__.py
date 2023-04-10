@@ -31,7 +31,9 @@ class TelloFlightSoftware(djiTello):
     TelloName = {'192.168.1.11':"Tello_A",   #A
                 '192.168.1.12':"Tello_B",   #B
                 '192.168.1.13':"Tello_C"}   #C
-
+    TelloColor = {'192.168.1.11':(0,0,200),   #A
+                '192.168.1.12':(255,0,0),   #B
+                '192.168.1.13':(0,255,0)}   #C
     vs_port = {'192.168.1.11':11111,   #A
                 '192.168.1.12':11112,   #B
                 '192.168.1.13':11113}   #C
@@ -46,16 +48,20 @@ class TelloFlightSoftware(djiTello):
     #go_xyz_speed_yaw_mid()
 
 
-    def _rotationMatrix_(self,yaw):
+    def _rotationMatrix_(self):
         import numpy as np
         from math import sin,cos,radians
-        self.yawrad = radians(yaw)
+        try:
+            self.yaw = self.t.get_yaw()
+        except:
+            self.yaw = 0
+        self.yawrad = radians(self.yaw)
         return np.array([cos(self.yawrad),-sin(self.yawrad),0,
                          sin(self.yawrad),cos(self.yawrad),0,
                          0,0,1]).reshape((3,3))
 
-    def _newCommand_(self,bodyVector,yaw):
-        self.rotationMatrix = self._rotationMatrix_(yaw)
+    def _newCommand_(self,bodyVector):
+        self.rotationMatrix = self._rotationMatrix_()
         self.Nvect = np.matmul(self.rotationMatrix,bodyVector).reshape((3,1))
         
         self.commandVector = self.commandVector + self.Nvect
@@ -70,14 +76,17 @@ class TelloFlightSoftware(djiTello):
         self.x = floor(self.x)
         
         #get orientation
-        self.yaw = self.t.get_yaw()
+        #self.yaw = self.t.get_yaw()
         self.bodyVector = np.array([self.x,0,0])
 
         #Apply to the commandVector
-        self._newCommand_(self.bodyVector,self.yaw)
+        self._newCommand_(self.bodyVector)
         
         #Apply the move distance using super class
-        self.t.move_forward(self.x)
+        try:
+            self.t.move_forward(self.x)
+        except AttributeError:
+            pass
 
     def move_back(self,travelDistance:float,unit:str = 'cm'):
         #Get travelDistance in proper form/unit
@@ -88,15 +97,18 @@ class TelloFlightSoftware(djiTello):
         self.x = floor(self.x)
         
         #get orientation
-        self.yaw = self.t.get_yaw()
+        #self.yaw = self.t.get_yaw()
         self.bodyVector = np.array([-self.x,0,0])
 
         #Apply to the commandVector
-        self._newCommand_(self.bodyVector,self.yaw)
+        self._newCommand_(self.bodyVector)
         
 
         #Apply the move distance using super class
-        self.t.move_back(self.x)
+        try:
+            self.t.move_back(self.x)
+        except:
+            pass
 
     def move_left(self,travelDistance:float,unit:str = 'cm'):
         #Get travelDistance in proper form/unit
@@ -107,15 +119,17 @@ class TelloFlightSoftware(djiTello):
         self.x = floor(self.x)
         
         #get orientation
-        self.yaw = self.t.get_yaw()
+        #self.yaw = self.t.get_yaw()
         self.bodyVector = np.array([0,-self.x,0])
 
         #Apply to the commandVector
-        self._newCommand_(self.bodyVector,self.yaw)
+        self._newCommand_(self.bodyVector)
         
         #Apply the move distance using super class
-        self.t.move_left(self.x)
-
+        try:
+            self.t.move_left(self.x)
+        except AttributeError:
+            pass
     def move_right(self,travelDistance:float,unit:str = 'cm'):
         #Get travelDistance in proper form/unit
         self.x = travelDistance
@@ -125,14 +139,17 @@ class TelloFlightSoftware(djiTello):
         self.x = floor(self.x)
         
         #get orientation
-        self.yaw = self.t.get_yaw()
+        #self.yaw = self.t.get_yaw()
         self.bodyVector = np.array([0,self.x,0])
 
         #Apply to the commandVector
-        self._newCommand_(self.bodyVector,self.yaw)
+        self._newCommand_(self.bodyVector)
         
         #Apply the move distance using super class
-        self.t.move_right(self.x)
+        try:
+            self.t.move_right(self.x)
+        except AttributeError:
+            pass
 
     def send_rc_control(self,rightVelcoity:float=0,forVelocity:float=0,downVelocity:float=0,yawVelocity:float=0,unit:str='cm'):
         #Get travelDistance in proper form/unit
@@ -147,22 +164,24 @@ class TelloFlightSoftware(djiTello):
         import time
         self.curTime = time.time()
 
-        if not abs(self.curTime-self.lastRCcommandTime) < 1e-8:
+        if  abs(self.curTime-self.lastRCcommandTime) > 1e-8:
             #Get change in time
             self.dt = self.curTime-self.lastRCcommandTime
 
             self.bV = np.array([self.lastRCcommand[1]*self.dt,self.lastRCcommand[0]*self.dt,self.lastRCcommand[2]*self.dt]).reshape((3,1))
-            self.yaw = self.t.get_yaw()
+            #self.yaw = self.t.get_yaw()
             #Apply the last RC command over the change in time
-            self._newCommand_(self.bV,self.yaw)
+            self._newCommand_(self.bV)
             
             #reset last RC command
             self.lastRCcommand = self.rcIn
             self.lastRCcommandTime = self.curTime
 
             #Apply the move distance using super class
-            self.t.send_rc_control(self.rcIn[0],self.rcIn[1],self.rcIn[2],self.rcIn[3])
-
+            try:
+                self.t.send_rc_control(self.rcIn[0],self.rcIn[1],self.rcIn[2],self.rcIn[3])
+            except AttributeError:
+                pass
 
     def goto(self, waypoint:list,timeout:float = 60):
         """
@@ -178,35 +197,46 @@ class TelloFlightSoftware(djiTello):
 
         if len(waypoint) == 2:
             self.waypoint = waypoint
-            self.waypoint.append(self.position[2])
+            self.waypoint.append(self.position[2][0])
         elif len(waypoint) == 3:
             self.waypoint = waypoint
         else:
             print("Error goto expected positional data with len of 2 or 3. Got something else")
             return None
         self.waypoint = np.array(self.waypoint).reshape((3,1))
-        self.gotoVector = self.position-self.waypoint
+        self.gotoVector =self.waypoint- self.position
+        self.gotoTimeOut = time()+timeout
+        #print("Going to",self.waypoint)
 
-        self.bodygotoVector = np.matmul(np.linalg.inv(self._rotationMatrix_(self.get_yaw())),self.gotoVector)
+        self.c_count = 0
+        while np.linalg.norm(self.gotoVector) > 10 and time() < self.gotoTimeOut:
 
-        self.bUV = self.bodygotoVector / np.linalg.norm(self.bodygotoVector)        #body unit vector
+            self.bodygotoVector = np.matmul(np.linalg.inv(self._rotationMatrix_()),self.gotoVector).reshape((3,1))
 
-        self.previousgotoVector = self.gotoVector
-
-        self.gotoTimeOut = time.time()+timeout
-
-        self.send_rc_control(self.bUV[1]*self.velocity,self.bUv[0]*self.velocity,self.bUV[2]*self.velocity,0)
-        while np.linalg.norm(self.bodygotoVector) > 0.1:
-            sleep(10/self.velocity) #Check units. velocity is cm/s but can't remeber what position is. I think cm
-            self.nextgotoVector = self.gotoVector = self.position-self.waypoint
+            for u in range(3):
+                if abs(self.bodygotoVector[u][0]) <10:
+                    self.bodygotoVector[u][0] = 0
             
-            self.furtherCheck = self.previousgotoVector -self.nextgotoVector
-            if self.furtherCheck[0] < -0.1 or self.furtherCheck[1] < -0.1 or self.furtherCheck[2] < -0.1:
-                #growing further away
-                print("Some distance is getting bigger")
-                ####Could try again. Should I?
-                break
+            self.previousgotoVector = self.gotoVector
+            if np.linalg.norm(self.bodygotoVector) <10:
+                self.c_count += 1
+
+                if self.c_count >10:
+                    self.gotoVector = np.array([0,0,0]).reshape((3,1))
+                continue
+
+            self.c_count = 0
+            self.bUV = self.bodygotoVector / np.linalg.norm(self.bodygotoVector)        #body unit vector
+            
+            self.send_rc_control(self.bUV[1][0]*self.velocity,self.bUV[0][0]*self.velocity,self.bUV[2][0]*self.velocity,0)
+            
+
+            sleep(0.5)   
+            self.gotoVector = self.waypoint-self.position
         self.send_rc_control(0,0,0,0)
+        #print("Finished Waypoint")
+
+
 
     def takeoff(self,*takeoffLocation:float):
         """
@@ -215,25 +245,27 @@ class TelloFlightSoftware(djiTello):
         *takeoff location: X,Y,Z float of the takeoff location
         """
         
-        for i in range(len(takeoffLocation)):
-            self.position[i] = takeoffLocation[i]
-            self.IMUVector[i]= takeoffLocation[i]
-            self.commandVector[i] = takeoffLocation[i]
-        self.t.takeoff()
-
+        #for i in range(len(takeoffLocation)):
+        #    self.position[i] = takeoffLocation[i]
+        #    self.IMUVector[i]= takeoffLocation[i]
+        #    self.commandVector[i] = takeoffLocation[i]
+        try:
+            self.t.takeoff()
+        except:
+            pass
     def addArea(self,location,wayIndex = 0):
         """
         Add an area centered around location to waypoints at the index of wayIndex
         """
         self.vert = []
         for self.v in range(4):
-            self.vert.append([location[0]+5*cos(self.v*pi/2+pi/4),location[1]+5*cos(self.v*pi/2+pi/4)])
-        
-        self.newWay = Modules.Controls.pattern_decendingSpiral(self.v)
-
+            self.vert.append([location[0][0]+100*cos(self.v*pi/2+pi/4),location[1][0]+100*sin(self.v*pi/2+pi/4)])
+        print(self.vert)
+        self.newWay = Modules.Controls.pattern_decendingSpiral(self.vert,self.swath,self.margin)
+        self.newWay.append(self.waypoints[wayIndex-1])
         for self.v in range(len(self.newWay)):
             self.waypoints.insert(wayIndex+self.v,self.newWay[self.v])
-
+        print(self.waypoints)
 
 
     ################################## Task functions  ######################################
@@ -262,7 +294,7 @@ class TelloFlightSoftware(djiTello):
          self.spi,self.dis = self._findDistance_(Task.taskLocation)
 
          self.bid = self.dis
-
+         print(self.bid)
 
          Task.offers.append((self,self.bid))
 
@@ -270,8 +302,8 @@ class TelloFlightSoftware(djiTello):
              sleep(1)
             
          self.o = np.array(Task.offers)
-
-         if self.o[np.argmax(self.o[:,0])][1] == self:
+         
+         if self.o[np.argmax(self.o[:,0])][0] == self:
              self.addArea(Task.taskLocation,self.spi)
 
 
@@ -315,13 +347,13 @@ class TelloFlightSoftware(djiTello):
                 else:
                     self.takeoff(self.takeoffLocation)
                     self.goto(self.waypoints.pop(0))
-            elif np.linalg.norm(self.position-self.takeoffLocation) > 1:
-                self.goto(self.takeoffLocation)
-            else:
-                if self.is_flying:
-                    self.land
-                else:
-                    sleep(1)
+            #elif np.linalg.norm(self.position-self.takeoffLocation) > 1:
+            #    self.goto(self.takeoffLocation)
+            #else:
+            #    if self.is_flying:
+            #        self.land
+                #else:
+            sleep(1)
 
 
     def _telloTasks_(self):
@@ -338,18 +370,18 @@ class TelloFlightSoftware(djiTello):
 
     ########################### Setup #######################################
 
-    def setConstraints(self,**kwargs):
+    #def setConstraints(self,**kwargs):
         """
         Set the artificial constraints of the system
         Needs functionality
         Anything not found is assumed false
         """
         ####NOTE: Likely going to change after PDR#####
-        for self.k in kwargs:
-            if self.k == "TIR":
-                self.nominal = self._squarePattern_
-            else:
-                self.nominal = self._linePattern_
+    #    for self.k in kwargs:
+    #        if self.k == "TIR":
+    #            self.nominal = self._squarePattern_
+    #        else:
+    #            self.nominal = self._linePattern_
 
 
     def __init__(self,IP,**kwargs):
@@ -376,9 +408,11 @@ class TelloFlightSoftware(djiTello):
         self.auto = False
         self.waypoints = []
 
+        self.sim = False
+
         self.takeoffLocation = np.array([0,0,0]).reshape((3,1))
-        self.swath = 1
-        self.margin = 0.1
+        self.swath = 50
+        self.margin = 5
 
         for self.k in kwargs:
             if self.k == 'logs':
@@ -409,13 +443,16 @@ class TelloFlightSoftware(djiTello):
                 self.waypoints = Modules.Controls.pattern_decendingSpiral(kwargs[self.k],self.swath,self.margin)
             elif self.k == "auto":
                 self.auto = kwargs[self.k]
+            elif self.k == "sim":
+                self.sim = kwargs[self.k]
+
         if not self.haveLogs:
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
 
 
         #TelloName
         self.name = self.TelloName[IP]
-
+        self.color = self.TelloColor[IP]
 
         self.velocity = 20 #cm/s
         
@@ -432,9 +469,13 @@ class TelloFlightSoftware(djiTello):
         self.position = np.array([0,0,0]).reshape((3,1))             #X,Y,Z in cm
 
         self.lastRCcommand = 0,0,0,0
-        self.t = super()
-        self.t.__init__(IP)
-        self.connect()
+
+        
+        if not self.sim:
+            self.t = super()
+            self.t.__init__(IP)
+            self.connect()
+            self.is_flying = True
 
 
         if self.haveLocation:
@@ -443,11 +484,7 @@ class TelloFlightSoftware(djiTello):
             self.locationThread = threading.Thread(target=self._updatePosition_)
             self.locationThread.start()
 
-        #Initialize the map and determine if it will be seen
-        if self.haveMap and self.haveLocation:        #map depends on Location
-            from Modules.Location import Mapping
-            self.mapThread = threading.Thread(target=Mapping.mapping,args=(self,self.showMap,),)
-            self.mapThread.start()
+       
         
 
         #Emergency Vs Manual Control (One is required)
@@ -479,14 +516,14 @@ class TelloFlightSoftware(djiTello):
             self.videoThread.start()
 
         if self.auto:
-            self.taskThread = threading.Thread(target = self._telloTasks_,args=(self,))
-            self.moveThread = threading.Thread(target = self._moveThroughWay_, args=(self,))
+            self.taskThread = threading.Thread(target = self._telloTasks_)
+            self.moveThread = threading.Thread(target = self._moveThroughWay_)
             self.taskThread.start()
             self.moveThread.start()
 
 
-        self.updateThread = threading.Thread(target=self._getTask_)
-        self.updateThread.start()
+        #self.updateThread = threading.Thread(target=self._getTask_)
+        #self.updateThread.start()
         
 
 

@@ -23,9 +23,6 @@ import os
 
 
 
-def drone(ConnectedTello):
-    ###DO stuff###
-    tello = ConnectedTello
 
 #Entrance
 if __name__ == "__main__":
@@ -46,8 +43,10 @@ if __name__ == "__main__":
 
 
     #Config may be used to add artificial constraints in near future updates but for now its used to distiguse between Different Tellos
-    configs = {"TIR":True
-               }
+
+
+    #List of Tellos for mapping
+    Tellos = []
     #select drones
     A = False
     B = True
@@ -57,41 +56,44 @@ if __name__ == "__main__":
         TelloA = TFS(cfg.telloIP_A,logs= True,
                                    location= False,
                                    map= False,
-                                   emControl= True,
+                                   emControl= False,
                                    video= True,
                                    livestream= False,
                                    showstream=True,
                                    takepic = False
                                    )
-        TelloA.setConstraints(con="hi")
-        TA_thread = Thread(target=drone,args=(TelloA,),)
-        TA_thread.start()
+        Tellos.append(TelloA)
     if B:
         TelloB = TFS(cfg.telloIP_B,logs= False,
-                                   location= False,
-                                   map= False,
+                                   location= True,
+                                   map= True,
                                    emControl= False,
-                                   video= True,
-                                   livestream= False
+                                   video= False,
+                                   livestream= False,
+                                   sim = True,
+                                   coverageArea = [[0,0],[200,0],[200,200],[0,200]],
+                                   auto = True
                                    )
-        TelloB.setConstraints(**configs)
-        TB_thread = Thread(target=drone,args=(TelloB,),)
-        TB_thread.start()
+        Tellos.append(TelloB)
     if C:
         TelloC = TFS(cfg.telloIP_C,logs= True,
                                    location= False,
                                    map= False,
-                                   emControl= True,
+                                   emControl= False,
                                    video= False,
                                    livestream= False
                                    )
-        TelloC.setConstraints(bleh="meh")
-        TC_thread = Thread(target=drone,args=(TelloC,),)
-        TC_thread.start()
+        Tellos.append(TelloC)
     
+
+    mapping = True
+    if mapping:
+        from Modules.Location.Mapping import init
+        mapThread = Thread(target=init,args=(Tellos,))
+        mapThread.start()
     ###Known ISSUE###
     #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
 
 
     input("Ready?")
-    cfg.task_requests.append(0)
+    cfg.task_requests.append(cfg.Task([-200,-200,0]))

@@ -155,7 +155,7 @@ def pattern_decendingSpiral(verticies:list,swath:float=1,margin:float=0.1) -> li
         #if occurs add
         if intersect != None:
             swathlines.append((slStart,intersect))
-            waypoints.append((intersect[0]-effS*sUV[0],intersect[1]-effS*sUV[1]))
+            waypoints.append([intersect[0]-effS*sUV[0],intersect[1]-effS*sUV[1]])
         else:
             #this will maybe become fall away curves?
             break
