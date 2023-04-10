@@ -54,13 +54,14 @@ if __name__ == "__main__":
     #turn on drones
     if A:
         TelloA = TFS(cfg.telloIP_A,logs= True,
-                                   location= False,
-                                   map= False,
+                                   location= True,
+                                   map= True,
                                    emControl= False,
-                                   video= True,
+                                   video= False,
                                    livestream= False,
-                                   showstream=True,
-                                   takepic = False
+                                   sim = True,
+                                   coverageArea = [[0,0],[-100,0],[-100,-100],[0,-100]],
+                                   auto = True
                                    )
         Tellos.append(TelloA)
     if B:
@@ -70,8 +71,8 @@ if __name__ == "__main__":
                                    emControl= False,
                                    video= False,
                                    livestream= False,
-                                   sim = True,
-                                   coverageArea = [[0,0],[200,0],[200,200],[0,200]],
+                                   sim = False,
+                                   coverageArea = [[0,0],[150,0],[150,150],[0,150]],
                                    auto = True
                                    )
         Tellos.append(TelloB)
@@ -93,7 +94,9 @@ if __name__ == "__main__":
         mapThread.start()
     ###Known ISSUE###
     #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
-
+    #t = Tello()
+    #t.connect()
+    #t.connect_to_wifi("tellonet","selvachess")
 
     input("Ready?")
-    cfg.task_requests.append(cfg.Task([-200,-200,0]))
+    cfg.task_requests.append(cfg.Task([250,250]))

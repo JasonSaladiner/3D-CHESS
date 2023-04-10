@@ -31,7 +31,7 @@ class TelloFlightSoftware(djiTello):
     TelloName = {'192.168.1.11':"Tello_A",   #A
                 '192.168.1.12':"Tello_B",   #B
                 '192.168.1.13':"Tello_C"}   #C
-    TelloColor = {'192.168.1.11':(0,0,200),   #A
+    TelloColor = {'192.168.1.11':(255,255,0),   #A
                 '192.168.1.12':(255,0,0),   #B
                 '192.168.1.13':(0,255,0)}   #C
     vs_port = {'192.168.1.11':11111,   #A
@@ -259,7 +259,7 @@ class TelloFlightSoftware(djiTello):
         """
         self.vert = []
         for self.v in range(4):
-            self.vert.append([location[0][0]+100*cos(self.v*pi/2+pi/4),location[1][0]+100*sin(self.v*pi/2+pi/4)])
+            self.vert.append([location[0][0]+50*cos(self.v*pi/2+pi/4),location[1][0]+50*sin(self.v*pi/2+pi/4)])
         print(self.vert)
         self.newWay = Modules.Controls.pattern_decendingSpiral(self.vert,self.swath,self.margin)
         self.newWay.append(self.waypoints[wayIndex-1])
@@ -342,16 +342,17 @@ class TelloFlightSoftware(djiTello):
         
         while True:
             if len(self.waypoints) > 0:
+                #print(self.is_flying)
                 if self.is_flying:
                     self.goto(self.waypoints.pop(0))
                 else:
                     self.takeoff(self.takeoffLocation)
-                    self.goto(self.waypoints.pop(0))
+                    #self.goto(self.waypoints.pop(0))
             #elif np.linalg.norm(self.position-self.takeoffLocation) > 1:
             #    self.goto(self.takeoffLocation)
-            #else:
-            #    if self.is_flying:
-            #        self.land
+            else:
+                if self.is_flying:
+                    self.land
                 #else:
             sleep(1)
 
@@ -411,7 +412,7 @@ class TelloFlightSoftware(djiTello):
         self.sim = False
 
         self.takeoffLocation = np.array([0,0,0]).reshape((3,1))
-        self.swath = 50
+        self.swath = 40
         self.margin = 5
 
         for self.k in kwargs:
@@ -475,6 +476,7 @@ class TelloFlightSoftware(djiTello):
             self.t = super()
             self.t.__init__(IP)
             self.connect()
+        else:
             self.is_flying = True
 
 

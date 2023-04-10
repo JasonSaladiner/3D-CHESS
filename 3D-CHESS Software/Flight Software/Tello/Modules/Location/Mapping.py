@@ -49,14 +49,14 @@ def _tmapping_(ConnectedTello):
 def _trmapping_(TR):
     from math import floor
 
-    color = (150,45,29)
+    color = (0,0,255)
     global points
     addedTR =0
     while _allowMapping_:
         
         if len(TR) > addedTR:
             print("TR")
-            points.append((TR[len(TR)-1].taskLocation[0],TR[len(TR)-1].taskLocation[1],color[0],color[1],color[2]))
+            points.append((TR[addedTR].taskLocation[0][0],TR[addedTR].taskLocation[1][0],color[0],color[1],color[2]))
             addedTR += 1
         sleep(1)
 
@@ -69,10 +69,11 @@ def init(Tellos):
         tMap.start()
     from Modules._config_ import task_requests as tr
     trMap = Thread(target=_trmapping_,args=(tr,))
-    #trMap.start()
+    trMap.start()
     global points
-    img = np.zeros((1000, 1000, 3), np.uint8)
+    
     while _allowMapping_:
+        img = np.zeros((1000, 1000, 3), np.uint8)
         _drawPoints_(img,points)
         #print(points)
         cv2.imshow("Output",img)
