@@ -121,7 +121,7 @@ def EngageMC(ConnectedTello):
 
 
     dt = .2
-    while not cfg.emOps:
+    while True:
 
         vals = keybinds[choice]()
         
