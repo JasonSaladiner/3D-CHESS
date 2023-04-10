@@ -47,8 +47,8 @@ if __name__ == "__main__":
     Tellos = []
     #select drones
     A = False
-    B = True
-    C = False
+    B = False
+    C = True
     #turn on drones
     if A:
         TelloA = TFS(cfg.telloIP_A,logs= True,
@@ -79,13 +79,13 @@ if __name__ == "__main__":
                                    location= False,
                                    map= False,
                                    emControl= False,
-                                   video= False,
+                                   video= True,
                                    livestream= False
                                    )
         Tellos.append(TelloC)
     
 
-    mapping = True
+    mapping = False
     if mapping:
         from Modules.Location.Mapping import init
         mapThread = Thread(target=init,args=(Tellos,))
@@ -98,4 +98,4 @@ if __name__ == "__main__":
     #t.connect_to_wifi("tellonet","selvachess")
 
     input("Ready?")
-    cfg.task_requests.append(cfg.Task([250,250]))
+    #cfg.task_requests.append(cfg.Task([250,250]))

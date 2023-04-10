@@ -64,7 +64,7 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
         TelloColor = TelloColors[0]
     elif ConnectedTello.name == "Tello_B":
         TelloColor = TelloColors[1]
-    elif ConnectedTello.name == Tello_C:
+    elif ConnectedTello.name == "Tello_C":
         TelloColor = TelloColors[2]
 
     # Create naming scheme for cv2 windows
@@ -102,7 +102,7 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
         imgFT = tello.get_frame_read().frame
         imgFT, info = findFace(imgFT)
         area_val = info[1]
-        alert = ': OBJECT DETECTED'
+        alert = 'OBJECT DETECTED'
         if area_val != 0 and start_time == 0:
             alert_status = True
             start_time = time.time()
@@ -116,16 +116,16 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
             cv2.putText(imgFT, alert, (250, 30), cv2.FONT_HERSHEY_PLAIN, .85, (0, 255, 255), 2)
         if streamShow == True:
             if ConnectedTello.name == "Tello_A":
-                cv2.imshow("ConnectedTello.name", imgL)
+                cv2.imshow("ConnectedTello.name", imgFT)
                 cv2.moveWindow("ConnectedTello.name", 0, 0)
             if ConnectedTello.name == "Tello_B":
-                cv2.imshow("ConnectedTello.name", imgL)
+                cv2.imshow("ConnectedTello.name", imgFT)
                 cv2.moveWindow("ConnectedTello.name", 0, 300)
             if ConnectedTello.name == "Tello_C":
-                cv2.imshow("ConnectedTello.name", imgL)
+                cv2.imshow("ConnectedTello.name", imgFT)
                 cv2.moveWindow("ConnectedTello.name", 0, 600)
         else:
-            print(ConnectedTello.name, alert)
+            print(ConnectedTello.name + ': ' + alert)
         cv2.waitKey(5)
 
 
