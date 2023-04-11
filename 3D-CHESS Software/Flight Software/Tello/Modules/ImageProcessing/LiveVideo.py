@@ -17,7 +17,7 @@ currentDir = os.getcwd()
 myClassifier = Classifier(currentDir + '\\Flight Software/Tello/Resources/keras_model.h5', currentDir + '\\Flight Software/Tello/Resources/labels.txt')
 ind1 = 0
 ind2 = 0
-indmin = 3
+indmin = 2
 
 # Royal Function
 def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False):
@@ -79,13 +79,13 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
                 ind2 += 1
         elif time.time() - start_time > buffer:
             start_time = 0
-            if ind1 > ind2 and ind1 > indmin:
+            if ind1 > ind2 and ind1 >= indmin:
                 print('HIGH DETECTION: CUP')
                 location = ConnectedTello.position
                 x = location[0][0]
                 y = location[1][0]
                 cfg.task_requests.append(cfg.Task([x, y]))
-            elif ind2 > ind1 and ind2 > indmin:
+            elif ind2 > ind1 and ind2 >= indmin:
                 print('HIGH DETECTION: SLEEVE')
                 x = location[0][0]
                 y = location[1][0]
