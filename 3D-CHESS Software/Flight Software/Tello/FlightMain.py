@@ -65,15 +65,15 @@ if __name__ == "__main__":
                                    )
         Tellos.append(TelloA)
     if B:
-        TelloB = TFS(cfg.telloIP_B,logs= False,
+        TelloB = TFS(cfg.telloIP_B,logs= True,
                                    location= True,
                                    map= True,
                                    emControl= False,
-                                   video= False,
+                                   video= True,
                                    livestream= False,
                                    sim = False,
                                    coverageArea = [[0,0],[150,0],[150,150],[0,150]],
-                                   auto = True
+                                   auto = False
                                    )
         Tellos.append(TelloB)
     if C:
@@ -87,12 +87,12 @@ if __name__ == "__main__":
         Tellos.append(TelloC)
     
 
-    mapping = True
+    mapping = False
     if mapping:
         from Modules.Location.Mapping import init
         mapThread = Thread(target=init,args=(Tellos,))
         mapThread.start()
-    emergencyControls = True
+    emergencyControls = False
     if emergencyControls:
         ##Escape and Delete are land and emergency for all
         ##1,2,3 are land for the first, second, and third drone respectively (A,B,C when all three exist)
@@ -106,8 +106,9 @@ if __name__ == "__main__":
     #t = Tello()
     #t.connect()
     #t.connect_to_wifi("tellonet","selvachess")
+    #input("Ready?")
+    #cfg.task_requests.append(cfg.Task([250,250]))
     while True:
         if cfg.emerg:
             os._exit(0)
-    #input("Ready?")
-    #cfg.task_requests.append(cfg.Task([250,250]))
+    

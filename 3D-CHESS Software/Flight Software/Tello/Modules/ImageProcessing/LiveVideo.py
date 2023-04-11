@@ -7,16 +7,19 @@ import cv2
 import os
 import cvzone
 import Modules._config_ as cfg  #Shared variables 
-
+from cvzone.ClassificationModule import Classifier
 
 # Global variables + parameters
 global img, img_base, buffer
 start_time = 0
 buffer = 3  # Adjust according to speed of Tello
 currentDir = os.getcwd()
-myClassifier = cvzone.Classifier(currentDir + '\\Flight Software/Tello/Resources/keras_model.h5', currentDir + '\\Flight Software/Tello/Resources/labels.txt')
+myClassifier = Classifier(currentDir + '\\Flight Software/Tello/Resources/keras_model.h5', currentDir + '\\Flight Software/Tello/Resources/labels.txt')
+fpsReader = cvzone.FPS()
 ind1 = 0
 ind2 = 0
+indmin=2
+
 
 # Royal Function
 def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False):
@@ -44,7 +47,7 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
 
     # Initialize function + video connection
     tello = ConnectedTello
-    tello.query_battery()  # testing purposes | DEMO
+    #tello.query_battery()  # testing purposes | DEMO
     tello.streamon()
     time.sleep(2) # adjust as needed
     global start_time, ind1, ind2
@@ -69,6 +72,7 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
         #time.sleep(2) # if errors w/ first frame grab
         imgFT = tello.get_frame_read().frame
         predictions, index = myClassifier.getPrediction(imgFT, scale=1, pos=(0, 30))
+
         if start_time == 0 and index != 0:
             start_time = time.time()
         if time.time() - start_time < buffer:
@@ -78,9 +82,10 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
                 ind2 += 1
         elif time.time() - start_time > buffer:
             start_time = 0
-            if ind1 > ind2:
+            if ind1 > ind2 and ind1 > indmin:
                 print('HIGH DETECTION: CUP')
-            elif ind2 > ind1:
+                cfg.task_requests.append(cfg.Task([ConnectedTello.position[0][0],ConnectedTello.position[1][0]]))
+            elif ind2 > ind1 and ind2 > indmin:
                 print('HIGH DETECTION: SLEEVE')
             ind1 = 0
             ind2 = 0

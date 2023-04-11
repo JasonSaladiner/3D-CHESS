@@ -27,7 +27,7 @@ class Task:
         self.offers = []
         self.maxDrones = 1
 
-        self.loc = location.append(0.)
+        self.loc = np.append(location,[0.])
         self.taskLocation = np.array(self.loc).reshape((3,1))
 
 

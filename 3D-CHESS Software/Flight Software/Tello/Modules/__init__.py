@@ -482,7 +482,7 @@ class TelloFlightSoftware(djiTello):
         else:
             self.is_flying = True
 
-
+        djiTello.LOGGER.setLevel(logging.WARNING)
         if self.haveLocation:
             #from Modules.Location import IMU
             #self.locationThread = threading.Thread(target=IMU.init,args=(self.t,),)
@@ -519,7 +519,9 @@ class TelloFlightSoftware(djiTello):
                                                                                                'takePic':self.takePic}),)
 
             self.videoThread.start()
-
+        print("i sleep")
+        sleep(10)
+        print("wake")
         if self.auto:
             self.taskThread = threading.Thread(target = self._telloTasks_)
             self.moveThread = threading.Thread(target = self._moveThroughWay_)
