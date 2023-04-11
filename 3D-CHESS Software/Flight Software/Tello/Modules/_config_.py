@@ -5,6 +5,8 @@ from contextlib import contextmanager
 import sys,os
 import numpy as np
 
+emerg = False
+
 #Tello IP addresses
 telloIP_A = '192.168.1.11'
 telloIP_B = '192.168.1.12'     

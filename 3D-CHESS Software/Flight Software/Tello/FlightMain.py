@@ -30,6 +30,8 @@ if __name__ == "__main__":
     #All drone kwargs are contained within the docustring of TFS. Below is a sample with all the default values (only different values need be passed)
     #kwargs =   logs= False
     #           location= True
+    #           map= False
+    #           showmap = True
     #           emControl= True        (manControl = False)
     #           video= True
     #           livestream= True       (tracking = Flase)
@@ -90,12 +92,22 @@ if __name__ == "__main__":
         from Modules.Location.Mapping import init
         mapThread = Thread(target=init,args=(Tellos,))
         mapThread.start()
-    
+    emergencyControls = True
+    if emergencyControls:
+        ##Escape and Delete are land and emergency for all
+        ##1,2,3 are land for the first, second, and third drone respectively (A,B,C when all three exist)
+        ##9,8,7 are emergency for the first, second, and third drone respectively (A,B,C when all three exist)
+        from Modules.Controls.ManualControl import EmergencyControls
+        emCThread = Thread(target=EmergencyControls,args=(Tellos,))
+        emCThread.start()
+
     ###Known ISSUE###
     #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
     #t = Tello()
     #t.connect()
     #t.connect_to_wifi("tellonet","selvachess")
-
-    input("Ready?")
-    cfg.task_requests.append(cfg.Task([250,250]))
+    while True:
+        if cfg.emerg:
+            os._exit(0)
+    #input("Ready?")
+    #cfg.task_requests.append(cfg.Task([250,250]))
