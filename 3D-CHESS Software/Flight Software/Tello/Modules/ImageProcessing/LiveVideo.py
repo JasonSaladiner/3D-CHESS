@@ -5,8 +5,8 @@ from djitellopy import Tello
 import time
 import cv2
 import os
-import cvzone
-import Modules._config_ as cfg  #Shared variables 
+from cvzone.ClassificationModule import Classifier
+import Modules._config_ as cfg  
 
 
 # Global variables + parameters
@@ -14,9 +14,10 @@ global img, img_base, buffer
 start_time = 0
 buffer = 3  # Adjust according to speed of Tello
 currentDir = os.getcwd()
-myClassifier = cvzone.Classifier(currentDir + '\\Flight Software/Tello/Resources/keras_model.h5', currentDir + '\\Flight Software/Tello/Resources/labels.txt')
+myClassifier = Classifier(currentDir + '\\Flight Software/Tello/Resources/keras_model.h5', currentDir + '\\Flight Software/Tello/Resources/labels.txt')
 ind1 = 0
 ind2 = 0
+indmin = 3
 
 # Royal Function
 def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False):
@@ -78,10 +79,17 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
                 ind2 += 1
         elif time.time() - start_time > buffer:
             start_time = 0
-            if ind1 > ind2:
+            if ind1 > ind2 and ind1 > indmin:
                 print('HIGH DETECTION: CUP')
-            elif ind2 > ind1:
+                location = ConnectedTello.position
+                x = location[0][0]
+                y = location[1][0]
+                cfg.task_requests.append(cfg.Task([x, y]))
+            elif ind2 > ind1 and ind2 > indmin:
                 print('HIGH DETECTION: SLEEVE')
+                x = location[0][0]
+                y = location[1][0]
+                cfg.task_requests.append(cfg.Task([x, y]))
             ind1 = 0
             ind2 = 0
         imgFT = cv2.resize(imgFT, (400, 300))
