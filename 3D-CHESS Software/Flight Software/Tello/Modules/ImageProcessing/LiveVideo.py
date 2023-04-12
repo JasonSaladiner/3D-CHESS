@@ -46,8 +46,6 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
     #tello.query_battery()  # testing purposes | DEMO
     tello.streamon()
     time.sleep(2) # adjust as needed
-    tello.set_video_bitrate(Tello.BITRATE_5MBPS)
-    tello.set_video_fps(Tello.FPS_30)
     global start_time, ind1, ind2
 
     while streamType == 'Live':
