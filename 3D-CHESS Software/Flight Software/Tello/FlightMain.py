@@ -49,8 +49,8 @@ if __name__ == "__main__":
     Tellos = []
     #select drones
     A = False
-    B = True
-    C = False
+    B = False
+    C = True
     #turn on drones
     if A:
         TelloA = TFS(cfg.telloIP_A,logs= True,
@@ -80,9 +80,9 @@ if __name__ == "__main__":
         TelloC = TFS(cfg.telloIP_C,logs= True,
                                    location= False,
                                    map= False,
-                                   emControl= False,
-                                   video= False,
-                                   livestream= False
+                                   emControl= True,
+                                   video= True,
+                                   livestream= True
                                    )
         Tellos.append(TelloC)
     

@@ -6,7 +6,7 @@ import time
 import cv2
 import os
 import cvzone
-import Modules._config_ as cfg  #Shared variables 
+import Modules._config_ as cfg  # Shared variables 
 from cvzone.ClassificationModule import Classifier
 
 # Global variables + parameters
@@ -18,7 +18,7 @@ myClassifier = Classifier(currentDir + '\\Flight Software/Tello/Resources/keras_
 fpsReader = cvzone.FPS()
 ind1 = 0
 ind2 = 0
-indmin=2
+indmin = 2
 
 
 # Royal Function
@@ -41,17 +41,14 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
     elif ConnectedTello.name == "Tello_C":
         TelloColor = TelloColors[2]
 
-    # Create naming scheme for cv2 windows
-    t = time.localtime()
-    t_name = time.strftime("%H%M%S", t)
-
     # Initialize function + video connection
     tello = ConnectedTello
     #tello.query_battery()  # testing purposes | DEMO
     tello.streamon()
     time.sleep(2) # adjust as needed
+    tello.set_video_bitrate(Tello.BITRATE_5MBPS)
+    tello.set_video_fps(Tello.FPS_30)
     global start_time, ind1, ind2
-    alert_status = False
 
     while streamType == 'Live':
         imgL = tello.get_frame_read().frame
@@ -72,7 +69,7 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
         #time.sleep(2) # if errors w/ first frame grab
         imgFT = tello.get_frame_read().frame
         predictions, index = myClassifier.getPrediction(imgFT, scale=1, pos=(0, 30))
-
+        fps, img = fpsReader.update(imgFT, pos=(0, 75), scale=3)
         if start_time == 0 and index != 0:
             start_time = time.time()
         if time.time() - start_time < buffer:
