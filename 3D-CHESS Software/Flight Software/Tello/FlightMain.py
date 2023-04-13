@@ -82,7 +82,7 @@ if __name__ == "__main__":
                                    map= False,
                                    emControl= True,
                                    video= True,
-                                   livestream= True
+                                   livestream= False,
                                    )
         Tellos.append(TelloC)
     
