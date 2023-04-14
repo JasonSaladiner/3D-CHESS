@@ -49,7 +49,6 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
         cv2.waitKey(5)
 
     while streamType == 'FT':
-        #time.sleep(2) # if errors w/ first frame grab
         imgFT = tello.get_frame_read().frame
         predictions, index = myClassifier.getPrediction(imgFT, scale=1, pos=(0, 30))
         if start_time == 0 and index != 0:
