@@ -5,7 +5,6 @@ from djitellopy import Tello
 import time
 import cv2
 import os
-from cvzone.ClassificationModule import Classifier
 import Modules._config_ as cfg  
 
 
@@ -14,10 +13,7 @@ global img, img_base, buffer
 start_time = 0
 buffer = 3  # Adjust according to speed of Tello
 currentDir = os.getcwd()
-myClassifier = Classifier(currentDir + '\\Flight Software/Tello/Resources/keras_model.h5', currentDir + '\\Flight Software/Tello/Resources/labels.txt')
-ind1 = 0
-ind2 = 0
-indmin = 2
+
 
 # Royal Function
 def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False):
@@ -28,20 +24,6 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
         raise ValueError("Invalid streamType type. Expected one of: %s" % streamTypes)
     if takePic not in takePics:
         raise ValueError("Invalid takePic type. Expected one of: %s" % takePics)
-
-    # Color identities for each Tello
-    TelloColors = [(0, 0, 255), (0, 255, 0), (255, 0, 0)]
-    TelloColor = None
-    if ConnectedTello.name == "Tello_A":
-        TelloColor = TelloColors[0]
-    elif ConnectedTello.name == "Tello_B":
-        TelloColor = TelloColors[1]
-    elif ConnectedTello.name == "Tello_C":
-        TelloColor = TelloColors[2]
-
-    # Create naming scheme for cv2 windows
-    t = time.localtime()
-    t_name = time.strftime("%H%M%S", t)
 
     # Initialize function + video connection
     tello = ConnectedTello
