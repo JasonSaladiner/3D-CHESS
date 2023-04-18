@@ -92,7 +92,7 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
         #time.sleep(2) # if errors w/ first frame grab
         imgFT = tello.get_frame_read().frame
         imgFT, info = findFace(imgFT)
-        area_val = info[1]
+        area_val = info[1]  # area of face detected
         alert = 'OBJECT DETECTED'
         if area_val != 0 and start_time == 0:
             alert_status = True
