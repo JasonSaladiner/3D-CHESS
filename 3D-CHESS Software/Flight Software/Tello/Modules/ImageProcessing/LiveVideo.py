@@ -5,7 +5,7 @@ from djitellopy import Tello
 import time
 import cv2
 import os
-
+import Modules._config_ as cfg
 
 # Global variables + parameters
 global img, img_base
@@ -52,11 +52,6 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
     if takePic not in takePics:
         raise ValueError("Invalid takePic type. Expected one of: %s" % takePics)
 
-    ## Create cv2 window for TelloVision
-    #cv2.namedWindow("TelloVision", cv2.WINDOW_NORMAL)
-    #cv2.moveWindow("TelloVision", 0, 0)
-    #cv2.resizeWindow("TelloVision", 640, 1440)
-
     # Color identities for each Tello
     TelloColors = [(0, 0, 255), (0, 255, 0), (255, 0, 0)]
     TelloColor = None
@@ -66,10 +61,6 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
         TelloColor = TelloColors[1]
     elif ConnectedTello.name == "Tello_C":
         TelloColor = TelloColors[2]
-
-    # Create naming scheme for cv2 windows
-    t = time.localtime()
-    t_name = time.strftime("%H%M%S", t)
 
     # Initialize function + video connection
     tello = ConnectedTello
@@ -105,6 +96,10 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
         alert = 'OBJECT DETECTED'
         if area_val != 0 and start_time == 0:
             alert_status = True
+            location = ConnectedTello.position
+            x = location[0][0]
+            y = location[1][0]
+            cfg.task_requests.append(cfg.Task([x, y]))
             start_time = time.time()
             if takePic == True:
                 cv2.imwrite(f'Flight Software/Tello/Resources/Images/{time.time()}.jpg', imgFT)
