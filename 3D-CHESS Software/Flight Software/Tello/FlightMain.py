@@ -21,6 +21,9 @@ from Modules.Location import IMU,Mapping            #Location services
 from time import sleep
 import os
 
+#t = Tello()
+#t.connect()
+#t.connect_to_wifi("ConnectoPatronum","73752677")
 
 
 
@@ -93,9 +96,7 @@ if __name__ == "__main__":
     
     ###Known ISSUE###
     #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
-    #t = Tello()
-    #t.connect()
-    #t.connect_to_wifi("tellonet","selvachess")
+  
 
     input("Ready?")
     #cfg.task_requests.append(cfg.Task([250,250]))

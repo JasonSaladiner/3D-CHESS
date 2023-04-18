@@ -21,7 +21,7 @@ def findFace(img):
     dir = current_dir + '/Flight Software/Tello/Resources/facedetect.xml'
     faceCascade = cv2.CascadeClassifier(dir)
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = faceCascade.detectMultiScale(imgGray, 1.2, 10)  # adjust minNeighbors as needed for clarity, OG = 8
+    faces = faceCascade.detectMultiScale(imgGray, 1.2, 8)  # adjust minNeighbors as needed for clarity, default = 8
 
     myFaceListC = []  # cx, cy = center of face detected
     myFaceListArea = []
