@@ -18,7 +18,7 @@ _showMap_ = True
 
 #cfg.xPos
 #cfg.yPos
-points = [(0,0,255,0,0),(0,0,255,0,0)]
+points = [(0,0,0,0,0),(0,0,0,0,0)]
 
 def _drawPoints_(img, points):
     #print(points)
@@ -40,7 +40,7 @@ def _tmapping_(ConnectedTello):
     color = ConnectedTello.color
     global points
     while True:
-        pos = ConnectedTello.position-start
+        pos = ConnectedTello.position
         if points[-1][0] != pos[0] or points[-1][1] != pos[1]:
              points.append((floor(pos[0]), floor(pos[1]),color[0],color[1],color[2]))
         sleep(1)

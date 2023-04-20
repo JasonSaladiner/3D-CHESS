@@ -26,19 +26,30 @@ import os
 
 #Entrance
 if __name__ == "__main__":
+    emergencyControls = True
+    mapping = True
     
+    connect = False
+    sim = True
+
+    if sim:
+        emergencyControls = False
+
+    if connect:
+        t = Tello()
+        t.connect()
+        t.connect_to_wifi("tellonet","selvachess")
+
+
     #All drone kwargs are contained within the docustring of TFS. Below is a sample with all the default values (only different values need be passed)
     #kwargs =   logs= False
     #           location= True
-    #           map= False
-    #           showmap = True
-    #           emControl= True        (manControl = False)
     #           video= True
     #           livestream= True       (tracking = Flase)
     #           showstream=True
     #           takepic = False
-    #           takeOffLocation = (0,0,0)
-    #           coverageArea = [] (list of verticies)
+    #           takeOffLocation = [0,0,0]
+    #           coverageArea = [(x1,y1),(x2,y2)...] (list of verticies)
     #           auto = False
 
 
@@ -48,51 +59,51 @@ if __name__ == "__main__":
     #List of Tellos for mapping
     Tellos = []
     #select drones
-    A = False
-    B = False
+    A = True
+    B = True
     C = True
     #turn on drones
     if A:
         TelloA = TFS(cfg.telloIP_A,logs= True,
                                    location= True,
-                                   map= True,
-                                   emControl= False,
                                    video= False,
-                                   livestream= False,
-                                   sim = True,
-                                   coverageArea = [[0,0],[-100,0],[-100,-100],[0,-100]],
+                                   tracking= True,
+                                   sim = sim,
+                                   takeoffLocation = [50,50,0],
+                                   coverageArea = [[50,50],[250,50],[250,300],[50,300]],
                                    auto = True
                                    )
         Tellos.append(TelloA)
     if B:
         TelloB = TFS(cfg.telloIP_B,logs= True,
                                    location= True,
-                                   map= True,
-                                   emControl= False,
-                                   video= True,
-                                   livestream= False,
-                                   sim = False,
-                                   coverageArea = [[0,0],[150,0],[150,150],[0,150]],
-                                   auto = False
+                                   video= False,
+                                   tracking= True,
+                                   sim = sim,
+                                   takeoffLocation = [-50,-50,0],
+                                   coverageArea = [[-50,-50],[-250,-50],[-250,-300],[-50,-300]],
+                                   auto = True
                                    )
         Tellos.append(TelloB)
     if C:
         TelloC = TFS(cfg.telloIP_C,logs= True,
-                                   location= False,
-                                   map= False,
-                                   emControl= True,
-                                   video= True,
-                                   livestream= False,
+                                   location= True,
+                                   video= False,
+                                   tracking= True,
+                                   sim = sim,
+                                   takeoffLocation = [-50,25,0],
+                                   coverageArea = [[-50,25],[50,-75],[100,-25],[0,75]],
+                                   auto = True
                                    )
         Tellos.append(TelloC)
     
 
-    mapping = False
+    
     if mapping:
         from Modules.Location.Mapping import init
         mapThread = Thread(target=init,args=(Tellos,))
         mapThread.start()
-    emergencyControls = False
+    
     if emergencyControls:
         ##Escape and Delete are land and emergency for all
         ##1,2,3 are land for the first, second, and third drone respectively (A,B,C when all three exist)
@@ -103,9 +114,7 @@ if __name__ == "__main__":
 
     ###Known ISSUE###
     #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
-    #t = Tello()
-    #t.connect()
-    #t.connect_to_wifi("tellonet","selvachess")
+    
     #input("Ready?")
     #cfg.task_requests.append(cfg.Task([250,250]))
     while True:

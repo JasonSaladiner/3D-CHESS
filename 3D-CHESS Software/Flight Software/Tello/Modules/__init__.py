@@ -238,17 +238,10 @@ class TelloFlightSoftware(djiTello):
 
 
 
-    def takeoff(self,*takeoffLocation:float):
+    def takeoff(self):
         """
         Command connected tello to takeoff
-        Optional:
-        *takeoff location: X,Y,Z float of the takeoff location
         """
-        
-        #for i in range(len(takeoffLocation)):
-        #    self.position[i] = takeoffLocation[i]
-        #    self.IMUVector[i]= takeoffLocation[i]
-        #    self.commandVector[i] = takeoffLocation[i]
         try:
             self.t.takeoff()
         except:
@@ -332,6 +325,7 @@ class TelloFlightSoftware(djiTello):
 
             self.delta = IMU_weight*self.deltaIMU + command_weight*self.deltaCommand
             self.delta = self.delta.reshape((3,1))
+
             self.position = self.position + self.delta
             self.commandVector = self.position
             self.IMUVector = self.position
@@ -398,11 +392,6 @@ class TelloFlightSoftware(djiTello):
         self.haveLogs = False
         #Location Thread
         self.haveLocation = True
-        #Mapping Thread
-        self.haveMap = False
-        self.showMap = True
-        #Manual Control
-        self.emControl = True
         #Video
         self.haveVideo = True
         self.livestream = True
@@ -423,14 +412,6 @@ class TelloFlightSoftware(djiTello):
                 self.haveLogs = kwargs[self.k]
             elif self.k == 'location':
                 self.haveLocation = kwargs[self.k]
-            elif self.k == 'map':
-                self.haveMap = kwargs[self.k]
-            elif self.k == 'showmap':
-                self.showMap = kwargs[self.k]
-            elif self.k == 'emControl':
-                self.emControl = kwargs[self.k]
-            elif self.k == 'manControl':
-                self.emControl = not kwargs[self.k]
             elif self.k =='video':
                 self.haveVideo = kwargs[self.k]
             elif self.k == 'livestream':
@@ -466,11 +447,13 @@ class TelloFlightSoftware(djiTello):
         self.lastRCcommandTime = time.time()        #Duplicate??
 
         #Command input and IMU locations
-        self.commandVector = np.array([0,0,0]).reshape((3,1))        #X,Y,Z in cm
-        self.IMUVector = np.array([0,0,0]).reshape((3,1))            #X,Y,Z in cm
-
+        #self.commandVector = np.array([0,0,0]).reshape((3,1))        #X,Y,Z in cm
+        #self.IMUVector = np.array([0,0,0]).reshape((3,1))            #X,Y,Z in cm
+        self.commandVector = self.takeoffLocation
+        self.IMUVector = self.takeoffLocation
         #Actual Position
-        self.position = np.array([0,0,0]).reshape((3,1))             #X,Y,Z in cm
+
+        self.position = self.takeoffLocation             #X,Y,Z in cm
 
         self.lastRCcommand = 0,0,0,0
 
@@ -482,27 +465,13 @@ class TelloFlightSoftware(djiTello):
         else:
             self.is_flying = True
 
-        djiTello.LOGGER.setLevel(logging.WARNING)
         if self.haveLocation:
             #from Modules.Location import IMU
             #self.locationThread = threading.Thread(target=IMU.init,args=(self.t,),)
             self.locationThread = threading.Thread(target=self._updatePosition_)
             self.locationThread.start()
 
-       
-        
-
-        #Emergency Vs Manual Control (One is required)
-        if self.emControl:
-            from Modules.Controls.ManualControl import EmergencyControls as emc
-            self.controlThread = threading.Thread(target=emc,args=(self,),)
-            self.controlThread.start()
-        else:
-            from Modules.Controls.ManualControl import EngageMC as mc
-            self.controlThread = threading.Thread(target=mc,args=(self,),)
-            #self.controlThread.start()
-
-        if self.haveVideo:
+        if self.haveVideo and not self.sim:
             self.VS_UDP_PORT = self.vs_port[IP]
             self.send_command_with_return("port 8890 " + str(self.vs_port[IP]))
             
@@ -519,19 +488,13 @@ class TelloFlightSoftware(djiTello):
                                                                                                'takePic':self.takePic}),)
 
             self.videoThread.start()
-        print("i sleep")
-        sleep(10)
-        print("wake")
+
         if self.auto:
             self.taskThread = threading.Thread(target = self._telloTasks_)
             self.moveThread = threading.Thread(target = self._moveThroughWay_)
             self.taskThread.start()
             self.moveThread.start()
 
-
-        #self.updateThread = threading.Thread(target=self._getTask_)
-        #self.updateThread.start()
-        
 
 
 
