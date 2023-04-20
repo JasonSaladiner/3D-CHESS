@@ -61,7 +61,7 @@ if __name__ == "__main__":
     #select drones
     A = True
     B = True
-    C = True
+    C = False
     #turn on drones
     if A:
         TelloA = TFS(cfg.telloIP_A,logs= True,
@@ -97,7 +97,7 @@ if __name__ == "__main__":
                                    )
         Tellos.append(TelloC)
     
-
+    cfg.Task.ActiveDrones = len(Tellos)
     
     if mapping:
         from Modules.Location.Mapping import init
@@ -115,9 +115,14 @@ if __name__ == "__main__":
     ###Known ISSUE###
     #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
     
-    #input("Ready?")
+    input("Ready?")
     #cfg.task_requests.append(cfg.Task([250,250]))
-    while True:
+    cfg.task_requests.append(cfg.Task([TelloA.position[0][0],TelloA.position[1][0]]))
+
+    input("Ready?")
+    cfg.task_requests.append(cfg.Task([TelloA.position[0][0],TelloA.position[1][0]],5))
+
+    while not sim:
         if cfg.emerg:
             os._exit(0)
     

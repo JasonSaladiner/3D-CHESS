@@ -246,22 +246,53 @@ class TelloFlightSoftware(djiTello):
             self.t.takeoff()
         except:
             pass
-    def addArea(self,location,wayIndex = 0):
+    def addArea(self,location,wayIndex = 0,scienceFunction = lambda x : 1):
         """
         Add an area centered around location to waypoints at the index of wayIndex
         """
         self.vert = []
         for self.v in range(4):
             self.vert.append([location[0][0]+50*cos(self.v*pi/2+pi/4),location[1][0]+50*sin(self.v*pi/2+pi/4)])
-        print(self.vert)
+        #print(self.vert)
         self.newWay = Modules.Controls.pattern_decendingSpiral(self.vert,self.swath,self.margin)
-        self.newWay.append(self.waypoints[wayIndex-1])
+        #self.newWay.append(self.waypoints[wayIndex])
         for self.v in range(len(self.newWay)):
-            self.waypoints.insert(wayIndex+self.v,self.newWay[self.v])
-        print(self.waypoints)
+            
+            self.waypoints.insert(wayIndex+self.v,[self.newWay[self.v][0],self.newWay[self.v][1],scienceFunction])
+        #print(self.waypoints)
 
 
     ################################## Task functions  ######################################
+
+    def _Utility_(self,task):
+        """
+        Generate Utility 
+        """
+        self.maxUtil = 0
+        self.maxLocation = 0
+        for i in range(len(self.waypoints)):
+            self.distanceTravel = 0.
+            self.util = 0
+            #All before possible waypoint
+            for j in range(0,i):
+                self.dvect = np.array(self.waypoints[j+1][0:2])-np.array(self.waypoints[j][0:2])
+                #print(j,self.dvect)
+                self.distanceTravel += np.linalg.norm(self.dvect)
+                self.util+=self.waypoints[j][2](self.distanceTravel)
+            #possible new waypoint
+            self.distanceTravel += np.linalg.norm(np.array(self.waypoints[i][0:2]).reshape((2,1))-task.taskLocation[0:2])
+            self.util+=task.sci(self.distanceTravel)
+            #All after
+            for j in range(i,len(self.waypoints)-1):
+                self.dvect = np.array(self.waypoints[j+1][0:2])-np.array(self.waypoints[j][0:2])
+                #print(j,self.dvect)
+                self.distanceTravel += np.linalg.norm(self.dvect)
+                self.util+=self.waypoints[j][2](self.distanceTravel)
+            if self.util > self.maxUtil:
+                self.maxUtil = self.util
+                self.maxLocation = i
+
+        return self.maxLocation,self.maxUtil
 
     def _findDistance_(self,location):
         """
@@ -286,11 +317,10 @@ class TelloFlightSoftware(djiTello):
          else:
              #TODO add requirement check and create utility function
             #Temporarily just distance
-            self.spi,self.dis = self._findDistance_(Task.taskLocation)
+            self.bidIndex,self.bid = self._Utility_(Task)
 
-            self.bid = 1/self.dis
-            #print(self.bid)
-
+            
+         print(self.name,self.bid)
          Task.offers.append((self,self.bid))
 
          while len(Task.offers) < Task.maxDrones:
@@ -298,9 +328,11 @@ class TelloFlightSoftware(djiTello):
             
          self.o = np.array(Task.offers)
          
-         if self.o[np.argmax(self.o[:,0])][0] == self:
-             self.addArea(Task.taskLocation,self.spi)
-
+         if self.o[np.argmax(self.o[:,1])][0] == self:
+             print(self.name,"Won the bid")
+             print(np.array(self.waypoints)[:,0:2])
+             self.addArea(Task.taskLocation,self.bidIndex)
+             print(np.array(self.waypoints)[:,0:2])
 
     ################################## Thread functions  ######################################
 
@@ -340,9 +372,9 @@ class TelloFlightSoftware(djiTello):
             if len(self.waypoints) > 0:
                 #print(self.is_flying)
                 if self.is_flying:
-                    self.goto(self.waypoints.pop(0))
+                    self.goto(self.waypoints.pop(0)[0:2])
                 else:
-                    self.takeoff(self.takeoffLocation)
+                    self.takeoff()
                     #self.goto(self.waypoints.pop(0))
             #elif np.linalg.norm(self.position-self.takeoffLocation) > 1:
             #    self.goto(self.takeoffLocation)
@@ -368,18 +400,6 @@ class TelloFlightSoftware(djiTello):
 
     ########################### Setup #######################################
 
-    #def setConstraints(self,**kwargs):
-        """
-        Set the artificial constraints of the system
-        Needs functionality
-        Anything not found is assumed false
-        """
-        ####NOTE: Likely going to change after PDR#####
-    #    for self.k in kwargs:
-    #        if self.k == "TIR":
-    #            self.nominal = self._squarePattern_
-    #        else:
-    #            self.nominal = self._linePattern_
 
 
     def __init__(self,IP,**kwargs):
@@ -434,7 +454,9 @@ class TelloFlightSoftware(djiTello):
         if not self.haveLogs:
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
 
-
+        for i in range(len(self.waypoints)):
+            self.waypoints[i] = [self.waypoints[i][0],self.waypoints[i][1],lambda *x :1/len(self.waypoints)]
+        #print(self.waypoints)
         #TelloName
         self.name = self.TelloName[IP]
         self.color = self.TelloColor[IP]
