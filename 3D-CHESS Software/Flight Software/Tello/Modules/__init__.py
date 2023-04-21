@@ -294,18 +294,6 @@ class TelloFlightSoftware(djiTello):
 
         return self.maxLocation,self.maxUtil
 
-    def _findDistance_(self,location):
-        """
-        Find the shortest distance from any point in the waypoints
-        """
-        self.shortestPoint = 0
-        self.dis = 1e8
-        for self.x in self.waypoints:
-            self.testDis = np.linalg.norm(self.x-location)
-            if self.testDis<self.dis:
-                self.shortestPoint = self.waypoints.index(self.x)
-                self.dis = self.testDis
-        return self.shortestPoint,self.dis
 
     def _taskBid_(self,Task):
          """
@@ -316,9 +304,12 @@ class TelloFlightSoftware(djiTello):
              self.bid = 0
          else:
              #TODO add requirement check and create utility function
-            #Temporarily just distance
+
             self.bidIndex,self.bid = self._Utility_(Task)
 
+            
+         
+            
             
          print(self.name,self.bid)
          Task.offers.append((self,self.bid))
@@ -330,9 +321,9 @@ class TelloFlightSoftware(djiTello):
          
          if self.o[np.argmax(self.o[:,1])][0] == self:
              print(self.name,"Won the bid")
-             print(np.array(self.waypoints)[:,0:2])
+             #print(np.array(self.waypoints)[:,0:2])
              self.addArea(Task.taskLocation,self.bidIndex)
-             print(np.array(self.waypoints)[:,0:2])
+             #print(np.array(self.waypoints)[:,0:2])
 
     ################################## Thread functions  ######################################
 
