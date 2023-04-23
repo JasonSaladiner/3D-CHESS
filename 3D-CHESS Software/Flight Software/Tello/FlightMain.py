@@ -27,7 +27,7 @@ import os
 #Entrance
 if __name__ == "__main__":
     emergencyControls = True
-    mapping = True
+    mapping = False
     
     connect = False
     sim = True
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
     
     input("Ready?")
-    cfg.task_requests.append(cfg.Task([250,250]))
+    cfg.task_requests.append(cfg.Task([-250,250]))
     #cfg.task_requests.append(cfg.Task([TelloA.position[0][0],TelloA.position[1][0]]))
 
     #input("Ready?")

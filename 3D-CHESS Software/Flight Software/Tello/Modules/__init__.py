@@ -256,8 +256,8 @@ class TelloFlightSoftware(djiTello):
         self.newWay = Modules.Controls.pattern_decendingSpiral(self.vert,self.swath,self.margin)
         #self.newWay.append(self.waypoints[wayIndex])
         for self.v in range(len(self.newWay)):
-            
-            self.waypoints.insert(wayIndex+self.v,[self.newWay[self.v][0],self.newWay[self.v][1],scienceFunction])
+            sci = lambda x: scienceFunction(x)/len(self.newWay)
+            self.waypoints.insert(wayIndex+self.v,[self.newWay[self.v][0],self.newWay[self.v][1],sci])
         #print(self.waypoints)
 
 
@@ -280,7 +280,7 @@ class TelloFlightSoftware(djiTello):
                             self.mod = 1 * sensor.resolution/task.con["resolution"]*sensor.FOV/task.con["FOV"]
             except TypeError:
                 pass
-        print(self.name,self.mod)
+        #print(self.name,self.mod)
         
         
         self.maxUtil = 0
@@ -339,7 +339,7 @@ class TelloFlightSoftware(djiTello):
          self.o = np.array(Task.offers)
          
          if self.o[np.argmax(self.o[:,1])][0] == self:
-             print(self.name,"Won the bid")
+             print(self.name,"Won the bid. Will go to TR in %i waypoints" %self.bidIndex)
              #print(np.array(self.waypoints)[:,0:2])
              self.addArea(Task.taskLocation,self.bidIndex)
              #print(np.array(self.waypoints)[:,0:2])
@@ -377,7 +377,10 @@ class TelloFlightSoftware(djiTello):
         """
         Target of movement thread. Will cycle through self.waypoints and goto the next one
         """
-        
+        if self.haveVideo and not self.sim:
+            #Buffer Time
+            #Random to prevent exact takeoff times
+            sleep(5+2*(np.rand()))
         while True:
             if len(self.waypoints) > 0:
                 #print(self.is_flying)
@@ -432,12 +435,20 @@ class TelloFlightSoftware(djiTello):
         self.waypoints = []
 
         self.sim = False
-
-        self.takeoffLocation = np.array([0,0,0]).reshape((3,1))
-        self.swath = 40
-        self.margin = 5
-
         self.OBS = OBS
+        self.takeoffLocation = np.array([0,0,0]).reshape((3,1))
+        
+        ##Optional swath=largest FOV. May remove?
+        try:
+            self.swath = 0
+            for s in self.OBS:
+                if s.FOV > self.swath:
+                    self.swath = s.FOV
+        except TypeError:
+            self.swath=40.
+
+        self.margin = 0.20*self.swath
+        
 
 
         for self.k in kwargs:
@@ -469,7 +480,7 @@ class TelloFlightSoftware(djiTello):
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
 
         for i in range(len(self.waypoints)):
-            self.waypoints[i] = [self.waypoints[i][0],self.waypoints[i][1],lambda *x :1/len(self.waypoints)]
+            self.waypoints[i] = [self.waypoints[i][0],self.waypoints[i][1],lambda *x :2/len(self.waypoints)]
         #print(self.waypoints)
         #TelloName
         self.name = self.TelloName[IP]

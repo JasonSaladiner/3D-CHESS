@@ -61,7 +61,7 @@ class Task:
 
 
 
-    def __init__(self,location,science_potential=1,**constraints):
+    def __init__(self,location,science_potential=1,constraints=sampleConstraints):
 
         #Initialize offer list and number of active drones (how long to wait)
         self.offers = []
@@ -70,9 +70,12 @@ class Task:
         self.loc = np.append(location,[0.])
         self.taskLocation = np.array(self.loc).reshape((3,1))
 
-        self.sci = lambda x :science_potential*exp(-x/200)
 
-        self.con = sampleConstraints
+        self.lagtime  = 30 #sec
+
+        self.sci = lambda x :science_potential*exp(-pow(0,1+(x/20-self.lagtime)/abs(x/20-self.lagtime)))
+
+        self.con = constraints
 
         ##TODO: Task Requirements##
         ##Priority##

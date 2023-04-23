@@ -5,6 +5,7 @@
 __all__ = ["KeyReader","ManualControl"]
 
 from time import sleep
+import warnings
 def lineIntersection(L1,L2):
     x1 = L1[0][0]
     y1 = L1[0][1]
@@ -17,8 +18,11 @@ def lineIntersection(L1,L2):
     y4 = L2[1][1]
 
     try: 
-        t = ((x1-x3)*(y3-y4)-(y1-y3)*(x3-x4)) / ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
-        u = ((x1-x3)*(y1-y2)-(y1-y3)*(x1-x2)) / ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            t = ((x1-x3)*(y3-y4)-(y1-y3)*(x3-x4)) / ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
+            u = ((x1-x3)*(y1-y2)-(y1-y3)*(x1-x2)) / ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
+
     except ZeroDivisionError:
         #print("Zero")
         return None
