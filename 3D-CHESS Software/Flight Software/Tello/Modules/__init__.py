@@ -27,7 +27,6 @@ class TelloFlightSoftware(djiTello):
     dmToin = 10/2.54
     cmToin = 1/2.54
 
-    
     TelloName = {'192.168.1.11':"Tello_A",   #A
                 '192.168.1.12':"Tello_B",   #B
                 '192.168.1.13':"Tello_C"}   #C
@@ -268,6 +267,22 @@ class TelloFlightSoftware(djiTello):
         """
         Generate Utility 
         """
+        #Constraint modifiers
+        self.mod = 0
+
+        for con in task.con:
+            try:
+                if issubclass(task.con[con],cfg.sensor):
+                    #print("Test")
+                    for sensor in self.OBS:
+                        
+                        if task.con[con] == type(sensor) and sensor.resolution >= task.con["resolution"] and sensor.FOV >= task.con["FOV"]:
+                            self.mod = 1 * sensor.resolution/task.con["resolution"]*sensor.FOV/task.con["FOV"]
+            except TypeError:
+                pass
+        print(self.name,self.mod)
+        
+        
         self.maxUtil = 0
         self.maxLocation = 0
         for i in range(len(self.waypoints)):
@@ -281,7 +296,7 @@ class TelloFlightSoftware(djiTello):
                 self.util+=self.waypoints[j][2](self.distanceTravel)
             #possible new waypoint
             self.distanceTravel += np.linalg.norm(np.array(self.waypoints[i][0:2]).reshape((2,1))-task.taskLocation[0:2])
-            self.util+=task.sci(self.distanceTravel)
+            self.util+=self.mod*task.sci(self.distanceTravel)
             #All after
             for j in range(i,len(self.waypoints)-1):
                 self.dvect = np.array(self.waypoints[j+1][0:2])-np.array(self.waypoints[j][0:2])
@@ -291,6 +306,10 @@ class TelloFlightSoftware(djiTello):
             if self.util > self.maxUtil:
                 self.maxUtil = self.util
                 self.maxLocation = i
+
+       
+
+
 
         return self.maxLocation,self.maxUtil
 
@@ -393,7 +412,7 @@ class TelloFlightSoftware(djiTello):
 
 
 
-    def __init__(self,IP,**kwargs):
+    def __init__(self,IP,OBS=None,**kwargs):
         import time
 
         """
@@ -417,6 +436,9 @@ class TelloFlightSoftware(djiTello):
         self.takeoffLocation = np.array([0,0,0]).reshape((3,1))
         self.swath = 40
         self.margin = 5
+
+        self.OBS = OBS
+
 
         for self.k in kwargs:
             if self.k == 'logs':
@@ -442,6 +464,7 @@ class TelloFlightSoftware(djiTello):
             elif self.k == "sim":
                 self.sim = kwargs[self.k]
 
+
         if not self.haveLogs:
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
 
@@ -454,7 +477,7 @@ class TelloFlightSoftware(djiTello):
 
         self.velocity = 20 #cm/s
         
-        
+
 
         #self.last_rc_control_timestamp = time.time()
         self.lastRCcommandTime = time.time()        #Duplicate??

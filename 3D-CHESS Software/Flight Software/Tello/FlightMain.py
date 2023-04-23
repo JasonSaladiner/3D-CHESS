@@ -13,7 +13,7 @@ from threading  import Thread    #For multithreading
 import multiprocessing as mp
 
 import Modules._config_ as cfg  #Shared variables 
-
+from Modules._config_ import VNIR,TIR,Radar
 import Modules.Controls.ManualControl as mc         #Manual Control of the drone
 #import Modules.Controls.ComputerControl as cc       #Computer Aided drone control
 from Modules.Location import IMU,Mapping            #Location services
@@ -64,7 +64,8 @@ if __name__ == "__main__":
     C = False
     #turn on drones
     if A:
-        TelloA = TFS(cfg.telloIP_A,logs= True,
+        TelloA = TFS(cfg.telloIP_A,OBS = [VNIR(10.,100.)],
+                                   logs= True,
                                    location= True,
                                    video= False,
                                    tracking= True,
@@ -75,7 +76,8 @@ if __name__ == "__main__":
                                    )
         Tellos.append(TelloA)
     if B:
-        TelloB = TFS(cfg.telloIP_B,logs= True,
+        TelloB = TFS(cfg.telloIP_B,OBS=[VNIR(1.,110.),VNIR(11.,110.),TIR(8.,100.)],
+                                   logs= True,
                                    location= True,
                                    video= False,
                                    tracking= True,
@@ -116,11 +118,11 @@ if __name__ == "__main__":
     #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
     
     input("Ready?")
-    #cfg.task_requests.append(cfg.Task([250,250]))
-    cfg.task_requests.append(cfg.Task([TelloA.position[0][0],TelloA.position[1][0]]))
+    cfg.task_requests.append(cfg.Task([250,250]))
+    #cfg.task_requests.append(cfg.Task([TelloA.position[0][0],TelloA.position[1][0]]))
 
-    input("Ready?")
-    cfg.task_requests.append(cfg.Task([TelloA.position[0][0],TelloA.position[1][0]],5))
+    #input("Ready?")
+    #cfg.task_requests.append(cfg.Task([TelloA.position[0][0],TelloA.position[1][0]],5))
 
     while not sim:
         if cfg.emerg:

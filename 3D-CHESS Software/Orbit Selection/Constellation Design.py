@@ -164,7 +164,7 @@ def plotWithAnnotate(results):
     y = results[:,2]
     names = []
     for i in range(len(results)):
-        names.append("(%i,%i,%i)"%(results[i][0][0],results[i][0][1],results[i][0][2]))
+        names.append("%ikm:(%i,%i,%i)"%(results[i][0][0],results[i][0][1],results[i][0][2],results[i][0][3]))
     #c = np.random.randint(1,5,size=15)
 
     #norm = plt.Normalize(1,4)
@@ -218,9 +218,10 @@ def csvOut(results):
         rt = results[i][1]
         usd = results[i][2]
         c =","
-        s = str(lab[0])+c+str(lab[1])+c+str(lab[2])+c+str(rt)+c+str(usd)+"\n"
+        s = str(lab[0])+c+str(lab[1])+c+str(lab[2])+c+str(lab[3])+c+str(rt)+c+str(usd)+"\n"
         f.write(s)
     f.close()
+
 
 def constellationTradeStudy():
     """
@@ -228,17 +229,17 @@ def constellationTradeStudy():
     """
     #start/finish walker constellations
     o = np.array([2,1,1])
-    f = np.array([24,12,3])
+    f = np.array([24,12,6])
     iteration = 1
-    maxIterations = np.prod(f-o)+1
+    maxIterations = (900-500)/50*(np.prod(f-o+np.array([1,1,1])))
 
     #Basic orbital parameters
-    a = Re + 700            #Semimajor Axis
+    #a = Re + 700            #Semimajor Axis
     e = 0                   #eccentricity
-    inc = SSOinclination(700) #inclination
+    #inc = SSOinclination(700) #inclination
     w = 0                   #argOfPerigee (doesn't really exist)
 
-    satUSD = lambda n: 1122322.5*n
+    satUSD = lambda n,alt:n* (0.00000000271436403509*alt**3 - 0.00000397319078947367*alt**2 + 0.00231994517543880000*alt - 0.16038157894742600000)
 
 
     results = []
@@ -246,27 +247,30 @@ def constellationTradeStudy():
 
 
     #Number of satellites
-    for i in range(o[0],f[0]+1):
+    for l in range(500,900,50):
+        a = Re+l
+        inc = SSOinclination(l)
+        for i in range(o[0],f[0]+1):
         
-        #Number of planes
-        for j in range(o[1],i+1):
-            if j > f[1]:
-                break
-            
-            currentConst = []
-            #Relative spacing
-            for k in range(o[2],j+1):
-                if k > f[2]:
+            #Number of planes
+            for j in range(o[1],i+1):
+                if j > f[1]:
                     break
-                print("Start ",iteration,"of %i. (%i,%i,%i)"%(maxIterations,i,j,k))
-                walkerOEs = OEfromWalker(i,j,k)
-                for sat in walkerOEs:
-                    currentConst.append([a,e,inc,w,sat[0],sat[1]])
+            
+                currentConst = []
+                #Relative spacing
+                for k in range(o[2],j+1):
+                    if k > f[2]:
+                        break
+                    print("Start ",iteration,"of %i: %i km (%i,%i,%i)"%(maxIterations,l,i,j,k))
+                    walkerOEs = OEfromWalker(i,j,k)
+                    for sat in walkerOEs:
+                        currentConst.append([a,e,inc,w,sat[0],sat[1]])
 
-                RT = findMaxRT_STK(currentConst)
-                results.append([[i,j,k],RT,satUSD(i)])
-                print("Finished")
-                iteration+=1
+                    RT = findMaxRT_STK(currentConst,200)
+                    results.append([[l,i,j,k],RT,satUSD(i,l)])
+                    print("Finished")
+                    iteration+=1
     results = np.array(results)
 
     print(results)
