@@ -59,7 +59,7 @@ def _trmapping_(TR):
             #print(TR[addedTR].taskLocation)
             points.append((floor(TR[addedTR].taskLocation[0][0]),floor(TR[addedTR].taskLocation[1][0]),color[0],color[1],color[2]))
             addedTR += 1
-        sleep(.25)
+        sleep(1)
 
 
 

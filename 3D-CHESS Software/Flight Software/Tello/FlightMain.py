@@ -30,7 +30,7 @@ if __name__ == "__main__":
     mapping = True
     
     connect = False
-    sim = True
+    sim = False
 
     if sim:
         emergencyControls = False
@@ -59,15 +59,16 @@ if __name__ == "__main__":
     #List of Tellos for mapping
     Tellos = []
     #select drones
-    A = True
-    B = False
-    C = False
+    A = False
+    B = True
+    C = True
+    D = False
     #turn on drones
     if A:
-        TelloA = TFS(cfg.telloIP_A,OBS = [VNIR(1.,100.)],
-                                   logs= True,
+        TelloA = TFS(cfg.telloIP_A,OBS = [VNIR(9.,100.)],
+                                   logs= False,
                                    location= True,
-                                   video= False,
+                                   video= True,
                                    tracking= True,
                                    sim = sim,
                                    takeoffLocation = [50,50,0],
@@ -77,13 +78,13 @@ if __name__ == "__main__":
         Tellos.append(TelloA)
     if B:
         TelloB = TFS(cfg.telloIP_B,OBS=[VNIR(10.,110.),VNIR(10.,120.),TIR(8.,100.)],
-                                   logs= True,
+                                   logs= False,
                                    location= True,
-                                   video= False,
+                                   video= True,
                                    tracking= True,
                                    sim = sim,
-                                   takeoffLocation = [-50,-50,0],
-                                   coverageArea = [[-50,-50],[-250,-50],[-250,-300],[-50,-300]],
+                                   takeoffLocation = [-60,-120,0],
+                                   coverageArea = [[-60,-120],[60,-120],[60,0],[-60,0]],
                                    auto = True
                                    )
         Tellos.append(TelloB)
@@ -91,15 +92,26 @@ if __name__ == "__main__":
         TelloC = TFS(cfg.telloIP_C,OBS=[VNIR(10.,110.),VNIR(10.,120.),TIR(8.,100.)],
                                    logs= True,
                                    location= True,
-                                   video= False,
+                                   video= True,
                                    tracking= True,
                                    sim = sim,
-                                   takeoffLocation = [-50,25,0],
-                                   coverageArea = [[-50,25],[50,-75],[100,-25],[0,75]],
+                                   takeoffLocation = [120,240,0],
+                                   coverageArea = [[120,240],[120,120],[0,120],[0,240]],
                                    auto = True
                                    )
         Tellos.append(TelloC)
-    
+    if D:
+        TelloD = TFS(cfg.telloIP_D,OBS=[VNIR(9.,100.)],
+                                   logs= True,
+                                   location= True,
+                                   video= True,
+                                   tracking= True,
+                                   sim = sim,
+                                   takeoffLocation = [50,50,0],
+                                   coverageArea = [[50,50],[250,50],[250,300],[50,300]],
+                                   auto = True
+                                   )
+        Tellos.append(TelloD)
     cfg.Task.ActiveDrones = len(Tellos)
     
     if mapping:
@@ -118,11 +130,11 @@ if __name__ == "__main__":
     ###Known ISSUE###
     #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
     
-    input("Ready?")
-    cfg.task_requests.append(cfg.Task([-250,250],20))
+    #input("Ready?")
+    #cfg.task_requests.append(cfg.Task([-250,250],20))
     #cfg.task_requests.append(cfg.Task([TelloA.position[0][0],TelloA.position[1][0]]))
-    input("Ready?")
-    cfg.task_requests.append(cfg.Task([-300,-250]))
+    #input("Ready?")
+    #cfg.task_requests.append(cfg.Task([-300,-250]))
     #input("Ready?")
     #cfg.task_requests.append(cfg.Task([TelloA.position[0][0],TelloA.position[1][0]],5))
 

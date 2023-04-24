@@ -13,6 +13,22 @@ global buffer
 start_time = 0
 buffer = 3  # Adjust according to speed of Tello
 
+def TR(ConnectedTello,x,y,img):
+    import numpy as np
+    possibleLocation = np.array([x,y]).reshape((2,1))
+    duplicateRequest = False
+    for tr in cfg.task_requests:
+        np.linalg.norm(possibleLocation-tr.taskLocation[0:2,])
+        if np.linalg.norm(possibleLocation-tr.taskLocation[0:2,]) < 100:
+            duplicateRequest = True
+            o = np.array(tr.offers)
+            if o[np.argmax(o[:,1])][0] == ConnectedTello:
+                cv2.imwrite(f'Flight Software/Tello/Resources/Images/Response_{ConnectedTello.name}_{tr.taskLocation[0][0],tr.taskLocation[1][0]}.jpg', img)
+                print("Take Picture")
+    #print(duplicateRequest)
+    if not duplicateRequest:   
+       cfg.task_requests.append(cfg.Task([x, y]))
+
 
 # Subject Function
 def findFace(img):
@@ -64,7 +80,7 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
 
     # Initialize function + video connection
     tello = ConnectedTello
-    tello.query_battery()  # testing purposes | DEMO
+    #tello.query_battery()  # testing purposes | DEMO
     tello.streamon()
     time.sleep(2) # adjust as needed
     #tello.set_video_direction(0) # Errors out randomly
@@ -86,6 +102,9 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
             if ConnectedTello.name == "Tello_C":
                 cv2.imshow("ConnectedTello.name", imgL)
                 cv2.moveWindow("ConnectedTello.name", 0, 600)
+            if ConnectedTello.name == "Tello_D":
+                cv2.imshow("ConnectedTello.name", imgL)
+                cv2.moveWindow("ConnectedTello.name", 400, 0)
         cv2.waitKey(5)
 
     while streamType == 'FT':
@@ -99,7 +118,8 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
             location = ConnectedTello.position
             x = location[0][0]
             y = location[1][0]
-            cfg.task_requests.append(cfg.Task([x, y]))
+            TR(ConnectedTello,x,y,imgFT)
+            
             start_time = time.time()
             if takePic == True:
                 cv2.imwrite(f'Flight Software/Tello/Resources/Images/{time.time()}.jpg', imgFT)
@@ -111,14 +131,17 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
             cv2.putText(imgFT, alert, (250, 30), cv2.FONT_HERSHEY_PLAIN, .85, (0, 255, 255), 2)
         if streamShow == True:
             if ConnectedTello.name == "Tello_A":
-                cv2.imshow("ConnectedTello.name", imgFT)
-                cv2.moveWindow("ConnectedTello.name", 0, 0)
+                cv2.imshow("A", imgFT)
+                #cv2.moveWindow("ConnectedTello.name", 0, 0)
             if ConnectedTello.name == "Tello_B":
-                cv2.imshow("ConnectedTello.name", imgFT)
-                cv2.moveWindow("ConnectedTello.name", 0, 300)
+                cv2.imshow("B", imgFT)
+                cv2.moveWindow("B", 0, 300)
             if ConnectedTello.name == "Tello_C":
-                cv2.imshow("ConnectedTello.name", imgFT)
-                cv2.moveWindow("ConnectedTello.name", 0, 600)
+                cv2.imshow("C", imgFT)
+                cv2.moveWindow("C", 0, 600)
+            if ConnectedTello.name == "Tello_D":
+                cv2.imshow("D", imgFT)
+                #cv2.moveWindow("ConnectedTello.name", 400, 0)
         else:
             print(ConnectedTello.name + ': ' + alert)
         cv2.waitKey(5)

@@ -13,7 +13,7 @@ from time import sleep,time
 import Modules._config_ as cfg
 from math import cos,sin,pi,sqrt
 import Modules
-#import numpy as np
+from numpy.random import rand
 
 
 class TelloFlightSoftware(djiTello):
@@ -29,13 +29,16 @@ class TelloFlightSoftware(djiTello):
 
     TelloName = {'192.168.1.11':"Tello_A",   #A
                 '192.168.1.12':"Tello_B",   #B
-                '192.168.1.13':"Tello_C"}   #C
+                '192.168.1.13':"Tello_C",   #C
+                '192.168.1.14':"Tello_D"}   #D
     TelloColor = {'192.168.1.11':(255,255,0),   #A
                 '192.168.1.12':(255,0,0),   #B
-                '192.168.1.13':(0,255,0)}   #C
+                '192.168.1.13':(0,255,0),   #C
+                '192.168.1.14':(150,0,150)}   #D
     vs_port = {'192.168.1.11':11111,   #A
                 '192.168.1.12':11112,   #B
-                '192.168.1.13':11113}   #C
+                '192.168.1.13':11113,   #C
+                '192.168.1.14':11110}   #D
 
     
 
@@ -323,6 +326,7 @@ class TelloFlightSoftware(djiTello):
          will bid on the given task request
          """
          self.bid = 0
+         self.bidIndex = 0
          if np.linalg.norm(self.position - Task.taskLocation) < 20:
              self.bid = 0
          else:
@@ -333,7 +337,7 @@ class TelloFlightSoftware(djiTello):
             
          
             
-            
+          
          print(self.name,self.bid)
          Task.offers.append((self,self.bid))
 
@@ -384,7 +388,9 @@ class TelloFlightSoftware(djiTello):
         if self.haveVideo and not self.sim:
             #Buffer Time
             #Random to prevent exact takeoff times
-            sleep(5+2*(np.rand()))
+
+            sleep(10+2*(rand()))
+
         while True:
             if len(self.waypoints) > 0:
                 #print(self.is_flying)
@@ -483,8 +489,7 @@ class TelloFlightSoftware(djiTello):
                 self.sim = kwargs[self.k]
 
 
-        if not self.haveLogs:
-            djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
+
 
         for i in range(len(self.waypoints)):
             self.waypoints[i] = [self.waypoints[i][0],self.waypoints[i][1],lambda *x :10/len(self.waypoints)]
@@ -493,7 +498,7 @@ class TelloFlightSoftware(djiTello):
         self.name = self.TelloName[IP]
         self.color = self.TelloColor[IP]
 
-        self.velocity = 20 #cm/s
+        self.velocity = 10 #cm/s
         
 
 
@@ -519,6 +524,8 @@ class TelloFlightSoftware(djiTello):
         else:
             self.is_flying = True
 
+        if not self.haveLogs:
+            djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
         if self.haveLocation:
             #from Modules.Location import IMU
             #self.locationThread = threading.Thread(target=IMU.init,args=(self.t,),)

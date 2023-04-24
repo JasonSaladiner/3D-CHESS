@@ -11,7 +11,7 @@ from collections.abc import Iterable
 telloIP_A = '192.168.1.11'
 telloIP_B = '192.168.1.12'     
 telloIP_C = '192.168.1.13'
-
+telloIP_D = '192.168.1.14'
 
 task_requests=[]
 
@@ -74,8 +74,8 @@ class Task:
 
         self.lagtime  = 2 #sec
 
-        self.log = lambda x : 1.2/(1+exp(-25*(x/20-self.lagtime)))
-        self.sci = lambda x :science_potential*exp(-self.log(x)*x/20 * 1/20)
+        self.log = lambda x : 1.2/(1+exp(-25*(x/10-self.lagtime)))
+        self.sci = lambda x :science_potential*exp(-self.log(x)*x/10 * 1/20)
         self.con = constraints
 
         ##TODO: Task Requirements##
