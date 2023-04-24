@@ -15,7 +15,7 @@ from math import *
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+from time import time
 global stk
 global stkRoot
 global scenario
@@ -229,7 +229,7 @@ def constellationTradeStudy():
     """
     #start/finish walker constellations
     o = np.array([2,1,1])
-    f = np.array([24,12,6])
+    f = np.array([20,10,1])
     iteration = 1
     maxIterations = (900-500)/50*(np.prod(f-o+np.array([1,1,1])))
 
@@ -244,10 +244,11 @@ def constellationTradeStudy():
 
     results = []
 
-
+    averageTime = 0.
+    
 
     #Number of satellites
-    for l in range(500,900,50):
+    for l in range(500,905,50):
         a = Re+l
         inc = SSOinclination(l)
         for i in range(o[0],f[0]+1):
@@ -263,19 +264,33 @@ def constellationTradeStudy():
                     if k > f[2]:
                         break
                     print("Start ",iteration,"of %i: %i km (%i,%i,%i)"%(maxIterations,l,i,j,k))
+                    istart = time()
                     walkerOEs = OEfromWalker(i,j,k)
                     for sat in walkerOEs:
                         currentConst.append([a,e,inc,w,sat[0],sat[1]])
 
-                    RT = findMaxRT_STK(currentConst,200)
+                    RT = findMaxRT_STK(currentConst,500)
                     results.append([[l,i,j,k],RT,satUSD(i,l)])
-                    print("Finished")
+                    
+                    ifin = time()
+                    tookTime = (ifin-istart)/60
+                    averageTime = (averageTime *(iteration-1) + tookTime)/iteration
                     iteration+=1
+                    print("Finished. Took:",tookTime,"Estimated Time remaining (min):",averageTime*(maxIterations-iteration))
+                    
     results = np.array(results)
-
-    print(results)
-    plotWithAnnotate(results)
-    csvOut(results)
+    try:
+        print(results)
+    except:
+        pass
+    try:    
+        csvOut(results)
+    except:
+        pass
+    try:
+        plotWithAnnotate(results)
+    except:
+        pass
 
 if __name__=="__main__":
 
