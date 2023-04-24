@@ -27,7 +27,7 @@ import os
 #Entrance
 if __name__ == "__main__":
     emergencyControls = True
-    mapping = False
+    mapping = True
     
     connect = False
     sim = True
@@ -60,11 +60,11 @@ if __name__ == "__main__":
     Tellos = []
     #select drones
     A = True
-    B = True
+    B = False
     C = False
     #turn on drones
     if A:
-        TelloA = TFS(cfg.telloIP_A,OBS = [VNIR(10.,100.)],
+        TelloA = TFS(cfg.telloIP_A,OBS = [VNIR(1.,100.)],
                                    logs= True,
                                    location= True,
                                    video= False,
@@ -76,7 +76,7 @@ if __name__ == "__main__":
                                    )
         Tellos.append(TelloA)
     if B:
-        TelloB = TFS(cfg.telloIP_B,OBS=[VNIR(1.,110.),VNIR(10.,100.),TIR(8.,100.)],
+        TelloB = TFS(cfg.telloIP_B,OBS=[VNIR(10.,110.),VNIR(10.,120.),TIR(8.,100.)],
                                    logs= True,
                                    location= True,
                                    video= False,
@@ -88,7 +88,8 @@ if __name__ == "__main__":
                                    )
         Tellos.append(TelloB)
     if C:
-        TelloC = TFS(cfg.telloIP_C,logs= True,
+        TelloC = TFS(cfg.telloIP_C,OBS=[VNIR(10.,110.),VNIR(10.,120.),TIR(8.,100.)],
+                                   logs= True,
                                    location= True,
                                    video= False,
                                    tracking= True,
@@ -118,9 +119,10 @@ if __name__ == "__main__":
     #There are times when commands in quick succession confuses the drone. Make sure to use closed loop methods for future to hopefully prevent
     
     input("Ready?")
-    cfg.task_requests.append(cfg.Task([-250,250]))
+    cfg.task_requests.append(cfg.Task([-250,250],20))
     #cfg.task_requests.append(cfg.Task([TelloA.position[0][0],TelloA.position[1][0]]))
-
+    input("Ready?")
+    cfg.task_requests.append(cfg.Task([-300,-250]))
     #input("Ready?")
     #cfg.task_requests.append(cfg.Task([TelloA.position[0][0],TelloA.position[1][0]],5))
 

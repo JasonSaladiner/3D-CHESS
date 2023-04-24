@@ -11,9 +11,9 @@ import socket
 from typing import Optional 
 from time import sleep,time
 import Modules._config_ as cfg
-from math import cos,sin,pi
+from math import cos,sin,pi,sqrt
 import Modules
-
+#import numpy as np
 
 
 class TelloFlightSoftware(djiTello):
@@ -251,7 +251,7 @@ class TelloFlightSoftware(djiTello):
         """
         self.vert = []
         for self.v in range(4):
-            self.vert.append([location[0][0]+50*cos(self.v*pi/2+pi/4),location[1][0]+50*sin(self.v*pi/2+pi/4)])
+            self.vert.append([location[0][0]+2.5/2*sqrt(2)*self.swath*cos(self.v*pi/2+pi/4),location[1][0]+2.5/2*sqrt(2)*self.swath*sin(self.v*pi/2+pi/4)])
         #print(self.vert)
         self.newWay = Modules.Controls.pattern_decendingSpiral(self.vert,self.swath,self.margin)
         #self.newWay.append(self.waypoints[wayIndex])
@@ -274,13 +274,17 @@ class TelloFlightSoftware(djiTello):
             try:
                 if issubclass(task.con[con],cfg.sensor):
                     #print("Test")
+                    mmod = 0.
                     for sensor in self.OBS:
                         
-                        if task.con[con] == type(sensor) and sensor.resolution >= task.con["resolution"] and sensor.FOV >= task.con["FOV"]:
-                            self.mod = 1 * sensor.resolution/task.con["resolution"]*sensor.FOV/task.con["FOV"]
+                        if task.con[con] == type(sensor) and sensor.resolution >= 1/task.con["resolution"] and sensor.FOV >= task.con["FOV"]:
+                            tmod = 1 * sensor.resolution*task.con["resolution"]*sensor.FOV/task.con["FOV"]
+                            if tmod>mmod:
+                                mmod = tmod
+                    self.mod = mmod
             except TypeError:
                 pass
-        #print(self.name,self.mod)
+        print(self.name,self.mod)
         
         
         self.maxUtil = 0
@@ -341,7 +345,7 @@ class TelloFlightSoftware(djiTello):
          if self.o[np.argmax(self.o[:,1])][0] == self:
              print(self.name,"Won the bid. Will go to TR in %i waypoints" %self.bidIndex)
              #print(np.array(self.waypoints)[:,0:2])
-             self.addArea(Task.taskLocation,self.bidIndex)
+             self.addArea(Task.taskLocation,self.bidIndex,Task.sci)
              #print(np.array(self.waypoints)[:,0:2])
 
     ################################## Thread functions  ######################################
@@ -393,7 +397,10 @@ class TelloFlightSoftware(djiTello):
             #    self.goto(self.takeoffLocation)
             else:
                 if self.is_flying:
-                    self.land
+                    try:
+                        self.land()
+                    except AttributeError:
+                        pass
                 #else:
             sleep(1)
 
@@ -439,14 +446,14 @@ class TelloFlightSoftware(djiTello):
         self.takeoffLocation = np.array([0,0,0]).reshape((3,1))
         
         ##Optional swath=largest FOV. May remove?
-        try:
-            self.swath = 0
-            for s in self.OBS:
-                if s.FOV > self.swath:
-                    self.swath = s.FOV
-        except TypeError:
-            self.swath=40.
-
+        #try:
+        #    self.swath = 0
+        #    for s in self.OBS:
+        #        if s.FOV > self.swath:
+        #            self.swath = s.FOV
+        #except TypeError:
+        #    self.swath=40.
+        self.swath=40.
         self.margin = 0.20*self.swath
         
 
@@ -480,7 +487,7 @@ class TelloFlightSoftware(djiTello):
             djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
 
         for i in range(len(self.waypoints)):
-            self.waypoints[i] = [self.waypoints[i][0],self.waypoints[i][1],lambda *x :2/len(self.waypoints)]
+            self.waypoints[i] = [self.waypoints[i][0],self.waypoints[i][1],lambda *x :10/len(self.waypoints)]
         #print(self.waypoints)
         #TelloName
         self.name = self.TelloName[IP]
