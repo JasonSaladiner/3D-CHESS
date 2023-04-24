@@ -76,7 +76,7 @@ if __name__ == "__main__":
                                    )
         Tellos.append(TelloA)
     if B:
-        TelloB = TFS(cfg.telloIP_B,OBS=[VNIR(1.,110.),VNIR(11.,110.),TIR(8.,100.)],
+        TelloB = TFS(cfg.telloIP_B,OBS=[VNIR(1.,110.),VNIR(10.,100.),TIR(8.,100.)],
                                    logs= True,
                                    location= True,
                                    video= False,

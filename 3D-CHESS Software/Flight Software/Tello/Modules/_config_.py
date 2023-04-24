@@ -4,7 +4,7 @@ importable list of variables/functions
 from contextlib import contextmanager
 import sys,os
 import numpy as np
-from math import exp
+from math import exp,pow,floor
 emerg = False
 from collections.abc import Iterable
 #Tello IP addresses
@@ -50,15 +50,15 @@ class Radar(sensor):
     def __init__(self,resolution,FOV):
         super().__init__(resolution,FOV)
 
-sampleConstraints = {"sensor":VNIR,
-                    "resolution":10.,
-                    "FOV":100.}
+
 
 
 class Task:
 
     ActiveDrones = 1
-
+    sampleConstraints = {"sensor":VNIR,
+                    "resolution":10.,
+                    "FOV":100.}
 
 
     def __init__(self,location,science_potential=1,constraints=sampleConstraints):
@@ -71,10 +71,10 @@ class Task:
         self.taskLocation = np.array(self.loc).reshape((3,1))
 
 
-        self.lagtime  = 30 #sec
+        self.lagtime  = 20 #sec
 
-        self.sci = lambda x :science_potential*exp(-pow(0,1+(x/20-self.lagtime)/abs(x/20-self.lagtime)))
-
+        self.log = lambda x : 1.2/(1+exp(-25*(x/20-self.lagtime)))
+        self.sci = lambda x :science_potential*exp(-self.log(x)*x/20 * 1/20)
         self.con = constraints
 
         ##TODO: Task Requirements##
