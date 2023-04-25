@@ -68,43 +68,36 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
     if takePic not in takePics:
         raise ValueError("Invalid takePic type. Expected one of: %s" % takePics)
 
-    # Color identities for each Tello
-    TelloColors = [(0, 0, 255), (0, 255, 0), (255, 0, 0)]
-    TelloColor = None
-    if ConnectedTello.name == "Tello_A":
-        TelloColor = TelloColors[0]
-    elif ConnectedTello.name == "Tello_B":
-        TelloColor = TelloColors[1]
-    elif ConnectedTello.name == "Tello_C":
-        TelloColor = TelloColors[2]
-
     # Initialize function + video connection
     tello = ConnectedTello
-    #tello.query_battery()  # testing purposes | DEMO
     tello.streamon()
-    time.sleep(2) # adjust as needed
-    #tello.set_video_direction(0) # Errors out randomly
     time.sleep(2) # adjust as needed
     global start_time
     alert_status = False
 
+    # Initalize TelloVision
+    TV_width, TV_height, TV_x, TV_y = 650, 500, 975, 520
+    cv2.namedWindow("TelloVision", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("TelloVision", TV_width, TV_height)
+    cv2.moveWindow("TelloVision", TV_x, TV_y)
+    
     while streamType == 'Live':
         imgL = tello.get_frame_read().frame
-        imgL = cv2.resize(imgL, (400, 300))
+        imgL = cv2.resize(imgL, (int(TV_width / 2), int(TV_height / 2)))
         
         if streamShow == True:
             if ConnectedTello.name == "Tello_A":
-                cv2.imshow("ConnectedTello.name", imgL)
-                cv2.moveWindow("ConnectedTello.name", 0, 0)
+                cv2.imshow("A", imgL)
+                cv2.moveWindow("A", TV_x, TV_y)  # Top-left corner
             if ConnectedTello.name == "Tello_B":
-                cv2.imshow("ConnectedTello.name", imgL)
-                cv2.moveWindow("ConnectedTello.name", 0, 300)
+                cv2.imshow("B", imgL)
+                cv2.moveWindow("B", int(TV_x + .5 * TV_width), TV_y)  # Top-right corner
             if ConnectedTello.name == "Tello_C":
-                cv2.imshow("ConnectedTello.name", imgL)
-                cv2.moveWindow("ConnectedTello.name", 0, 600)
+                cv2.imshow("C", imgL)
+                cv2.moveWindow("C", TV_x, int(TV_y + .5 * TV_height))  # Bottom-left corner
             if ConnectedTello.name == "Tello_D":
-                cv2.imshow("ConnectedTello.name", imgL)
-                cv2.moveWindow("ConnectedTello.name", 400, 0)
+                cv2.imshow("D", imgL)
+                cv2.moveWindow("D", int(TV_x + .5 * TV_width), int(TV_y + .5 * TV_height))  # Bottom-right corner
         cv2.waitKey(5)
 
     while streamType == 'FT':
@@ -126,22 +119,22 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
         elif area_val == 0 and time.time() - start_time > buffer:
             alert_status = False
             start_time = 0
-        imgFT = cv2.resize(imgFT, (400, 300))
+        imgFT = cv2.resize(imgFT, (TV_width / 2, TV_height / 2))
         if alert_status == True:
-            cv2.putText(imgFT, alert, (250, 30), cv2.FONT_HERSHEY_PLAIN, .85, (0, 255, 255), 2)
+            cv2.putText(imgFT, alert, (250, 30), cv2.FONT_HERSHEY_PLAIN, .85, ConnectedTello.color, 2)
         if streamShow == True:
             if ConnectedTello.name == "Tello_A":
                 cv2.imshow("A", imgFT)
-                cv2.moveWindow("A", 0, 0)
+                cv2.moveWindow("A", TV_x, TV_y)  # Top-left corner
             if ConnectedTello.name == "Tello_B":
                 cv2.imshow("B", imgFT)
-                cv2.moveWindow("B", 0, 300)
+                cv2.moveWindow("B", TV_x + .5 * TV_width, TV_y)  # Top-right corner
             if ConnectedTello.name == "Tello_C":
                 cv2.imshow("C", imgFT)
-                cv2.moveWindow("C", 0, 600)
+                cv2.moveWindow("C", TV_x, TV_y + .5 * TV_height)  # Bottom-left corner
             if ConnectedTello.name == "Tello_D":
                 cv2.imshow("D", imgFT)
-                #cv2.moveWindow("ConnectedTello.name", 400, 0)
+                cv2.moveWindow("D", TV_x + .5 * TV_width, TV_y + .5 * TV_height)  # Bottom-right corner
         else:
             print(ConnectedTello.name + ': ' + alert)
         cv2.waitKey(5)
