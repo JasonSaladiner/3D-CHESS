@@ -27,10 +27,10 @@ import os
 #Entrance
 if __name__ == "__main__":
     emergencyControls = True
-    mapping = True
+    mapping = False
     
     connect = False
-    sim = True
+    sim = False
 
     #if sim:
     #    emergencyControls = False
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     if connect:
         t = Tello()
         t.connect()
-        t.connect_to_wifi("tellonet","selvachess")
+        t.connect_to_wifi("ConnectoPatronum","73752677")
 
 
     #All drone kwargs are contained within the docustring of TFS. Below is a sample with all the default values (only different values need be passed)
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     A = False
     B = False
     C = True
-    D = False
+    D = True
     #turn on drones
     if A:
         TelloA = TFS(cfg.telloIP_A,OBS = [VNIR(8.,100.)],
@@ -73,7 +73,7 @@ if __name__ == "__main__":
                                    sim = sim,
                                    takeoffLocation = [0,60,0],
                                    coverageArea = [[0,60],[-120,60],[-120,180],[0,180]],
-                                   auto = True
+                                   auto = False
                                    )
         Tellos.append(TelloA)
     if B:
@@ -85,7 +85,7 @@ if __name__ == "__main__":
                                    sim = sim,
                                    takeoffLocation = [-60,-120,0],
                                    coverageArea = [[-60,-120],[60,-120],[60,0],[-60,0]],
-                                   auto = True
+                                   auto = False
                                    )
         Tellos.append(TelloB)
     if C:
@@ -97,7 +97,7 @@ if __name__ == "__main__":
                                    sim = sim,
                                    takeoffLocation = [120,240,0],
                                    coverageArea = [[120,240],[120,120],[0,120],[0,240]],
-                                   auto = True
+                                   auto = False
                                    )
         Tellos.append(TelloC)
     if D:
@@ -109,7 +109,7 @@ if __name__ == "__main__":
                                    sim = sim,
                                    takeoffLocation = [50,50,0],
                                    coverageArea = [[50,50],[250,50],[250,300],[50,300]],
-                                   auto = True
+                                   auto = False
                                    )
         Tellos.append(TelloD)
     cfg.Task.ActiveDrones = len(Tellos)
