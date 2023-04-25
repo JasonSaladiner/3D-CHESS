@@ -11,7 +11,7 @@ import Modules._config_ as cfg
 global img, img_base
 global buffer
 start_time = 0
-buffer = 3  # Adjust according to speed of Tello
+buffer = 2  # Adjust according to speed of Tello
 
 def TR(ConnectedTello,x,y,img):
     import numpy as np
@@ -132,7 +132,7 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
         if streamShow == True:
             if ConnectedTello.name == "Tello_A":
                 cv2.imshow("A", imgFT)
-                #cv2.moveWindow("ConnectedTello.name", 0, 0)
+                cv2.moveWindow("A", 0, 0)
             if ConnectedTello.name == "Tello_B":
                 cv2.imshow("B", imgFT)
                 cv2.moveWindow("B", 0, 300)

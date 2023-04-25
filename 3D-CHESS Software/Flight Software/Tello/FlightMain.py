@@ -30,10 +30,10 @@ if __name__ == "__main__":
     mapping = True
     
     connect = False
-    sim = False
+    sim = True
 
-    if sim:
-        emergencyControls = False
+    #if sim:
+    #    emergencyControls = False
 
     if connect:
         t = Tello()
@@ -60,24 +60,24 @@ if __name__ == "__main__":
     Tellos = []
     #select drones
     A = False
-    B = True
+    B = False
     C = True
     D = False
     #turn on drones
     if A:
-        TelloA = TFS(cfg.telloIP_A,OBS = [VNIR(9.,100.)],
+        TelloA = TFS(cfg.telloIP_A,OBS = [VNIR(8.,100.)],
                                    logs= False,
                                    location= True,
                                    video= True,
                                    tracking= True,
                                    sim = sim,
-                                   takeoffLocation = [50,50,0],
-                                   coverageArea = [[50,50],[250,50],[250,300],[50,300]],
+                                   takeoffLocation = [0,60,0],
+                                   coverageArea = [[0,60],[-120,60],[-120,180],[0,180]],
                                    auto = True
                                    )
         Tellos.append(TelloA)
     if B:
-        TelloB = TFS(cfg.telloIP_B,OBS=[VNIR(10.,110.),VNIR(10.,120.),TIR(8.,100.)],
+        TelloB = TFS(cfg.telloIP_B,OBS=[TIR(8.,100.)],
                                    logs= False,
                                    location= True,
                                    video= True,
@@ -89,7 +89,7 @@ if __name__ == "__main__":
                                    )
         Tellos.append(TelloB)
     if C:
-        TelloC = TFS(cfg.telloIP_C,OBS=[VNIR(10.,110.),VNIR(10.,120.),TIR(8.,100.)],
+        TelloC = TFS(cfg.telloIP_C,OBS=[VNIR(10.,110.)],
                                    logs= True,
                                    location= True,
                                    video= True,
