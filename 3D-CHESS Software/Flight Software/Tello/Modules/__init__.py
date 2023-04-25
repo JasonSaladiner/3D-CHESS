@@ -11,9 +11,9 @@ import socket
 from typing import Optional 
 from time import sleep,time
 import Modules._config_ as cfg
-from math import cos,sin,pi
+from math import cos,sin,pi,sqrt
 import Modules
-
+from numpy.random import rand
 
 
 class TelloFlightSoftware(djiTello):
@@ -29,13 +29,16 @@ class TelloFlightSoftware(djiTello):
 
     TelloName = {'192.168.1.11':"Tello_A",   #A
                 '192.168.1.12':"Tello_B",   #B
-                '192.168.1.13':"Tello_C"}   #C
+                '192.168.1.13':"Tello_C",   #C
+                '192.168.1.14':"Tello_D"}   #D
     TelloColor = {'192.168.1.11':(255,255,0),   #A
                 '192.168.1.12':(255,0,0),   #B
-                '192.168.1.13':(0,255,0)}   #C
+                '192.168.1.13':(0,255,0),   #C
+                '192.168.1.14':(150,0,150)}   #D
     vs_port = {'192.168.1.11':11111,   #A
                 '192.168.1.12':11112,   #B
-                '192.168.1.13':11113}   #C
+                '192.168.1.13':11113,   #C
+                '192.168.1.14':11110}   #D
 
     
 
@@ -251,7 +254,7 @@ class TelloFlightSoftware(djiTello):
         """
         self.vert = []
         for self.v in range(4):
-            self.vert.append([location[0][0]+50*cos(self.v*pi/2+pi/4),location[1][0]+50*sin(self.v*pi/2+pi/4)])
+            self.vert.append([location[0][0]+2.5/2*sqrt(2)*self.swath*cos(self.v*pi/2+pi/4),location[1][0]+2.5/2*sqrt(2)*self.swath*sin(self.v*pi/2+pi/4)])
         #print(self.vert)
         self.newWay = Modules.Controls.pattern_decendingSpiral(self.vert,self.swath,self.margin)
         #self.newWay.append(self.waypoints[wayIndex])
@@ -274,13 +277,17 @@ class TelloFlightSoftware(djiTello):
             try:
                 if issubclass(task.con[con],cfg.sensor):
                     #print("Test")
+                    mmod = 0.
                     for sensor in self.OBS:
                         
-                        if task.con[con] == type(sensor) and sensor.resolution >= task.con["resolution"] and sensor.FOV >= task.con["FOV"]:
-                            self.mod = 1 * sensor.resolution/task.con["resolution"]*sensor.FOV/task.con["FOV"]
+                        if task.con[con] == type(sensor) and sensor.resolution >= 1/task.con["resolution"] and sensor.FOV >= task.con["FOV"]:
+                            tmod = 1 * sensor.resolution*task.con["resolution"]*sensor.FOV/task.con["FOV"]
+                            if tmod>mmod:
+                                mmod = tmod
+                    self.mod = mmod
             except TypeError:
                 pass
-        #print(self.name,self.mod)
+        print(self.name,self.mod)
         
         
         self.maxUtil = 0
@@ -319,6 +326,7 @@ class TelloFlightSoftware(djiTello):
          will bid on the given task request
          """
          self.bid = 0
+         self.bidIndex = 0
          if np.linalg.norm(self.position - Task.taskLocation) < 20:
              self.bid = 0
          else:
@@ -329,7 +337,7 @@ class TelloFlightSoftware(djiTello):
             
          
             
-            
+          
          print(self.name,self.bid)
          Task.offers.append((self,self.bid))
 
@@ -341,7 +349,7 @@ class TelloFlightSoftware(djiTello):
          if self.o[np.argmax(self.o[:,1])][0] == self:
              print(self.name,"Won the bid. Will go to TR in %i waypoints" %self.bidIndex)
              #print(np.array(self.waypoints)[:,0:2])
-             self.addArea(Task.taskLocation,self.bidIndex)
+             self.addArea(Task.taskLocation,self.bidIndex,Task.sci)
              #print(np.array(self.waypoints)[:,0:2])
 
     ################################## Thread functions  ######################################
@@ -380,7 +388,9 @@ class TelloFlightSoftware(djiTello):
         if self.haveVideo and not self.sim:
             #Buffer Time
             #Random to prevent exact takeoff times
-            sleep(5+2*(np.rand()))
+
+            sleep(10+2*(rand()))
+
         while True:
             if len(self.waypoints) > 0:
                 #print(self.is_flying)
@@ -393,7 +403,10 @@ class TelloFlightSoftware(djiTello):
             #    self.goto(self.takeoffLocation)
             else:
                 if self.is_flying:
-                    self.land
+                    try:
+                        self.land()
+                    except AttributeError:
+                        pass
                 #else:
             sleep(1)
 
@@ -439,14 +452,14 @@ class TelloFlightSoftware(djiTello):
         self.takeoffLocation = np.array([0,0,0]).reshape((3,1))
         
         ##Optional swath=largest FOV. May remove?
-        try:
-            self.swath = 0
-            for s in self.OBS:
-                if s.FOV > self.swath:
-                    self.swath = s.FOV
-        except TypeError:
-            self.swath=40.
-
+        #try:
+        #    self.swath = 0
+        #    for s in self.OBS:
+        #        if s.FOV > self.swath:
+        #            self.swath = s.FOV
+        #except TypeError:
+        #    self.swath=40.
+        self.swath=40.
         self.margin = 0.20*self.swath
         
 
@@ -476,17 +489,16 @@ class TelloFlightSoftware(djiTello):
                 self.sim = kwargs[self.k]
 
 
-        if not self.haveLogs:
-            djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
+
 
         for i in range(len(self.waypoints)):
-            self.waypoints[i] = [self.waypoints[i][0],self.waypoints[i][1],lambda *x :2/len(self.waypoints)]
+            self.waypoints[i] = [self.waypoints[i][0],self.waypoints[i][1],lambda *x :10/len(self.waypoints)]
         #print(self.waypoints)
         #TelloName
         self.name = self.TelloName[IP]
         self.color = self.TelloColor[IP]
 
-        self.velocity = 20 #cm/s
+        self.velocity = 10 #cm/s
         
 
 
@@ -512,6 +524,8 @@ class TelloFlightSoftware(djiTello):
         else:
             self.is_flying = True
 
+        if not self.haveLogs:
+            djiTello.LOGGER.setLevel(logging.WARNING)      #Setting tello output to warning only
         if self.haveLocation:
             #from Modules.Location import IMU
             #self.locationThread = threading.Thread(target=IMU.init,args=(self.t,),)

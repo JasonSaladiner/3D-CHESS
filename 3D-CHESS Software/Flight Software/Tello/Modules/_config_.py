@@ -11,7 +11,7 @@ from collections.abc import Iterable
 telloIP_A = '192.168.1.11'
 telloIP_B = '192.168.1.12'     
 telloIP_C = '192.168.1.13'
-
+telloIP_D = '192.168.1.14'
 
 task_requests=[]
 
@@ -22,8 +22,9 @@ class sensor:
     def __init__(self,resolution,FOV):
         """
             class that defines a sensor by resolution and FOV
+            resolution is the "quality" of resolution aka 1/res
         """
-        self.resolution = resolution
+        self.resolution = 1/resolution
         self.FOV = FOV
 
 class VNIR(sensor):
@@ -71,10 +72,10 @@ class Task:
         self.taskLocation = np.array(self.loc).reshape((3,1))
 
 
-        self.lagtime  = 20 #sec
+        self.lagtime  = 2 #sec
 
-        self.log = lambda x : 1.2/(1+exp(-25*(x/20-self.lagtime)))
-        self.sci = lambda x :science_potential*exp(-self.log(x)*x/20 * 1/20)
+        self.log = lambda x : 1.2/(1+exp(-25*(x/10-self.lagtime)))
+        self.sci = lambda x :science_potential*exp(-self.log(x)*x/10 * 1/20)
         self.con = constraints
 
         ##TODO: Task Requirements##

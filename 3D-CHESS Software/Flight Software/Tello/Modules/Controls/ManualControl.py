@@ -134,12 +134,18 @@ def EmergencyControls(Tellos):
     while True:
         if kr.getKey('ESCAPE'):
             for t in Tellos:
-                t.land()
+                try:
+                    t.land()
+                except:
+                    pass
             cfg.emerg = True
              #os._exit()
         elif kr.getKey('DELETE'):
             for t in Tellos:
-                t.emergency()
+                try:
+                    t.emergency()
+                except:
+                    pass
             cfg.emerg = True    
             #os._exit()
         elif kr.getKey('1'):

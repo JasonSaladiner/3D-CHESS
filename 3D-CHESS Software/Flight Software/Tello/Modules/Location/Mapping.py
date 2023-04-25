@@ -30,8 +30,12 @@ def _drawPoints_(img, points):
     cv2.circle(img, (prevpoint[1]+500,-1*prevpoint[0]+500), 8, (prevpoint[2],prevpoint[3],prevpoint[4]), cv2.FILLED)
     cv2.putText(img, f'{(points[-1][0])/100 }, {(points[-1][1])/100}m',
                 (points[-1][1] + 500, -1*points[-1][0] + 500), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 255), 1)  # m NOT cm
-
-
+    #X
+    cv2.line(img,(500,1000),(500,0),(100,100,100),2)
+    cv2.putText(img,"X",(500,20),cv2.FONT_HERSHEY_PLAIN, 2, (100, 100, 100), 1)
+    #Y
+    cv2.line(img,(0,500),(1000,500),(100,100,100),2)
+    cv2.putText(img,"Y",(980,500),cv2.FONT_HERSHEY_PLAIN, 2, (100, 100, 100), 1)
 
 
 def _tmapping_(ConnectedTello):
@@ -72,10 +76,15 @@ def init(Tellos):
     trMap = Thread(target=_trmapping_,args=(tr,))
     trMap.start()
     global points
-    
+    offset = 0
     while _allowMapping_:
-        img = np.zeros((1000, 1000, 3), np.uint8)
+        
+        
+        
+        img = np.zeros((1000-offset, 1000-offset, 3), np.uint8)
         _drawPoints_(img,points)
         #print(points)
-        cv2.imshow("Output",img)
+        cv2.imshow("Map",img)
+        
+        cv2.moveWindow("Map",-16+offset,0)
         cv2.waitKey(1)

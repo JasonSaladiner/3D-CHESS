@@ -1,8 +1,12 @@
 import pygame as pg
 
 def init():
+    x,y = 975,375
+    import os
+    os.environ['SDL_VIDEO_WINDOW_POS'] = '%d,%d' % (x,y)
+
     pg.init()
-    win = pg.display.set_mode((480,480))
+    win = pg.display.set_mode((650,155))
 
 
 def getKey(keyName):

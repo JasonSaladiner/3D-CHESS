@@ -2,11 +2,12 @@
   "ExpandedNodes": [
     "",
     "\\Flight Software",
+    "\\Flight Software\\Tello",
     "\\Flight Software\\Tello\\Modules",
-    "\\Flight Software\\Tello\\Modules\\Location",
+    "\\Flight Software\\Tello\\Modules\\Controls",
     "\\Flight Software\\Tello\\Resources",
-    "\\Orbit Selection"
+    "\\Flight Software\\Tello\\Resources\\Images"
   ],
-  "SelectedNode": "\\results.csv",
+  "SelectedNode": "\\Flight Software\\Tello\\Modules\\Controls\\KeyReader.py",
   "PreviewInSolutionExplorer": false
 }
