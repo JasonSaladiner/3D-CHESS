@@ -27,7 +27,7 @@ import os
 #Entrance
 if __name__ == "__main__":
     emergencyControls = True
-    mapping = True
+    mapping = False
     
     connect = False
     sim = False
