@@ -6,8 +6,9 @@
     "\\Flight Software\\Tello\\Modules",
     "\\Flight Software\\Tello\\Modules\\Controls",
     "\\Flight Software\\Tello\\Resources",
-    "\\Flight Software\\Tello\\Resources\\Images"
+    "\\Flight Software\\Tello\\Resources\\Images",
+    "\\Orbit Selection"
   ],
-  "SelectedNode": "\\Flight Software\\Tello\\Modules\\Controls\\KeyReader.py",
+  "SelectedNode": "\\Flight Software\\Tello\\FlightMain.py",
   "PreviewInSolutionExplorer": false
 }
