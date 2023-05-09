@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Saladiner Jr"
+  given-names: "Jason"
+  orcid: "https://orcid.org/0000-0000-0000-0000"
+- family-names: "John"
+  given-names: "Amy"
+  orcid: "https://orcid.org/0000-0000-0000-0000"
+title: "3D-CHESS_ConopsValidation"
+version: 1.0.0
+doi: 10.5281/zenodo.1234
+date-released: 2023-05-09
+url: "https://github.com/JasonSaladiner/3D-CHESS"
