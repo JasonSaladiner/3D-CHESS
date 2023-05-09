@@ -31,10 +31,10 @@ class TelloFlightSoftware(djiTello):
                 '192.168.1.12':"Tello_B",   #B
                 '192.168.1.13':"Tello_C",   #C
                 '192.168.1.14':"Tello_D"}   #D
-    TelloColor = {'192.168.1.11':(255,255,0),   #A
-                '192.168.1.12':(255,0,0),   #B
-                '192.168.1.13':(0,255,0),   #C
-                '192.168.1.14':(150,0,150)}   #D
+    TelloColor = {'192.168.1.11':(159,31,217),   #A
+                '192.168.1.12':(42,139,234),   #B
+                '192.168.1.13':(236,181,80),   #C
+                '192.168.1.14':(0,255,223)}   #D
     vs_port = {'192.168.1.11':11111,   #A
                 '192.168.1.12':11112,   #B
                 '192.168.1.13':11113,   #C
@@ -42,7 +42,7 @@ class TelloFlightSoftware(djiTello):
 
     
 
-
+    
     ############################################# Movement ###############################################
         ###Not Adding. Do not Use###
     #go_xyz_speed()
@@ -58,10 +58,10 @@ class TelloFlightSoftware(djiTello):
         except:
             self.yaw = 0
         self.yawrad = radians(self.yaw)
-        return np.array([cos(self.yawrad),-sin(self.yawrad),0,
-                         sin(self.yawrad),cos(self.yawrad),0,
-                         0,0,1]).reshape((3,3))
-
+        #return np.array([cos(self.yawrad),-sin(self.yawrad),0,
+         #                sin(self.yawrad),cos(self.yawrad),0,
+         #                0,0,1]).reshape((3,3))
+        return np.array([1,0,0,0,1,0,0,0,1]).reshape((3,3))
     def _newCommand_(self,bodyVector):
         self.rotationMatrix = self._rotationMatrix_()
         self.Nvect = np.matmul(self.rotationMatrix,bodyVector).reshape((3,1))
@@ -213,8 +213,8 @@ class TelloFlightSoftware(djiTello):
         self.c_count = 0
         while np.linalg.norm(self.gotoVector) > 10 and time() < self.gotoTimeOut:
 
-            self.bodygotoVector = np.matmul(np.linalg.inv(self._rotationMatrix_()),self.gotoVector).reshape((3,1))
-
+            #self.bodygotoVector = np.matmul(np.linalg.inv(self._rotationMatrix_()),self.gotoVector).reshape((3,1))
+            self.bodygotoVector = self.gotoVector
             for u in range(3):
                 if abs(self.bodygotoVector[u][0]) <10:
                     self.bodygotoVector[u][0] = 0
@@ -233,7 +233,7 @@ class TelloFlightSoftware(djiTello):
             self.send_rc_control(self.bUV[1][0]*self.velocity,self.bUV[0][0]*self.velocity,self.bUV[2][0]*self.velocity,0)
             
 
-            sleep(0.5)   
+            sleep(.2)   
             self.gotoVector = self.waypoint-self.position
         self.send_rc_control(0,0,0,0)
         #print("Finished Waypoint")
@@ -460,7 +460,7 @@ class TelloFlightSoftware(djiTello):
         #except TypeError:
         #    self.swath=40.
         self.swath=40.
-        self.margin = 0.20*self.swath
+        self.margin = 0.10*self.swath
         
 
 

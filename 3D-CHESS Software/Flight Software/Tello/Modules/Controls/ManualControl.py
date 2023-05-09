@@ -151,37 +151,37 @@ def EmergencyControls(Tellos):
         elif kr.getKey('1'):
             try:
                 Tellos[0].land()
-                cfg.emerg = True
+                #cfg.emerg = True
             except:
                 pass
         elif kr.getKey('2'):
             try:
                 Tellos[1].land()
-                cfg.emerg = True
+                #cfg.emerg = True
             except:
                 pass
         elif kr.getKey('3'):
             try:
                 Tellos[2].land()
-                cfg.emerg = True
+                #cfg.emerg = True
             except:
                 pass
         elif kr.getKey('9'):
             try:
                 Tellos[0].emergency()
-                cfg.emerg = True
+                #cfg.emerg = True
             except:
                 pass
         elif kr.getKey('8'):
             try:
                 Tellos[1].emergency()
-                cfg.emerg = True
+                #cfg.emerg = True
             except:
                 pass
         elif kr.getKey('7'):
             try:
                 Tellos[2].emergency()
-                cfg.emerg = True
+                #cfg.emerg = True
             except:
                 pass
         else:

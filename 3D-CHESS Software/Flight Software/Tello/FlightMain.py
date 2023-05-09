@@ -27,7 +27,7 @@ import os
 #Entrance
 if __name__ == "__main__":
     emergencyControls = True
-    mapping = False
+    mapping = True
     
     connect = False
     sim = False
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     if connect:
         t = Tello()
         t.connect()
-        t.connect_to_wifi("ConnectoPatronum","73752677")
+        t.connect_to_wifi("tellonet","selvachess")
 
 
     #All drone kwargs are contained within the docustring of TFS. Below is a sample with all the default values (only different values need be passed)
@@ -59,61 +59,64 @@ if __name__ == "__main__":
     #List of Tellos for mapping
     Tellos = []
     #select drones
-    A = False
-    B = False
-    C = True
-    D = True
+    A = True
+    B = True
+    C = False
+    D = False   
     #turn on drones
     if A:
-        TelloA = TFS(cfg.telloIP_A,OBS = [VNIR(8.,100.)],
+        TelloA = TFS(cfg.telloIP_A,OBS = [VNIR(11.,100.)],
                                    logs= False,
-                                   location= True,
-                                   video= True,
+                                   location= False,
+                                   video= False,
                                    tracking= True,
                                    sim = sim,
-                                   takeoffLocation = [0,60,0],
-                                   coverageArea = [[0,60],[-120,60],[-120,180],[0,180]],
+                                   takeoffLocation = [-250,-200,0],
+                                   coverageArea = [[-250,-200],[-50,-200],[-50,0],[-250,0]],
                                    auto = False
                                    )
         Tellos.append(TelloA)
     if B:
-        TelloB = TFS(cfg.telloIP_B,OBS=[TIR(8.,100.)],
+        TelloB = TFS(cfg.telloIP_B,OBS=[TIR(8.,100.),VNIR(8.,100.)],
+                                   logs= False,
+                                   location= True,
+                                   video= False,
+                                   tracking= True,
+                                   sim = sim,
+                                   takeoffLocation = [200,250,0],
+                                   coverageArea = [[200,250],[50,250],[50,50],[200,50]],
+                                   auto = False,
+                                   showstream=True
+                                   )
+        Tellos.append(TelloB)
+    if C:
+        TelloC = TFS(cfg.telloIP_C,OBS=[VNIR(10.,110.)],
                                    logs= False,
                                    location= True,
                                    video= True,
                                    tracking= True,
                                    sim = sim,
-                                   takeoffLocation = [-60,-120,0],
-                                   coverageArea = [[-60,-120],[60,-120],[60,0],[-60,0]],
-                                   auto = False
-                                   )
-        Tellos.append(TelloB)
-    if C:
-        TelloC = TFS(cfg.telloIP_C,OBS=[VNIR(10.,110.)],
-                                   logs= True,
-                                   location= True,
-                                   video= True,
-                                   tracking= True,
-                                   sim = sim,
-                                   takeoffLocation = [120,240,0],
-                                   coverageArea = [[120,240],[120,120],[0,120],[0,240]],
-                                   auto = False
+                                   takeoffLocation = [200,-200,0],
+                                   coverageArea = [[200,-200],[200,0],[50,0],[50,-200]],
+                                   auto = True
                                    )
         Tellos.append(TelloC)
     if D:
-        TelloD = TFS(cfg.telloIP_D,OBS=[VNIR(9.,100.)],
-                                   logs= True,
+        TelloD = TFS(cfg.telloIP_D,OBS=[TIR(9.,100.)],
+                                   logs= False,
                                    location= True,
                                    video= True,
                                    tracking= True,
                                    sim = sim,
-                                   takeoffLocation = [50,50,0],
-                                   coverageArea = [[50,50],[250,50],[250,300],[50,300]],
-                                   auto = False
+                                   takeoffLocation = [-250,225,0],
+                                   coverageArea = [[-250,225],[-250,100],[0,100],[0,225]],
+                                   auto = True
                                    )
         Tellos.append(TelloD)
     cfg.Task.ActiveDrones = len(Tellos)
     
+    
+
     if mapping:
         from Modules.Location.Mapping import init
         mapThread = Thread(target=init,args=(Tellos,))
@@ -137,6 +140,14 @@ if __name__ == "__main__":
     #cfg.task_requests.append(cfg.Task([-300,-250]))
     #input("Ready?")
     #cfg.task_requests.append(cfg.Task([TelloA.position[0][0],TelloA.position[1][0]],5))
+
+    TelloA.takeoff()
+    TelloB.takeoff()
+    while not cfg.emerg:
+        for t in Tellos:
+            t.send_rc_control(0,0,0,0)
+
+
 
     while not sim:
         if cfg.emerg:

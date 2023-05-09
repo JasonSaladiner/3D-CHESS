@@ -12,7 +12,7 @@ import numpy as np
 global img, img_base
 global buffer
 start_time = 0
-buffer = 2  # Adjust according to speed of Tello
+buffer = 1  # Adjust according to speed of Tello
 
 def TR(ConnectedTello,x,y,img):
     import numpy as np
@@ -25,10 +25,11 @@ def TR(ConnectedTello,x,y,img):
             o = np.array(tr.offers)
             if o[np.argmax(o[:,1])][0] == ConnectedTello:
                 cv2.imwrite(f'Flight Software/Tello/Resources/Images/Response_{ConnectedTello.name}_{tr.taskLocation[0][0],tr.taskLocation[1][0]}.jpg', img)
-                print("Take Picture")
+                print("Image Captured")
     #print(duplicateRequest)
     if not duplicateRequest:   
-       cfg.task_requests.append(cfg.Task([x, y]))
+        print("Create TR at:",ConnectedTello.position)
+        cfg.task_requests.append(cfg.Task([x, y]))
 
 
 # Subject Function
@@ -152,7 +153,8 @@ def startVideo(ConnectedTello, streamType='FT', streamShow = True, takePic=False
                 cv2.imshow("D", frame_d)
                 cv2.moveWindow("D", int(TV_x + .5 * TV_width), int(TV_y + .5 * TV_height))  # Bottom-right corner
         else:
-            print(ConnectedTello.name + ': ' + alert)
+            pass
+            #print(ConnectedTello.name + ': ' + alert)
         cv2.waitKey(5)
 
 
